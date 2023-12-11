@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.progrow_project.member.mapper.MenteeMapper">
+    <insert id="insert">
+        INSERT into `user_mentee` (`mentee_id`, `passwd`, `name`, `region`,  `nickname`, `devLanguage`, `mNo`, `mNum`)
+        values (#{mentee_id}, #{passwd}, #{name}, #{region},  #{nickname}, #{devLanguage}, #{mNo}, #{mNum})
+    </insert>
+    
+    <select id="selectAll" resultType="kr.nomadlab.progrow_project.member.domain.MenteeVO">
+        SELECT * from `user_mentee` order by `menteeNo` DESC;
+    </select>
+
+    <select id="selectOne" resultType="kr.nomadlab.progrow_project.member.domain.MenteeVO">
+        select * from `user_mentee` where `mentee_id` = #{mentee_id};
+    </select>
+
+    <update id="update">
+        update `user_mentee`
+        set `name` = #{name}, `region` = #{region},
+            `nickname` = #{nickname}, `devLanguage` = #{devLanguage}
+        where `mentee_id` = #{mentee_id}
+    </update>
+
+    <delete id="delete">
+        delete from `user_mentee` where `mentee_id` = #{mentee_id}
+    </delete>
+
+
+    <update id="updatePw">
+        update `user_mentee` set `passwd` = #{passwd} where `mentee_id` = #{mentee_id}
+    </update>
+
+
+</mapper>

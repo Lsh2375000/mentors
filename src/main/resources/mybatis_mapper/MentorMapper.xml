@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.progrow_project.member.mapper.MentorMapper">
+    <insert id="insert">
+        INSERT INTO `user_mentor` (`mentor_id`, `passwd`, `name`, `region`, `nickname`, `devLanguage`, `fileNames`, `intro`, `mNo`, `rating`)
+        VALUES (#{mentor_id}, #{passwd}, #{name}, #{region},  #{nickname}, #{devLanguage}, #{fileNames}, #{intro}, #{mNo}, #{rating})
+    </insert>
+    
+    <select id="selectAll" resultType="kr.nomadlab.progrow_project.member.domain.MentorVO">
+        SELECT * FROM `user_mentor` ORDER BY `mentorNo` DESC;
+    </select>
+
+    <select id="selectOne" resultType="kr.nomadlab.progrow_project.member.domain.MentorVO">
+        SELECT * FROM `user_mentor` WHERE `mentor_id` = #{mentor_id};
+    </select>
+
+    <update id="update">
+        UPDATE `user_mentor`
+        SET `name` = #{name}, `region` = #{region},
+            `nickname` = #{nickname}, `devLanguage` = #{devLanguage},
+            `fileNames` = #{fileNames}, `intro` = #{intro}
+        WHERE `mentor_id` = #{mentor_id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM `user_mentor` WHERE `mentor_id` = #{mentor_id}
+    </delete>
+
+    <update id="updatePw">
+        UPDATE `user_mentor` SET `passwd` = #{passwd} where `mentor_id` = #{mentor_id}
+    </update>
+
+
+</mapper>

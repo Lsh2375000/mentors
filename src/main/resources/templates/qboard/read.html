@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-springsecurity5"
+      layout:decorate="~{layout/inc.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>QBoard Read</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <br>
+  <br>
+  <br>
+  <br>
+  <div class="row mt-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          QBoard Read
+        </div>
+        <form th:action="@{/qboard/read}" method="post">
+          <div class="card-body">
+            <div class="input-group mb-3">
+              <span class="input-group-text " hidden>ID</span>
+              <input type="text" class="form-control id" th:value="${dto.id}" hidden>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">QnaBoardNo</span>
+              <input type="text" class="form-control" th:value="${dto.qnaBoardNo}" readonly>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Title</span>
+              <input type="text" class="form-control" th:value="${dto.title}" readonly>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Content</span>
+              <textarea class="form-control col-sm-5" rows="5" readonly>[[${dto.content}]]</textarea>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Writer</span>
+              <input type="text" class="form-control" th:value="${dto.nickname}" readonly>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">RegDate</span>
+              <input type="text" class="form-control" th:value="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">ModDate</span>
+              <input type="text" class="form-control" th:value="${#temporals.format(dto.modDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+            </div>
+            <!-- 사용자 권한 부분 추가 -->
+            <!--          <div class="my-4" th:with="user=${#authentication.principal}">-->
+            <div class="my-4" >
+              <div class="float-end" th:with="link = ${pageRequestDTO.getLink()}">
+                <a th:href="|@{/qboard/list}?${link}|" class="text-decoration-none">
+                  <button type="button" class="btn btn-primary">List</button>
+                </a>
+                <th:block th:if="${#authentication.principal != 'anonymousUser'}">
+                  <a th:href="|@{/qboard/modify(qnaBoardNo=${dto.qnaBoardNo})}&${link}|" class="text-decoration-none">
+                    <button type="button" class="btn btn-secondary">Modify</button>
+                  </a>
+                </th:block>
+              </div>
+            </div>
+          </div> <!-- end card body -->
+        </form>
+          <!-- 추가 부분 -->
+          <div class="col">
+            <!-- 추가 수정(이미지) -->
+<!--            <div class="col">-->
+<!--              <div class="card" th:if="${dto.fileNames != null && dto.fileNames.length() > 0}">-->
+<!--                <img style="width: 30%;" class="card-img-top"-->
+<!--                     th:src="|@{/viewReal}/${dto.fileNames.split(',')[0]}|">-->
+<!--              </div>-->
+<!--            </div>-->
+            <!--           // 추가 부분-->
+          </div>
+        </div> <!-- end card -->
+      </div> <!-- end col -->
+    </div> <!-- end row -->
+
+  <div class="row mt-3"> <!-- start Qreply -->
+    <div class="col-md-12">
+      <!--        <input type="hidden" name="qBoardNo" th:value="${dto.qnaBoardNo}">-->
+      <!--        <div class="reply-nick">-->
+      <!--          <input type="text" name="nickName" th:value="${dto.nickName}" readonly>-->
+      <!--        </div>-->
+      <!--        <div class="qna-reply">-->
+      <!--          <textarea name="content" id="content" cols="50" rows="5" class="form-control" placeholder="qrContent"></textarea>-->
+      <!--        </div>-->
+      <div class="my-4">
+        <button class="btn btn-info qnaAddReplyBtn">댓글 등록</button>
+      </div>
+      <ul class="list-group qnaReplyList">
+
+      </ul>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <ul class="pagination qnaReplyPaging">
+
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- end Qreply -->
+  <!-- register modal -->
+  <th:block th:if="${#authentication.principal != 'anonymousUser'}">
+  <div class="modal qnaRegisterModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Register Reply</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal", aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Content</span>
+            <input type="text" class="form-control qnaReplyContent">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">nickname</span>
+            <input type="text" class="form-control qnaNickName" th:value="${#authentication.principal.nickname}" readonly>
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" hidden>id</span>
+            <input type="text" class="form-control qnaID" th:value="${#authentication.principal.mid}" hidden>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary qnaRegisterBtn">Register</button>
+          <button type="button" class="btn btn-outline-dark qnaCloseRegisterBtn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> <!-- register end modal -->
+  </th:block>
+  <!-- modify model -->
+  <div class="modal qnaModifyModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title qnaReplyHeader"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Reply Content</span>
+            <input type="text" class="form-control qnaModifyContent">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info qnaModifyBtn">Modify</button>
+          <button type="button" class="btn btn-danger qnaRemoveBtn">Remove</button>
+          <button type="button" class="btn btn-outline-dark qnaCloseModifyBtn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>  <!-- modify end modal -->
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Axios library add -->
+  <script src="/js/replyQ.js"></script>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+
+  // qBoardNo 정의
+  const qnaBoardNo = [[${dto.qnaBoardNo}]];
+
+  console.log(getQ1(qnaBoardNo)); // 콘솔로 확인
+
+  function printReplies(page, size, goLast) { // 댓글 출력
+    getQList({qnaBoardNo, page, size, goLast}).then(
+            data => {
+              // console.log(data)
+              printList(data.dtoList); // 목록 처리
+              console.log(printList(data.dtoList)); // 목록 처리
+              printPages(data); // 페이지 처리
+            }
+    ).catch(e => {
+      console.error();
+    });
+  }
+
+  printReplies(1, 10) // 무조건 호출
+  printReplies(1, 10, true);
+
+  const qnaReplyList = document.querySelector('.qnaReplyList'); // 댓글 목록 DOM
+  const qnaReplyPaging = document.querySelector('.qnaReplyPaging'); // 페이지 목록 DOM
+
+  function printList(dtoList) { // 댓글 목록 출력
+    let str = '';
+    if (dtoList && dtoList.length > 0) {
+      for (const dto of dtoList) {
+        str += `<li class="list-group-item d-flex qReplyItem">
+                    <span class="col-2">${dto.qnaRno}</span>
+                    <span class="col-6" data-qnaRno="${dto.qnaRno}">${dto.content}</span>
+                    <span class="col-2">${dto.nickname}</span>
+                    <span class="col-2">${dto.regDate}</span>
+                </li>`;
+      }
+    }
+    qnaReplyList.innerHTML = str;
+  }
+
+  function printPages(data) { // 페이지 목록 출력
+    // pagination
+    let pageStr = '';
+    if (data.prev) {
+      pageStr += `<li class="page-item"><a class="page-link" data-page="${data.start - 1}">PREV</a></li>`;
+    }
+    for (let i = data.start; i <= data.end; i++) {
+      pageStr += `<li class="page-item ${i === data.page ? "active" : ""}">
+                            <a class="page-link" data-page="${i}">${i}</a></li>`;
+    }
+    if (data.next) {
+      pageStr += `<li class="page-item"><a class="page-link" data-page="${data.end + 1}">NEXT</a></li>`;
+    }
+    qnaReplyPaging.innerHTML = pageStr;
+
+  }
+
+  // 댓글 등록 모달
+  const qnaRegisterModal = new bootstrap.Modal(document.querySelector(".qnaRegisterModal"));
+  console.log(qnaRegisterModal);
+  // registerModal
+  const qnaRegisterBtn = document.querySelector(".qnaRegisterBtn");
+  const content = document.querySelector(".qnaReplyContent");
+  const id = document.querySelector(".qnaID");
+  const nickname = document.querySelector(".qnaNickName");
+  const qnaCloseRegisterBtn = document.querySelector(".qnaCloseRegisterBtn");
+
+  document.querySelector(".qnaAddReplyBtn").addEventListener('click', function (e) {
+    qnaRegisterModal.show();
+  }, false)
+
+  qnaCloseRegisterBtn.addEventListener('click', function (e) {
+    qnaRegisterModal.hide();
+  }, false)
+
+  // 댓글 등록 자바스크립트
+  qnaRegisterBtn.addEventListener("click", function (e) {
+    const replyObj = {qnaBoardNo:qnaBoardNo, content:content.value, nickname:nickname.value, id:id.value}
+    console.log(replyObj);
+    addQReply(replyObj).then(result => { // 등록 후 결과처리
+      alert(result.data.qnaRno);
+      console.log(result);
+      qnaRegisterModal.hide();
+      content.value = '';
+      nickname.value = '';
+      id.value = this.id.value;
+      printReplies(1, 10 ,true); // 댓글 목록 갱신
+    }).catch(e => {
+      alert("Exception...");
+    });
+  }, false);
+
+  // 페이징 관련
+  let page = 1;
+  let size = 10;
+
+  qnaReplyPaging.addEventListener("click", function (e) { // 페이징 이벤트 리스너
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target;
+    console.log(target);
+
+    if (!target || target.tagName != 'A') {
+      return;
+    }
+
+    const pageNum = target.getAttribute("data-page");
+    page = pageNum;
+    printReplies(page, size)
+  }, false)
+
+  // modify modal 관련
+  const qnaModifyModal = new bootstrap.Modal(document.querySelector(".qnaModifyModal")); // 모달 수정 정의
+  const qnaReplyHeader = document.querySelector(".qnaReplyHeader"); // 리플 헤더 정의
+  const qnaModifyContent = document.querySelector(".qnaModifyContent"); // 수정 글 내용 정의
+  const qnaModifyBtn = document.querySelector(".qnaModifyBtn"); // 수정 버튼 정의
+  const qnaRemoveBtn = document.querySelector(".qnaRemoveBtn"); // 삭제 버튼 정의
+  const qnaCloseModifyBtn = document.querySelector(".qnaCloseModifyBtn"); // 수정 창 닫기 버튼 정의
+
+  qnaReplyList.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.target;
+    if (!target || target.tagName != 'SPAN') {
+      return;
+    }
+
+    const qnaRno = target.getAttribute("data-qnaRno");
+    if (!qnaRno) {
+      return;
+    }
+
+    getQReply(qnaRno).then(qreply => { // 댓글의 내용을 모달창에 채워서 보여줌.
+      console.log(qreply);
+      qnaReplyHeader.innerHTML = qreply.qnaRno;
+      qnaModifyContent.value = qreply.content;
+      qnaModifyModal.show();
+    }).catch(e => alert('error'))
+  }, false);
+
+  // 수정 버튼 이벤트 리스너
+  qnaModifyBtn.addEventListener("click", function (e) {
+    const replyObj = {qnaBoardNo:qnaBoardNo, qnaRno:qnaReplyHeader.innerHTML, content:qnaModifyContent.value};
+    modifyQReply(replyObj).then(result => {
+      alert(result.qnaRno + '댓글이 수정되었습니다.');
+      qnaModifyContent.value = '';
+      console.log(qnaModifyContent.value);
+      qnaModifyModal.hide();
+      //printReplies(1, 10 ,true); // 댓글 목록 갱신
+      printReplies(page, size);
+    }).catch(e => {
+      console.log(e);
+    })
+  }, false);
+
+  qnaCloseModifyBtn.addEventListener("click", function (e) {
+    qnaModifyModal.hide();
+  }, false);
+
+  // 삭제 버튼 이벤트 리스너
+  qnaRemoveBtn.addEventListener("click", function (e) {
+    removeQReply(qnaReplyHeader.innerHTML).then(result => {
+      alert(result.qnaRno + '댓글이 삭제되었습니다.');
+      qnaModifyContent.value = '';
+      qnaModifyModal.hide();
+      page = 1; // 이 부분이 없다면 원래 페이지로
+      //printReplies(1, 10 ,true); // 댓글 목록 갱신
+      printReplies(page, size);
+    }).catch(e => {
+      console.log(e);
+    })
+  }, false);
+</script>
+</body>
+</html>

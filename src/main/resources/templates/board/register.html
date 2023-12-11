@@ -1,0 +1,212 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/inc.html}">
+
+c
+
+<div layout:fragment="content">
+    <br>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Board Register
+                </div>
+                <div class="card-body">
+                    <form name="frmRegister" id="formRegister" action="/board/register" method="post" class="form-horizontal">
+                        <!--제목-->
+                        <div class="form-group">
+                            <label th:for="title">Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="Title">
+                        </div>
+
+                        <!-- id -->
+                        <div class="form-group">
+                            <label th:for="id">ID</label>
+                            <input type="text" name="id" class="form-control" placeholder="id" th:value="${#authentication.principal.mid}" readonly>
+                        </div>
+
+                        <!-- nickName -->
+                        <div class="form-group">
+                            <label th:for="nickname">NickName</label>
+                            <input type="text" name="nickname" class="form-control" placeholder="nickname" th:value="${#authentication.principal.nickname}" readonly>
+                        </div>
+
+                        <!-- content -->
+                        <div class="form-group">
+                            <label th:for="Content">Content</label>
+                                <textarea name="content" id="content" cols="50" rows="5" class="form-control" placeholder="content"
+                                style="width: 700px; height: 500px;"></textarea>
+                        </div>
+
+                        <!-- ADD Image -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Images</span>
+                            <div class="float-end uploadHidden">
+                                <button type="button" class="btn btn-primary uploadFileBtn">ADD Files</button>
+                            </div>
+                        </div>
+
+                        <div class="my-4">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-primary btn-submit">올리기</button>
+                                <button type="reset" class="btn btn-secondary">취소</button>
+                            </div>
+                        </div>
+                    </form>
+                </div> <!-- end card body-->
+                <!-- but-submit 스크립트-->
+                <script layout:fragment="script" th:inline="javascript">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const btnSubmit = document.querySelector('.btn-submit');
+                        const frmRegister = document.querySelector('form[name=frmRegister]');
+
+
+                        btnSubmit.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (!frmRegister.title.value) {
+                                alert("제목을 입력하세요.");
+                                return;
+                            }
+                            if (!frmRegister.content.value) {
+                                alert("내용을 입력하세요.");
+                                return;
+                            }
+                           frmRegister.submit();
+                            alert("게시물 등록이 완료되었습니다.");
+                        });
+                    });
+                </script>
+            </div> <!-- end card -->
+        </div><!-- end col -->
+    </div><!-- end row-->
+
+    <!-- 첨부 파일 섬네일을 보여줄 부분 -->
+    <div class="row mt-3">
+        <div class="col">
+            <div class="container-fluid d-flex uploadResult" style="flex-wrap: wrap;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 첨부파일 추가를 위한 모달창 -->
+    <div class="modal uploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="file" name="files" class="form-control" multiple>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary uploadBtn">Upload</button>
+                    <button type="button" class="btn btn-outline-dark closeUploadBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- register modal -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="/js/upload.js"></script>
+
+    <script layout:fragment="script" th:inline="javascript">
+
+        //업로드 모달
+        const uploadModal = new bootstrap.Modal(document.querySelector('.uploadModal'));
+
+        document.querySelector('.uploadFileBtn').addEventListener('click', function (e){
+            e.stopPropagation();
+            e.preventDefault();
+            uploadModal.show();
+        });
+
+        //모달창 업로드 버튼 이벤트 처리
+        document.querySelector('.uploadBtn').addEventListener('click', function (e){
+            const formObj = new FormData();
+
+            const fileInput = document.querySelector("input[name='files']");
+
+            console.log(fileInput.files);
+
+            const files = fileInput.files;
+
+            for(let i = 0; i < files.length; i++){
+                formObj.append("files", files[i]);
+            }
+            uploadToServer(formObj).then(result => {
+                console.log(result);
+                for (const uploadResult of result){
+                    showUploadFile(uploadResult);
+                }
+                uploadModal.hide();
+            }).catch(e =>{
+                uploadModal.hide();
+            })
+        });
+
+        // 업로드 된 이미지의 섬네일을 보여줌
+        const uploadResult = document.querySelector(`.uploadResult`);
+
+        function showUploadFile({uuid, fileName, link}) {
+            const str = `<div class="card col-4">
+                    <div class="card-header d-flex justify-content-center">
+                        ${fileName}
+                        <button class="btn-sm btn-danger" onclick="javascript:removeFile('${uuid}','${fileName}', this)">X</button>
+        </div>
+        <div class="card-body">
+            <img style="width: 50%" src="/viewTmp/${link}" data-src="${link}">
+        </div>
+    </div><!-- card -->`;
+            uploadResult.innerHTML += str;
+        }
+
+        //파일 삭제 처리
+        function removeFile(uuid, fileName, obj){
+            console.log(uuid);
+            console.log(fileName);
+            console.log(obj);
+
+            const targetDiv = obj.closest('.card');
+
+            removeFileToServer(uuid, fileName).then(data => {
+                targetDiv.remove();
+            })
+        }
+
+        //게시물 등록 처리
+        document.querySelector('.btn-submit').addEventListener('click', function (e){
+            e.preventDefault();
+            e.stopPropagation();
+
+            //1. 섬네일 영역에서 img 태그의 data-src 속성을 들고 옴
+            const uploadFiles = uploadResult.querySelectorAll('img');
+            let str = '';
+            for (let i = 0; i < uploadFiles.length; i++){
+                const uploadFile = uploadFiles[i];
+                const imgLink = uploadFile.getAttribute('data-src');
+
+                str += `<input type='hidden' name='fileNames' value="${imgLink}">`;
+            }
+            //2. ADD Files 버튼 영역에 태그 추가
+            const  target = document.querySelector('.uploadHidden'); //ADD Files 버튼 영역
+            target.innerHTML = str;
+
+            //3. submit()처리
+            const formObj = document.getElementById('formRegister');
+            console.log(uploadFiles);
+        });
+    </script>
+</div><!-- layout fragment end -->
+
+
+
+
+
+

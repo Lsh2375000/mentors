@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/myPageInc.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 자료</title>
+</head>
+<div layout:fragment="content">
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card" style="width: 1000px; height: 500px;">
+                <div class="card-header">
+                    자료 목록
+                </div>
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--회원 탈퇴 모달창 form 태그-->
+    <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">
+        <div class="modal" id="qmpwModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">회원 탈퇴</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="qcloseModal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="pwModal">
+                            <label>비밀번호 입력</label>
+                            <input name="mpwChk" type="password" class="form-control" id="qmpwChk">
+                            <span id="qmpwCheck" class="qchkTxt" ></span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="quitMemberBtn" disabled> 회원 탈퇴 </button>
+                    </div>
+                </div>
+            </div>
+        </div><!--End Modal-->
+    </form>
+    <script src="/js/checkAxios.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+    const frmQuitPw = document.getElementById('frmQuitPw'); // 회원탈퇴 form 태그
+    const qmpwModal = new bootstrap.Modal(document.getElementById('qmpwModal')); // 회원 탈퇴 모달창 모달창
+    const qcloseModal = document.getElementById('qcloseModal'); // 모달창 닫기 버튼
+
+    const privacyModifyBtn = document.getElementById('privacyModify'); // 회원 탈퇴 버튼
+    const qmpwChk = document.getElementById('qmpwChk'); // 입력한 현재 비밀번호
+    const quitMemberBtn = document.getElementById('quitMemberBtn'); // 모달창에서 회원 탈퇴 버튼
+
+
+    privacyModifyBtn.addEventListener('click', function (e) { // 회원탈퇴 모달창 이벤트
+        qmpwModal.show();
+    });
+
+    qcloseModal.addEventListener('click', function (e) { // 모달창 닫기 이벤트
+        frmQuitPw.reset();
+    });
+
+    qmpwChk.addEventListener('focusout', async function () { // 비밀번호를 입력하면
+        const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
+        const qmpwCheck = document.getElementById('qmpwCheck'); // 현재 비밀번호 일치여부 텍스트
+        const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+        if (result) {
+            qmpwCheck.innerHTML = '현재 비밀번호와 일치합니다.'
+            qmpwCheck.style.color = '#5c6ff1';
+            qmpwChk.readonly = true; // 현재 비밀번호가 일치하면
+            quitMemberBtn.disabled = false; // 회원 탈퇴 버튼 활성화
+        } else {
+            qmpwCheck.innerHTML = '현재 비밀번호와 일치하지 않습니다.'; // 비밀번호 일치하지 않으면 회원 탈퇴 불가
+            qmpwCheck.style.color = '#f64e4e';
+            quitMemberBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+        }
+    });
+
+    quitMemberBtn.addEventListener('click', async function (e) {
+        const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
+        const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+
+        if (result === false || qmpwChk.value === ''.trim()){
+            alert('현재 비밀번호가 일치하지 않습니다.');
+            e.preventDefault();
+            e.stopPropagation();
+        } else if (result) {
+            if (confirm('정말 회원 탈퇴 하시겠습니까?')) {
+                // console.log(mpwChk.value);
+                // console.log(frmQuitPw);
+                frmQuitPw.submit();
+            }
+
+        }
+
+    });
+
+</script>
+</html>

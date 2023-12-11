@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.progrow_project.mentoring.mapper.MentoringMapper">
+    <!-- 멘토의 멘토링 생성 -->
+    <insert id="insert">
+        INSERT into `mentoring` (`mentor_nickname`, `mentee_id`, `region`, `devLanguage`, `chatNo`, `materials`, `meeting`, `on_off`, `addDate`, `rentNo`, `payment`)
+        values (#{mentor_nickname}, #{mentee_id}, #{region}, #{devLanguage}, #{chatNo}, #{materials}, #{meeting}, #{on_off}, now(), #{rentNo}, #{payment})
+    </insert>
+    <!--  멘토의 멘토링 수정  -->
+    <update id="update">
+        update `mentoring`
+        set `region`=#{region},
+            `devLanguage`=#{devLanguage},
+            `meeting`=#{meeting},
+            `on_off`=#{on_off}
+        where `mNo` = #{mNo}
+    </update>
+
+    <delete id="delete">
+        delete
+        from `mentoring`
+        where `mNo` = #{mNo};
+    </delete>
+    <!-- 멘토의 멘토링 생성 시 user_mentor 테이블에 멘토 멘토링 여부 true로 변경-->
+    <update id="mentorIsMentoring">
+        UPDATE `user_mentor` SET `isMentoring` = TRUE
+        WHERE `mentor_nickname` = #{mentor_nickname}
+    </update>
+
+    <!-- 멘토의 멘토링참여여부 조회 -->
+    <select id="isMentorMentoring" resultType="boolean">
+        SELECT `isMentoring` FROM `user_mentor` WHERE `mentor_nickname` = #{mentor_nickname};
+    </select>
+
+    <!-- 멘티의 멘토링참여  -->
+    <update id="recruitInsert">
+        UPDATE `mentoring` SET `mentee_id` =
+        if(`mentee_id` = NULL, #{mentee_id}, CONCAT_WS(', ', `mentee_id`, #{mentee_id}))
+        WHERE `mNo` = #{mNo};
+    </update>
+
+    <!-- 멘티의 멘토링참여시 user_mentee 테이블에 멘토링여부 true, mNo 등록 -->
+    <update id="menteeRecruit">
+        UPDATE `user_mentee` SET `isMentoring` = TRUE, `mNo` = #{mNo}
+        WHERE `mentee_id` = #{mentee_id}
+    </update>
+
+    <!-- 멘티의 멘토링참여여부 조회 -->
+    <select id="isMenteeMentoring" resultType="boolean">
+        SELECT `isMentoring` FROM `user_mentee` WHERE `mentee_id` = #{mentee_id};
+    </select>
+
+
+
+    <select id="selectAll" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO">
+        SELECT * from `mentoring` order by `mNo` DESC;
+    </select>
+
+    <select id="selectOne" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO">
+        select *
+        from `mentoring`
+        where `mNo` = #{mNo};
+    </select>
+
+    <!--  멘토의 멘토링방 -->
+    <select id="mentorRoom" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO">
+        SELECT *
+        FROM `mentoring`
+        JOIN `user_mentor` ON `mentoring`.`mentor_nickname` = `user_mentor`.`nickname`
+        WHERE `mentoring`.`mentor_nickname` = #{mentor_nickname};
+--         SELECT *
+--         FROM mentoring, user_mentor
+--         WHERE mentoring.mentor_id = user_mentor.mentor_id
+--         AND mentoring.mentor_id = #{mentor_id};
+    </select>
+
+    <!-- 멘토의 멘토링방 공지사항 생성 -->
+    <insert id="insertNotice">
+        INSERT into `mentor_room_notice` (`mentor_nickname`, `title`, `content`, `addDate`)
+        values (#{mentor_nickname}, #{title},#{content}, now())
+    </insert>
+
+    <!-- 멘토의 멘토링방 공지사항 수정 -->
+    <update id="updateNotice">
+        update `mentor_room_notice`
+        set `title` = #{title},
+            `content` = #{content}
+        where `num` = #{num};
+    </update>
+    <!-- 멘토의 멘토링방 공지사항 삭제 -->
+    <delete id="deleteNotice">
+        delete
+        from `mentor_room_notice`
+        where `num` = #{num}
+    </delete>
+
+
+    <!--  멘토링방 공지사항 list  -->
+    <select id="selectAllNotice" resultType="kr.nomadlab.progrow_project.mentoring.MentorRoomNoticeVO">
+        SELECT * from `mentor_room_notice` order by `num` DESC;
+    </select>
+
+
+    <select id="selectOneNotice" resultType="kr.nomadlab.progrow_project.mentoring.MentorRoomNoticeVO">
+        select *
+        from `mentor_room_notice`
+        where `num` = #{num};
+    </select>
+
+
+    <!--  멘티의 멘토링방 -->
+    <select id="menteeRoom" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO">
+        SELECT *
+        FROM `mentoring`
+                 JOIN `user_mentee` ON `mentoring`.`mNo` = `user_mentee`.`mNo`
+        WHERE `user_mentee`.`mentee_id` = #{mentee_id};
+        --         SELECT *
+--         FROM mentoring, user_mentor
+--         WHERE mentoring.mentor_id = user_mentor.mentor_id
+--         AND mentoring.mentor_id = #{mentor_id};
+    </select>
+
+    <!--    지금 해야하는 멘티의 멘토링방에서 멘토정보 조회-->
+    <select id="menteeRoomMentorInfo" resultType="kr.nomadlab.progrow_project.member.domain.MentorVO">
+        select * from `user_mentor`
+
+    </select>
+    <!-- 멘티의 멘토링 방 끝 -->
+
+
+
+    <sql id="search">
+        <where>
+            <if test="types != null and types.length > 0">
+                <foreach collection="types" item="type" open="(" close=")" separator="OR">
+                    <if test="type == 'l'.toString()">
+                        `devLanguage` like concat('%',#{keyword},'%')
+                    </if>
+                    <if test="type=='r'.toString()">
+                        `region` like concat('%',#{keyword},'%')
+                    </if>
+                    <if test="type=='i'.toString()">
+                        `mentor_nickname` like concat('%',#{keyword},'%')
+                    </if>
+                </foreach>
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="selectList" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO">
+        select * from `mentoring`
+        <include refid="search"/>
+        order by `mNo` desc limit #{skip}, #{size};
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(`mNo`) from `mentoring`
+        <include refid="search"/>
+    </select>
+
+
+    <select id="mentorMentoring" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO" parameterType="string">
+        select `devLanguage`, `addDate`, `rentNo`, `payment`, `materials` from `mentoring` where `mentor_nickname` = #{mentor_nickname};
+    </select>
+
+    <select id="menteeMentoring" resultType="kr.nomadlab.progrow_project.mentoring.domain.MentoringVO" parameterType="string">
+        select `devLanguage`, `addDate`, `rentNo`, `payment`, `materials` from `mentoring` where `mentee_id` = #{mentee_id};
+    </select>
+
+
+
+</mapper>

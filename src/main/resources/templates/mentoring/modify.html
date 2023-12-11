@@ -1,0 +1,82 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/inc.html}">
+
+<div layout:fragment="content">
+    <br><br><br><br>
+    <h1>멘토링 수정</h1>
+    <div class="container">
+        <form name="frmAdd" action="/mentoring/modify" method="post" class="form-horizontal">
+
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" >번호 </label>
+                <div class="col-sm-3">
+                    <input name="mNo" type="text" class="form-control" th:value="${mentorRoom.mNo}" readonly>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" >멘토 ID</label>
+                <div class="col-sm-3">
+                    <input type="text" name="mentor_id" class="form-control" placeholder="mentor_id"
+                           th:value="${#authentication.principal.username}" readonly>
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" >프로그래밍 언어</label>
+                <div class="col-sm-3">
+                    <input name="devLanguage" type="text" class="form-control"  th:value="${mentorRoom.devLanguage}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" >지역</label>
+                <div class="col-sm-3">
+                    <input name="region" type="text" class="form-control" th:value="${mentorRoom.region}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" >사전 미팅(체크시 O)</label>
+                <div class="col-sm-3">
+                    <input name="meeting" type="checkbox" class="form-check" checked>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" >on_off(체크시 온라인)</label>
+                <div class="col-sm-3">
+                    <input name="on_off" type="checkbox" class="form-check" checked>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="submit" class="btn btn-primary btn-submit" value=" 변경하기 ">
+                    <input type="button" class="btn btn-primary back" value=" 취소 ">
+                    <button type="button" class="btn btn-danger removeBtn">삭제하기</button>
+
+                </div>
+            </div>
+        </form>
+        <hr>
+    </div>
+
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    // 4. 삭제 클릭시 이벤트 처리
+    // 기존 이벤트 리스너 삭제
+    // document.querySelector(".removeBtn").addEventListener("click", function (e) {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //
+    //     formObj.action = `/mentoring/remove`;
+    //     formObj.method = 'post';
+    //     formObj.submit(); // 테스트 이후에 주석 해제
+    //
+    // });
+
+    document.querySelector(".back").addEventListener("click", function (e) {
+        window.history.back();
+
+    });
+</script>
+</html>

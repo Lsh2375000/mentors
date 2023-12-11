@@ -1,0 +1,176 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/inc.html}">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>멘토링 룸</title>
+    <style>
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+
+<div layout:fragment="content">
+    <h4><span class="badge bg-secondary">[[${mentorRoom.mentor_id}]] 멘토님의 멘토링 방 </span></h4>
+
+    <table class="table table-hover">
+        <tr>
+            <th>번호</th>
+            <th>멘토 ID</th>
+            <th>참여 멘티 ID</th>
+            <th>지역</th>
+            <th>주 언어</th>
+            <th>작성일</th>
+            <th>사전만남여부</th>
+            <th>온/오프라인</th>
+            <th></th>
+
+        </tr>
+        <tr>
+            <td>[[${mentorRoom.mNo}]]</td>
+            <td>[[${mentorRoom.mentor_id}]]</td>
+            <td >[[${mentorRoom.mentee_id}]]</td>
+            <td>[[${mentorRoom.region}]]</td>
+            <td>[[${mentorRoom.devLanguage}]]</td>
+            <td>[[${mentorRoom.addDate}]]</td>
+            <td>[[${mentorRoom.meeting}]]</td>
+            <td>[[${mentorRoom.on_off}]]</td>
+            <td><a th:href="|@{/mentoring/modify(mNo=${mentorRoom.mNo})}|" class="text-decoration-none">
+                <button type="button" class="btn btn-secondary">수정
+                </button>
+            </a></td>
+
+        </tr>
+    </table>
+
+    <br>
+    <button type="button" id="toggleFormButton" class="btn btn-primary">공지사항 작성</button>
+    <br>
+    <form accept-charset="UTF-8" style="display: none;" id="myForm" action="/mentoring/mentorRoom" method="post" class="form-horizontal" >
+
+        <div class="form-group row" style="visibility:hidden;">
+            <label class="col-sm-2 control-label" >멘토아이디</label>
+            <div class="col-sm-3">
+                <input type="text" name="mentor_id" class="form-control" placeholder="mentor_id"
+                       th:value="${#authentication.principal.username}" readonly>
+            </div>
+        </div>
+        <h3><span class="badge bg-warning">공지사항 작성</span></h3>
+        <div class="form-group row">
+            <label class="col-sm-2 control-label" >제목</label>
+            <div class="col-sm-3">
+                <input name="title" type="text" class="form-control" placeholder="title">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 control-label" >내용</label>
+            <textarea class="form-control col-sm-5" cols="50" rows="5" name="content" id="content"
+                      style="width: 500px; height: 300px;"></textarea>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="submit" class="btn btn-primary btn-submit" value=" 등록 ">
+                <input type="reset" class="btn btn-secondary" value="초기화">
+            </div>
+        </div>
+    </form>
+    <br>
+
+
+    <div th:fragment="notice">
+        <h3><span class="badge bg-info">공지사항</span></h3>
+        <table class="table table-hover" >
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성일</th>
+            </tr>
+            <tr th:each="dto : ${noticeList}">
+                <td>[[${dto.num}]]</td>
+                <td><a th:href="|@{/mentoring/noticeRead(num=${dto.num})}|">[[${dto.title}]]</a></td>
+                <td>[[${#temporals.format(dto.addDate, 'yyyy-MM-dd HH:mm')}]]</td>
+            </tr>
+        </table>
+
+    </div>
+
+
+
+
+
+</div>
+
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>-->
+<script layout:fragment="script" th:inline="javascript">
+    // JavaScript 코드
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    const myForm = document.getElementById('myForm');
+
+    let formVisible = false;
+
+    toggleFormButton.addEventListener('click', function() {
+        formVisible = !formVisible;
+        if (formVisible) {
+            toggleFormButton.innerText = '작성 폼 숨기기';
+            myForm.style.display = 'block';
+        } else {
+            toggleFormButton.innerText = '공지글 작성하기';
+            myForm.style.display = 'none';
+        }
+    });
+
+    // form submit 이벤트가 발생했을 때 실행되는 함수
+    function validateForm() {
+        // 제목 입력 필드의 값을 가져옵니다.
+        var titleValue = document.querySelector('input[name="title"]').value;
+
+        // 만약 제목이 비어있다면
+        if (titleValue.trim() === '') {
+            // 알림창을 띄웁니다.
+            alert('제목을 입력해주세요.');
+            return false; // 폼이 제출되지 않도록 false 반환
+        }
+
+        return true; // 제목이 입력되어 있다면 폼 제출을 진행합니다.
+    }
+
+    // form 요소를 찾아서 submit 이벤트가 발생했을 때 validateForm 함수를 실행합니다.
+    document.querySelector('form').addEventListener('submit', function (e) {
+        // 폼 제출을 막고, 대신 validateForm 함수를 실행합니다.
+        e.preventDefault();
+        if (validateForm()) {
+            this.submit(); // 폼 제출
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const onOffCell = document.querySelector(".table-hover tr:nth-child(2) td:nth-child(8)"); // 사전만남 여부 셀
+        const meetingCell = document.querySelector(".table-hover tr:nth-child(2) td:nth-child(7)"); // 온/오프라인 셀
+
+        // 온/오프라인 값에 따라 변경
+        if (onOffCell.textContent.trim() === "true") {
+            onOffCell.textContent = "온라인";
+        } else if (onOffCell.textContent.trim() === "false") {
+            onOffCell.textContent = "오프라인";
+        }
+
+        // O/X 값에 따라 변경
+        if (meetingCell.textContent.trim() === "true") {
+            meetingCell.textContent = "O";
+        } else if (meetingCell.textContent.trim() === "false") {
+            meetingCell.textContent = "X";
+        }
+    });
+
+
+</script>
+
+</div>
+</html>

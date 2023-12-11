@@ -1,0 +1,131 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/loginInc.html}">
+<head>
+    <title>비밀번호 재설정</title>
+    <link href="/css/resetPw.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,800" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+</head>
+<body class="align-middle" >
+<div layout:fragment="content" style="display: flex; justify-content: center; align-items: center;">
+    <!-- Heading -->
+    <div class="outerDiv">
+        <h1>이메일 인증</h1>
+        <!-- Links -->
+        <section id="emailConfirm">
+            <!-- email input -->
+            <div class="middleDiv">
+                <div class="first-input input__block first-input__block" style="margin-bottom: 20px; width: 320px;">
+                    <input name="email" type="email" placeholder="Email" class="input" id="email"/>
+                </div>
+                <!-- Send ConfirmKey Btn -->
+                <button type="button" class="login_btn sendConfirmKey" id="sendConfirmKeyBtn" style="margin-bottom: 30px; width: 280px;">
+                    이메일 인증하기
+                </button>
+            </div>
+            <div class="middleDiv">
+                <!-- ConfirmKey Input -->
+                <div class="input__block" style="margin-bottom: 20px; width: 320px;">
+                    <input name="confirmKey" type="text" placeholder="ConfirmKey" class="input" id="confirmKey"/>
+                </div>
+                <button type="button" class="login_btn sendConfirmKey" id="confirmKeyChk" style="margin-bottom: 50px; width: 280px;">인증 문자 확인</button>
+                <!-- Reset Password Btn -->
+                <button type="button" class="login_btn resetBtn" id="resetPw" style="width: 150px;">
+                    비밀번호 재설정하기
+                </button>
+            </div>
+        </section>
+    </div>
+    <script id="rendered-js" src="/js/login.js"></script>
+<!--    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>-->
+    <script src="/js/checkAxios.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+
+    const email = document.getElementById('email'); // 이메일 입력폼
+    const sendConfirmKeyBtn = document.getElementById('sendConfirmKeyBtn'); // 이메일 인증버튼
+    const confirmKey = document.getElementById('confirmKey'); // 인증문자 입력폼
+    const confirmKeyChkBtn = document.getElementById('confirmKeyChk'); // 인증문자 확인 버튼
+    const resetPw = document.getElementById('resetPw'); // 비밀번호 재설정 화면이동 버튼
+
+    sendConfirmKeyBtn.addEventListener('click', async function (e) {
+        const emailVal = email.value;
+        const result =  await isEmail(emailVal);
+
+        if (emailVal === ''.trim()) {
+            alert('이메일을 입력해 주세요');
+            resetPw.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            return;
+        } else if (!result) {
+            alert('존재하지 않는 이메일입니다.');
+            resetPw.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            return;
+        } else if (result) {
+            alert('이메일이 확인 되었습니다.');
+            await sendConfirmMail(emailVal);
+            alert('인증문자가 전송되었습니다.');
+        }
+        return null;
+    });
+
+    confirmKeyChkBtn.addEventListener('click', async function (e) {
+        const confirmKeyVal = confirmKey.value;
+        const result = await matchConfirmKey(confirmKeyVal);
+
+        if (confirmKeyVal === ''.trim()){
+            alert('인증문자를 입력해 주세요.');
+            resetPw.addEventListener('click', function (e) {
+                e.preventDefault()
+                e.stopPropagation();
+            });
+            return;
+        }else if (!result) {
+            alert('잘못된 인증문자 입니다.');
+            resetPw.addEventListener('click', function (e) {
+                e.preventDefault()
+                e.stopPropagation();
+            });
+            return;
+        } else if (result) {
+            alert('인증되었습니다.');
+            return;
+        }
+        return null;
+    });
+
+    resetPw.addEventListener('click', async function (e){
+        const emailVal = email.value;
+        const confirmKeyVal = confirmKey.value;
+        const result = await matchConfirmKey(confirmKeyVal);
+
+        if (emailVal === ''.trim()) {
+            alert('이메일 인증을 진행해 주세요');
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        } else if (confirmKeyVal === ''.trim()) {
+            alert('인증문자를 입력해 주세요.');
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        } else if (!result) {
+            alert('인증이 완료 되지 않았습니다.');
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        self.location.href = '/member/resetPassword';
+    });
+
+
+</script>
+</body>

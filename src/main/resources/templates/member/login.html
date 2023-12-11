@@ -1,0 +1,86 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/loginInc.html}">
+<head>
+    <link href="/css/login.css" rel="stylesheet">
+    <title>로그인</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,800" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+</head>
+<body class="align-middle" >
+    <div layout:fragment="content" style="padding-bottom: 300px;">
+        <!-- Heading -->
+        <h1>Login</h1>
+        <!-- Links -->
+        <form id="loginForm" action="/member/login" method="post">
+            <ul class="links">
+                <li>
+                    <a href="#" id="mentee">Mentee</a>
+                </li>
+                <li>
+                    <a href="#" id="mentor">Mentor</a>
+                </li>
+                <li>
+                    <a href="#" id="reset">RESET</a>
+                </li>
+            </ul>
+            <!-- email input -->
+            <div class="first-input input__block first-input__block">
+                <input name="username" type="email" placeholder="Email" class="input" id="email"   />
+            </div>
+            <!-- password input -->
+            <div class="input__block">
+                <input name="password" type="password" placeholder="Password" class="input" id="password"    />
+            </div>
+            <!-- sign in button -->
+            <button class="login_btn">
+                멘티 로그인
+            </button>
+            <div class="etc" style="width: 680px; text-align: center; display: flex; justify-content: space-around; align-items: center; margin-top: 20px;">
+                <div style="display: flex; align-items: center;">
+                    <input class="form-check-input" style="margin-top: -2px;" type="checkbox" name="remember-me">
+                    <label class="form-check-label" style="font-size: 8pt;">
+                        &nbsp 자동 로그인
+                    </label>
+                </div>
+                <span style="font-size: 8pt; display: flex; align-items: center; color: #8f8f8f">
+                    비밀번호가 기억나지 않나요? &nbsp
+                    <a class="" href="/member/forgotPW" style="font-size: 8pt; color: black"> 비밀번호 찾기 </a>
+                </span>
+                <span style="font-size: 8pt; display: flex; align-items: center; color: #8f8f8f">
+                    회원이 아니신가요? &nbsp
+                    <a class="" href="/member/agreement" style="font-size: 8pt; color: black"> 회원 가입 </a>
+                </span>
+            </div>
+            </form>
+            <!-- separator -->
+            <div class="separator">
+                <p>OR</p>
+            </div>
+            <!-- KAKAO button -->
+            <a href="/oauth2/authorization/kakao" class="google__btn">
+                <i class="fa fa-comment fa-lg" style="margin-right: 10px;"></i>
+                Login with Kakao
+            </a>
+            <!-- google button
+            <button class="github__btn">
+              <i class="fa fa-github"></i>
+              Sign in with GitHub
+            </button> -->
+        <script id="rendered-js" src="/js/login.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+        <script>
+
+        </script>
+    </div>
+    <script layout:fragment="script" th:inline="javascript">
+
+        const resetBtn = document.getElementById('reset');
+        const loginForm = document.getElementById('loginForm')
+        resetBtn.addEventListener('click', function (e) {
+            loginForm.reset();
+        });
+    </script>
+</body>
+
+

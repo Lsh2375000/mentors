@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}" xmlns:height="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>qBoard Post</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <form name="frmQregister" action="/qboard/register" method="post" class="form-horizontal">
+        <div class="form-group row">
+            <label th:for="id" hidden>ID</label>
+            <input type="text" name="id" class="form-control" placeholder="id" th:value="${#authentication.principal.mid}" hidden>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 control-label">닉네임</label>
+            <div class="col-sm-3">
+                <input type="text" name="nickname" class="form-control" placeholder="nickname" th:value="${#authentication.principal.nickname}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 control-label">제목</label>
+            <div class="col-sm-5">
+                <input name="title" type="text" class="form-control" placeholder="title">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 control-label">내용</label>
+            <div class="col-sm-8">
+                <textarea name="content" id="content" cols="50" rows="5" class="form-control" placeholder="content"
+                          style="width:700px; height:500px;"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="button" class="btn btn-primary btn-submit-Q" value=" 등록" ononclick="goToQBoardList();">
+                <input type="reset" class="btn btn-primary" value="취소" onclick="goToQBoardList();">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--<script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="UTF-8"></script>-->
+<!--<script> // 네이버 에디터 추가-->
+<!--let oEditors = []; // 전역으로 설정 하기 위해 위치 변경-->
+<!--document.addEventListener("DOMContentLoaded", function () {-->
+<!--    nhn.husky.EZCreator.createInIFrame({-->
+<!--        oAppRef: oEditors,-->
+<!--        elPlaceHolder: "qnaContent", // id가 content인 요소를 지정-->
+<!--        sSkinURI: "/smarteditor2/SmartEditor2Skin.html",-->
+<!--        fCreator: "createSEditor2"-->
+<!--    });-->
+<!--});-->
+<!--</script>-->
+
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnSubmitQ = document.querySelector('.btn-submit-Q');
+        const frmQregister = document.querySelector('form[name=frmQregister]');
+
+        // console.log(oEditors);
+        btnSubmitQ.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // oEditors.getById['qnaContent'].exec("UPDATE_CONTENTS_FIELD", []); // 에디터에 있던 내용을 원 경로로 컴파일
+            // if (!frmQregister.nickname.value) {
+            //     alert("이름을 입력하세요.");
+            //     return;
+            // }
+            if (!frmQregister.title.value) {
+                alert("제목을 입력하세요.");
+                return;
+            }
+            if (!frmQregister.content.value) {
+                alert("내용을 입력하세요.");
+                return;
+            }
+            // console.log(oEditors);
+            console.log(frmQregister);
+            frmQregister.submit();
+        });
+    });
+
+    function goToQBoardList() { // 리스트 이동
+        // 페이지 이동
+        window.location.href = "/qboard/list";
+    }
+</script>
+</body>
+</html>

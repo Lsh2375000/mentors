@@ -1,0 +1,439 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/myPageInc.html}">
+<style layout:fragment="style">
+  .form-group{
+    margin-bottom: 30px;
+  }
+  input[name = "region"] {
+    margin-bottom: 10px;
+  }
+  #zipcode {
+    width: 300px;
+  }
+  .btnFindZipcode {
+    margin-left: 30px;
+    cursor: pointer;
+    width: 130px;
+    height: 40px;
+  }
+  .control-label {
+    width: 150px;
+  }
+
+  .pwModal {
+    margin-bottom: 15px;
+  }
+  .chkTxt {
+    color: black;
+  }
+  .modal-content {
+    width: 700px;
+  }
+
+  form#frmModify{
+    background-color: #F5F7F8;
+    padding: 10px 10px 10px 30px;
+    margin: 10px;
+    border: 1px solid #e0e2e3;
+    border-radius: 5px;
+    font-family: 'Orbit', sans-serif;
+  }
+  .inputBtn{
+    background-color: black;
+    border: none;
+  }
+
+
+</style>
+<div layout:fragment="content">
+
+  <form name="frmModify" id="frmModify" action="/member/mentorModify" method="post" class="form-horizontal" enctype="multipart/form-data">
+
+    <!--이메일 아이디 시작-->
+    <div class="form-group row" style="margin-top: 20px;">
+      <label class="col-sm-2 control-label">이메일</label>
+      <div class="col-sm-3" style="display: flex; align-items: center;">
+        <span class="form-control" id="email" style="width: 320px; background-color: #cccccc; border: solid 1px #727272;" readonly>[[${#authentication.principal.getMid()}]]</span>
+      </div>
+    </div>
+    <!--이메일 아이디 끝-->
+
+    <!--비밀번호 시작-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">비밀번호 변경</label>
+      <div class="col-sm-5">
+        <button type="button" id="pwModifyBtn" class="btn btn-primary inputBtn">비밀번호 변경하기</button>
+      </div>
+    </div>
+    <!--비밀번호 끝-->
+
+    <!--주소 시작-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">주소 수정</label>
+      <div class="col-10">
+        <table>
+          <tr style="display: flex;">
+            <td>
+              <input name="region" class="form-control" id="zipcode" size="10" maxlength="7" th:value="${mentorDTO.region.split(',')[0]}" style="width: 300px" readonly>
+            </td>
+            <td><span type="button" class="btn btn-primary btnFindZipcode inputBtn">우편번호 검색</span><br/></td>
+          </tr>
+          <tr>
+            <td>
+              <input name="region" class="form-control" id="address01" size="70" maxlength="70" th:value="${mentorDTO.region.split(',')[1]}" style="width: 470px" readonly>
+              <input name="region" class="form-control" id="address02" size="70" maxlength="70" th:value="${mentorDTO.region.split(',')[2]}" style="width: 470px">
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!--주소 끝-->
+
+    <!--이름 시작-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">이름</label>
+      <div class="col-sm-5">
+        <input name="name" type="text" class="form-control name" id="name" maxlength="10" th:value="${mentorDTO.name}" placeholder="name">
+      </div>
+    </div>
+    <!--이름 끝-->
+
+    <!--닉네임 시작-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">닉네임</label>
+      <div class="col-sm-2" style="width: 30%;">
+        <input name="nickname" type="text" class="form-control nickname" maxlength="20" id="nickname" th:value="${mentorDTO.nickname}" placeholder="nickname">
+      </div>
+      <div class="col-sm-2" style="width: 30%;">
+        <button type="button" class="btn btn-primary dupBtn inputBtn" id="dupNicknameBtn" style="margin-left: 20px;">중복 확인</button>
+      </div>
+    </div>
+    <!--닉네임 끝-->
+
+    <!-- 오류방지용 임시 포트폴리오 text태그로 값을 받음 나중에 파일업로드 기능 구현해서 수정-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">포트폴리오</label>
+      <div class="col-sm-7" style="border: 1px solid #a6a6a6; border-radius: 5px; background-color: #e7e7e7; padding: 10px; ">
+        <th:block th:if="mentorDTO.fileNames != null">
+          <div style="display: flex; flex-direction: column;">
+            <div style="display: flex; margin-bottom: 5px;" th:each="file : ${mentorDTO.fileNames.split('\|')}">
+              <img src="/img/pdfIcon.png" style="width: 20px; margin-right: 5px;" alt="pdf"/>
+              <a target="_blank" style="color: black; text-decoration: none;" th:href="|@{/mentorModify/}${file}|">
+                [[${file.split('_')[1]}]]
+              </a>
+            </div>
+          </div>
+        </th:block>
+        <input class="form-control" name="files" type="file" multiple="multiple" accept=".pdf">
+      </div>
+    </div>
+
+
+    <!-- 포트폴리오 끝-->
+
+    <!--프로그래밍 언어 시작-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">프로그래밍 언어</label>
+      <div class="col-sm-5">
+        <select name="devLanguage" class="form-select lngName" id="lngName">
+          <option value="JAVA">JAVA</option>
+          <option value="Python">Python</option>
+          <option value="Javascript">Javascript</option>
+          <option value="C#">C#</option>
+        </select>
+      </div>
+    </div>
+    <!--프로그래밍 언어 끝-->
+
+    <!--멘토 소개 시작-->
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">멘토 소개</label>
+      <div class="col-sm-5">
+        <textarea name="intro" cols="100" rows="10" class="form-control" id="intro" th:value="${mentorDTO.intro}"></textarea>
+      </div>
+    </div>
+    <!--멘토 소개 끝-->
+
+    <div class="form-group row">
+      <div class="col-sm-offset-2 col-sm-10">
+        <input type="button" class="btn btn-primary" id="btnSubmit" value=" 수정 " disabled>
+        <a class="btn btn-danger" href="/mypage/mentor"> 취소 </a>
+      </div>
+    </div>
+
+  </form>
+
+  <!--비밀번호 변경 모달창 form 태그-->
+  <form name="frmModifyPw" id="frmModifyPw" action="/member/passwordEdit" method="post">
+    <div class="modal" id="pwModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">비밀번호 변경하기</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <div class="pwModal">
+              <label>현재 비밀번호</label>
+              <input type="password" class="form-control" id="currentPW">
+              <span id="pwCheck" class="chkTxt" ></span>
+            </div>
+            <div class="pwModal">
+              <label>새로 사용할 비밀번호</label>
+              <input name="modifyPw" type="password" class="form-control" id="modifyPw" disabled>
+              <span id="modifyPWTxt" class="chkTxt"></span>
+            </div>
+            <div class="pwModal">
+              <label>비밀번호 확인</label>
+              <input type="password" class="form-control" id="modifyPwChk" disabled>
+              <span id="modifyPwCheckTxt" class="chkTxt"></span></div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn btn-secondary"> 초기화 </button>
+            <button type="button" class="btn btn-primary" id="editPwBtn" disabled> 비밀번호 변경 </button>
+          </div>
+        </div>
+      </div>
+    </div><!--End Modal-->
+  </form>
+  <!--회원 탈퇴 모달창 form 태그-->
+  <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">
+    <div class="modal" id="qmpwModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">회원 탈퇴</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" id="qcloseModal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="pwModal">
+              <label>비밀번호 입력</label>
+              <input name="mpwChk" type="password" class="form-control" id="qmpwChk">
+              <span id="qmpwCheck" class="qchkTxt" ></span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="quitMemberBtn" disabled> 회원 탈퇴 </button>
+          </div>
+        </div>
+      </div>
+    </div><!--End Modal-->
+  </form>
+
+  <!-- 모달 form 태그 끝 -->
+
+  <script src="/js/checkAxios.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
+  <script src="/js/valid.js"></script>
+
+
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+  const frmModifyPw = document.getElementById('frmModifyPw'); // 비밀번호 수정 form 태그
+  const pwModal = new bootstrap.Modal(document.getElementById('pwModal')); // 모달창 출력 이벤트
+  const closeModal = document.getElementById('closeModal'); // 모달창 닫기 버튼
+  const btnSubmit = document.getElementById('btnSubmit'); // 최종 수정 버튼
+
+
+  const pwModifyBtn = document.getElementById('pwModifyBtn'); // 비밀번호 변경 버튼
+  const currentPw = document.getElementById('currentPW'); // 입력한 현재 비밀번호
+  const editBtn = document.getElementById('editPwBtn'); // 모달창에서 수정 완료 버튼
+
+
+
+  pwModifyBtn.addEventListener('click', function (e) { // 모달창 켜기 이벤트
+    pwModal.show();
+  });
+
+  closeModal.addEventListener('click', function (e) { // 모달창 닫기 이벤트
+    frmModifyPw.reset();
+  });
+
+  currentPw.addEventListener('focusout', async function () { // 현재 비밀번호를 입력하고 커서가 벗아나면
+    const inputPwVal = currentPw.value; // 입력한 현재 비밀번호 값
+    const pwCheck = document.getElementById('pwCheck'); // 현재 비밀번호 일치여부 텍스트
+    const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+    if (result) {
+      pwCheck.innerHTML = '현재 비밀번호와 일치합니다.'
+      pwCheck.style.color = '#5c6ff1';
+      currentPw.disabled = true; // 현재 비밀번호가 일치하면
+      modifyPw.disabled = false; // 새로 사용할 비밀번호 폼 ON
+      modifyPwChk.disabled = false; // 새로 사용할 비밀번호 폼 ON
+    } else {
+      pwCheck.innerHTML = '현재 비밀번호와 일치하지 않습니다.'; // 비밀번호 일치하지 않으면 수정 불가
+      pwCheck.style.color = '#f64e4e';
+      editBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+      });
+    }
+  });
+
+  const modifyPw = document.getElementById('modifyPw'); // 새로 사용할 비밀번호
+  const modifyPwChk = document.getElementById('modifyPwChk'); // 새로 사용할 비밀번호 확인
+
+  const modifyPWTxt = document.getElementById('modifyPWTxt'); // 새로 사용할 비밀번호 유효성 검사 텍스트
+  const modifyPwCheckTxt = document.getElementById('modifyPwCheckTxt'); // 비밀번호 확인 유효성 검사 텍스트
+
+  modifyPw.addEventListener('focusout', function (e) { // 새로 사용할 비밀번호 유효성 검사
+    const mPwVal = modifyPw.value; // 비밀번호 값
+    const pwRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,12}$/; // 비밀번호 양식
+
+    if (mPwVal === currentPw.value) { // 비밀번호가 전에 사용하던 비밀번호와 같다면
+      modifyPWTxt.innerHTML = '전에 사용하던 비밀번호는 사용할 수 없습니다.';
+      modifyPWTxt.style.color = '#f64e4e';
+
+    } else if (!pwRegex.test(mPwVal) || mPwVal === "") { // 비밀번호 양식이 맞지 않거나 비어있다면
+      modifyPWTxt.innerHTML = '비밀번호는 영문 대소문자, 숫자, ' +
+              '특수문자(!,@,#,$,%,^,&,*)를 포함하여 8~12자 사이로 입력해주세요.';
+    } else { // 모든 유효성을 통과 했다면
+      modifyPWTxt.innerHTML = '사용가능한 비밀번호 입니다.';
+      modifyPWTxt.style.color = '#5c6ff1';
+    }
+
+  });
+
+   modifyPwChk.addEventListener('keyup', function (e) { // 비밀번호 확인 유효성 검사
+    const mPwChkVal = modifyPwChk.value; // 입력한 비밀번호 확인
+    const mPWVal = modifyPw.value; // 입력한 비밀번호
+
+    if (mPwChkVal !== mPWVal) { // 비밀번호와 비밀번호 확인이 다르다면
+      modifyPwCheckTxt.innerHTML = '비밀번호가 일치하지 않습니다.'
+      modifyPwCheckTxt.style.color = '#f64e4e';
+    } else { // 일치한다면
+      modifyPwCheckTxt.innerHTML = '비밀번호가 일치합니다.';
+      modifyPwCheckTxt.style.color = '#5c6ff1';
+      editBtn.disabled = false;
+    }
+  });
+
+  editBtn.addEventListener('click', function (e) {
+    console.log(frmModifyPw);
+    frmModifyPw.submit();
+  });
+
+
+  const dupNicknameBtn = document.getElementById('dupNicknameBtn'); // 닉네임 중복검사 버튼
+
+  dupNicknameBtn.addEventListener('click', async function () { // 닉네임 중복 검사
+    const nickname = document.getElementById('nickname').value;
+    const result = await checkNickname(nickname);
+    if (!result) {
+      alert('이미 사용중인 닉네임 입니다.');
+      btnSubmit.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    } else if (nickname === ''.trim()) {
+      alert('닉네임은 비어 있을 수 없습니다.');
+      btnSubmit.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    } else if (result) {
+      alert('사용 가능한 닉네임 입니다.');
+    }
+  });
+
+
+  const inputAll = document.querySelectorAll('input');
+
+  inputAll.forEach(input => {
+
+     input.addEventListener('change', function (e) {
+       btnSubmit.disabled = false;
+     });
+  });
+
+
+
+
+  const frmModify = document.getElementById('frmModify');
+  btnSubmit.addEventListener('click', async function (e) {
+    const nickname = document.getElementById('nickname');
+    const nicknameVal = nickname.value;
+    const nameVal = document.getElementById('name').value;
+    const result = await lastModifyCheck(nicknameVal);
+    if (nicknameVal === ''.trim() || nickname.onchange) {
+      if (!result) {
+        alert('닉네임 중복체크를 진행해 주세요.');
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      return;
+    }
+    // console.log(nicknameVal);
+    // console.log(nameVal);
+    frmModify.submit();
+  });
+//--------------------------------------------------------------------
+
+  const frmQuitPw = document.getElementById('frmQuitPw'); // 비밀번호 수정 form 태그
+  const qmpwModal = new bootstrap.Modal(document.getElementById('qmpwModal')); // 회원 탈퇴 모달창 모달창
+  const qcloseModal = document.getElementById('qcloseModal'); // 모달창 닫기 버튼
+
+  const privacyModifyBtn = document.getElementById('privacyModify'); // 회원 탈퇴 버튼
+  const qmpwChk = document.getElementById('qmpwChk'); // 입력한 현재 비밀번호
+  const quitMemberBtn = document.getElementById('quitMemberBtn'); // 모달창에서 회원 탈퇴 버튼
+
+
+  privacyModifyBtn.addEventListener('click', function (e) { // 회원탈퇴 모달창 이벤트
+    qmpwModal.show();
+  });
+
+  qcloseModal.addEventListener('click', function (e) { // 모달창 닫기 이벤트
+    frmQuitPw.reset();
+  });
+
+  qmpwChk.addEventListener('focusout', async function () { // 비밀번호를 입력하면
+    const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
+    const qmpwCheck = document.getElementById('qmpwCheck'); // 현재 비밀번호 일치여부 텍스트
+    const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+    if (result) {
+      qmpwCheck.innerHTML = '현재 비밀번호와 일치합니다.'
+      qmpwCheck.style.color = '#5c6ff1';
+      qmpwChk.readonly = true; // 현재 비밀번호가 일치하면
+      quitMemberBtn.disabled = false; // 회원 탈퇴 버튼 활성화
+    } else {
+      qmpwCheck.innerHTML = '현재 비밀번호와 일치하지 않습니다.'; // 비밀번호 일치하지 않으면 회원 탈퇴 불가
+      qmpwCheck.style.color = '#f64e4e';
+      quitMemberBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+      });
+    }
+  });
+
+  quitMemberBtn.addEventListener('click', async function (e) {
+    const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
+    const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+
+    if (result === false || qmpwChk.value === ''.trim()){
+      alert('현재 비밀번호가 일치하지 않습니다.');
+      e.preventDefault();
+      e.stopPropagation();
+    } else if (result) {
+      if (confirm('정말 회원 탈퇴 하시겠습니까?')) {
+        // console.log(mpwChk.value);
+        // console.log(frmQuitPw);
+        frmQuitPw.submit();
+      }
+
+    }
+
+  });
+
+
+</script>
+
+
+
+

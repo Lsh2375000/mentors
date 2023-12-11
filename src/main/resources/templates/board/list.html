@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <br>
+    <!--/* 검색 폼 start */-->
+    <div class="row mt-3">
+        <form action="/board/list" method="get">
+            <div class="col">
+                <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <select class="form-select" name="type">
+                            <option value="">---</option>
+                            <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
+                            <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
+                            <option value="w" th:selected="${pageRequestDTO.type == 'w'}">작성자</option>
+                            <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목 내용</option>
+                            <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">제목 내용 작성자</option>
+                        </select>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary searchBtn" type="submit">Search</button>
+                        <button class="btn btn-outline-secondary clearBtn" type="button">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--/* 검색 폼 end */-->
+
+    <div style="padding-top: 50px">
+        <table class="table table-hover">
+            <h5 class="card-title">Board List</h5>
+            <h5 class="card-title">Total : [[${responseDTO.total}]] 개</h5>
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>아이디</th>
+                <th>작성자</th>
+                <th>조회수</th>
+                <th>작성일</th>
+            </tr>
+            </thead>
+            <tbody th:with="link = ${pageRequestDTO.getLink()}, no = ${responseDTO.sno}">
+            <tr th:each="dto, status:${responseDTO.dtoList}">
+                <td>[[${dto.boardNo}]]</td>
+                <td><a th:href="|@{/board/view(boardNo =${dto.boardNo})}&${link}|">[[${dto.title}]]</a>
+                    <!-- 댓글 -->
+                    <span class="badge progress-bar-success" style="background-color: #0a53be">[[${dto.replyCount}]]</span>
+                    <!-- 이미지 나오는 부분-->
+                    <div th:if="${dto.fileNames != null && dto.fileNames.length() > 0}">
+                        <img style="width: 30px;"
+                             th:src="|@{/viewReal}/${dto.fileNames.split(',')[0]}|"> <!-- 이미지 섬네일 첫번째 사진이 뜨도록 함-->
+                    </div>
+                </td>
+                <!-- 이미지 나오는 부분-->
+                <td>[[${dto.id}]]</td>
+                <td>[[${dto.nickname}]]</td>
+                <td>[[${dto.hit}]]</td>
+                <td>[[${#temporals.format(dto.addDate, 'yyyy-MM-dd')}]]</td>
+            </tr>
+            </tbody>
+        </table>
+        <!--/* 페이징 start */-->
+        <div class="float-end">
+            <ul class="pagination flex-wrap">
+                <li class="page-item" th:if="${responseDTO.prev}">
+                    <a class="page-link" th:data-num="${responseDTO.start - 1}">Previous</a>
+                </li>
+                <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                    <li th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
+                        <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                    </li>
+                </th:block>
+                <li class="page-item" th:if="${responseDTO.next}">
+                    <a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+                </li>
+            </ul>
+        </div>
+        <!--/* 페이징 end */-->
+        <div class="float-left" th:with="link = ${pageRequestDTO.getLink()}">
+            <a th:href="|@{/board/register}?${link}|" class="text-decoration-none">
+                <button type="button" class="btn btn-primary">글쓰기</button>
+            </a>
+    </div>
+
+
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+    document.querySelector(".pagination").addEventListener("click", function (e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        const target = e.target;
+
+        if(target.tagName !== 'A'){
+            return;
+        }
+
+        const num = target.getAttribute("data-num");
+        const formObj = document.querySelector("form");
+        formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`;
+
+        formObj.submit();
+    }, false)
+
+    document.querySelector(".clearBtn").addEventListener("click", function (e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        self.location='/board/list';
+    }, false)
+
+    //show modal
+    const result = [[${result}]];
+
+    if(result){
+        alert(result);
+    }
+
+</script>
+</div>
+</body>
+</html>

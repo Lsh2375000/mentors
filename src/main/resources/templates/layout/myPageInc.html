@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <link rel="icon" type="image/x-icon" th:href="@{/assets/favicon.ico}" />  <!-- Favicon-->
+  <link th:href="@{/css/myPage.css}" rel="stylesheet" />  <!-- Core theme CSS (includes Bootstrap)-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap core JS-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@600&family=Do+Hyeon&family=Orbit&family=Poor+Story&display=swap" rel="stylesheet">  <script th:src="@{/js/myPage.js}"></script> <!--마이페이지 레이아웃 JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+</head>
+<th:block layout:fragment="style">
+
+</th:block>
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700);
+
+  .outerSidebar{
+    background: #2E4374;
+    color: #ffffff;
+    border: none;
+    padding-left: 20px;
+  }
+  .list-group-item{
+    background: #2E4374;
+    color: #ffffff;
+    border: none;
+    font-size: 15pt;
+    font-family: 'Orbit', sans-serif;
+  }
+  .sidebar_header{
+    font-weight: bold;
+    font-size: 40px;
+    border: none;
+    font-family: 'Do Hyeon', sans-serif;
+  }
+
+
+  /*#sidebarToggle{*/
+  /*  background-color: #2f87ff;*/
+  /*  border: none;*/
+  /*  color: #6e6e6e;*/
+  /*  font-family: 'Do Hyeon', sans-serif;*/
+  /*}*/
+
+  .btnLightBlue {
+    background: #E5C3A6;
+  }
+
+
+
+  button.button {
+    display: block;
+    position: relative;
+    float: left;
+    width: 120px;
+    padding: 0;
+    margin: 10px 20px 10px 0;
+    font-weight: 600;
+    text-align: center;
+    line-height: 50px;
+    color: #5e5e5e;
+    border-radius: 5px;
+    transition: all 0.2s ;
+    border: none;
+    font-family: 'Assistant', sans-serif;}
+  /* 3D */
+
+  .btnLightBlue.btnPush {
+    box-shadow: 0px 5px 0px 0px #e09f66;
+  }
+
+  .btnPush:hover {
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+
+
+  .btnLightBlue.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #e09f66;
+  }
+
+</style>
+<body>
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar-->
+  <div class="outerSidebar"  id="sidebar-wrapper" style="border: none;">
+    <div class="sidebar-heading border-none">
+      <span class="sidebar_header">마이 페이지</span>
+    </div> <!--End Sidebar Head-->
+
+    <div class="list-group list-group-flush">
+      <th:block th:if="${#authentication.principal.getType() == 'tor'}">
+        <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentor">멘토링 목록</a>
+        <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/answer">내가 쓴 답변</a>
+      </th:block>
+      <th:block th:if="${#authentication.principal.getType() == 'tee'}">
+        <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentee">멘토링</a>
+        <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/question">내가 쓴 질문</a>
+      </th:block>
+      <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글</a>
+<!--      <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/saveData">저장한 자료</a>-->
+
+    </div> <!--End List Group Flush-->
+  </div> <!--End OuterSidebar-->
+
+  <div id="page-content-wrapper">
+    <!-- Top navigation-->
+    <nav class="navbar navbar-expand-lg" style="background-color: #0766AD;">
+      <div class="container-fluid">
+        <button class="button btnPush btnLightBlue" id="sidebarToggle"> MenuToggle </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+              <a class="nav-link" href="/" style="color: white; font-family: 'Orbit', sans-serif;">HOME</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-family: 'Orbit', sans-serif;">개인정보</a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <th:block th:if="${#authentication.principal.getType() == 'tor'}">
+                  <a class="dropdown-item" th:href="|/member/mentorModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                </th:block>
+                <th:block th:if="${#authentication.principal.getType() == 'tee'}">
+                  <a class="dropdown-item" th:href="|/member/menteeModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                </th:block>
+                <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>
+<!--            <div class="dropdown-divider"></div>-->
+<!--            <a class="dropdown-item" href="#!">Something else here</a>-->
+              </div>
+            </li> <!--End Nav Dropdown-->
+          </ul>
+        </div> <!--End Collapse-->
+      </div> <!--End Container-->
+    </nav> <!--End Nav-->
+    <div class="container" layout:fragment="content">
+
+    </div>
+  </div> <!--End Wrapper-->
+</div> <!--End D-flex-->
+<th:block layout:fragment="script">
+
+</th:block>
+
+</body>
+</html>
