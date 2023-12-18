@@ -1,61 +1,103 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/inc.html}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <meta charset="UTF-8">
-    <title>Main Write</title>
+        <meta charset="UTF-8">
+        <title>Main Write</title>
 </head>
-<style layout:fragment="style">
-
+<style>
+        .content{
+                width: 50%;
+                margin: 0 auto;
+                margin-top: 100px;
+        }
+        .header{
+                border-bottom: 1px solid rgb(0, 196, 113);
+                text-align: center;
+                font-weight: bold;
+                font-size: 20pt;
+        }
+        .paidFree{
+                display: flex;
+                justify-content: space-evenly;
+                font-size: 20px;
+        }
+        .paidFree input[type=checkbox]{
+                width: 20px;
+                height: 20px;
+        }
 </style>
 <body>
-<div layout:fragment="content">
-    멘토링 글쓰기
-    <form action="/main/write">
-<!--        로그인한 사람 정보를 value로-->
-        <input type="hidden" name="mno">
-        <input type="hidden" name="nickName">
-<!--        끝-->
+<div class="content">
+        <p class="header">멘토링 글 작성</p>
+        <form action="/main/write">
+                <!--        로그인한 사람 정보를 value로-->
+                <input type="hidden" name="mno">
+                <input type="hidden" name="nickName">
+                <!--        끝-->
+                <div class="paidFree">
+                        <div>
+                                <!--                <th:block th:if="${mentoringCnt > 5}">-->
+                                <input type="checkbox" name="paidFree" value="paid">유료
+                                <!--                </th:block>-->
+                        </div>
+                        <div>
+                                <input type="checkbox" name="paidFree" value="free" checked>무료
+                        </div>
+                </div>
+                <div class="language">
+                        <span>멘토링 언어를 선택하세요</span><span> * 1개 이상 선택하세요 </span><br>
+                        <div class="d-flex">
+                                <div>
+                                        <input type="checkbox" name="devLanguage" value="Java">자바
+                                        <input type="checkbox" name="devLanguage" value="Python">파이썬
+                                        <input type="checkbox" name="devLanguage" value="C">C언어
+                                </div>
+                                <div>
+                                        <input type="checkbox" name="devLanguage" value="C++">C++
+                                        <input type="checkbox" name="devLanguage" value="JavaScript">JavaScript
+                                        <input type="checkbox" name="devLanguage" value="PHP">PHP
+                                </div>
+                                <div>
+                                        <input type="checkbox" name="devLanguage" value="Swift">Swift
+                                        <input type="checkbox" name="devLanguage" value="Kotlin">Kotlin
+                                        <input type="checkbox" name="devLanguage" value="TypeScript">TypeScript
+                                </div>
+                        </div>
+                </div>
+                <div class="title">
+                        <label for="title">제목</label>
+                        <textarea type="text" id="title" name="title" placeholder="제목에 핵심 내용을 요약해보세요" required></textarea>
+                </div>
+                <div class="position">
+                        <label for="position">직무</label>
+                        <input type="text" id="position" name="title" required>
+                </div>
+                <div class="career">
+                        <label for="career">경력</label>
+                        <input type="text" id="career" name="title" required>
+                </div>
+                <div class="introduce">
+                        <p>멘토 소개</p>
+                        <textarea id="content" required></textarea>
+                </div>
+                <div class="date">
+                        <label for="startDate">수업 시작일</label>
+                        <input type="date" id="startDate" name="startDate" required>
 
-        <th:block th:if="${mentoringCnt > 5}">
-            <input type="checkbox" name="paidFree" value="paid">유료
-        </th:block>
-        <input type="checkbox" name="paidFree" value="free" checked>무료
-
-        <input type="checkbox" name="devLanguage" value="Java">자바
-        <input type="checkbox" name="devLanguage" value="Python">파이썬
-        <input type="checkbox" name="devLanguage" value="C">C언어
-        <input type="checkbox" name="devLanguage" value="C++">C++
-        <input type="checkbox" name="devLanguage" value="JavaScript">JavaScript
-        <input type="checkbox" name="devLanguage" value="PHP">PHP
-        <input type="checkbox" name="devLanguage" value="Swift">Swift
-        <input type="checkbox" name="devLanguage" value="Kotlin">Kotlin
-        <input type="checkbox" name="devLanguage" value="TypeScript">TypeScript
-
-        <label for="title">제목</label>
-        <input type="text" id="title" name="title">
-
-        <label for="position">직무</label>
-        <input type="text" id="position" name="title">
-
-        <label for="career">경력</label>
-        <input type="text" id="career" name="title">
-
-        <label for="content">멘토 소개</label>
-        <textarea id="content"></textarea>
-
-        <label for="startDate">수업 시작일</label>
-        <input type="date" id="startDate" name="startDate">
-
-        <label for="endDate">수업 종료일</label>
-        <input type="date" id="endDate" name="endDate">수업 종료일
-
-        <input type="number" name="price" min="0" max="1000">개
-
-        <button type="submit" class="writeBtn">등록</button>
-        <button type="button" class="cancelBtn">취소</button>
-    </form>
+                        <label for="endDate">수업 종료일</label>
+                        <input type="date" id="endDate" name="endDate" required>
+                </div>
+                <div class="price">
+                        <img src="/img/basic/비타민.png" width="40" height="40">
+                        <input type="number" name="price" min="0" max="1000" value="0">개
+                </div>
+                <button type="submit" class="writeBtn">등록</button>
+                <button type="button" class="cancelBtn">취소</button>
+        </form>
 </div>
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
 </body>
 </html>
