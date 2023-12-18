@@ -107,7 +107,7 @@
             <div class="form-group" style="width: 400px;">
                 <div class="input_div">
                     <label for="email" id="mailTxt"></label>
-                    <input name="mentor_id" class="input_value" id="email" type="text" required>
+                    <input name="memberId" class="input_value" id="email" type="text" required>
                     <label class="input_name">이메일</label>
                     <span class="input_span"></span>
                 </div>
@@ -155,7 +155,7 @@
             <!--이름 시작-->
             <div class="form-group" style="width: 400px;">
                 <div class="input_div">
-                    <input name="name" type="text" class="input_value name" maxlength="10" id="name" required>
+                    <input name="memberName" type="text" class="input_value name" maxlength="10" id="name" required>
                     <label class="input_name">이름</label>
                     <span class="input_span"></span>
                 </div>
@@ -218,14 +218,17 @@
 
         <!--프로그래밍 언어 시작-->
         <div class="form-group row">
-            <label class="col-sm-2 control-label">프로그래밍 언어</label>
+            <label class="col-sm-2 control-label">프로그래밍 언어 스택</label>
             <div class="col-sm-5">
-                <select name="devLanguage" class="lngName" id="lngName">
-                    <option value="JAVA">JAVA</option>
-                    <option value="Python">Python</option>
-                    <option value="Javascript">Javascript</option>
-                    <option value="C#">C#</option>
-                </select>
+                Java<input type="checkbox" name="devLanguage" value="Java" class="form-check-input">
+                Python<input type="checkbox" name="devLanguage" value="Phython" class="form-check-input">
+                C<input type="checkbox" name="devLanguage" value="C" class="form-check-input">
+                C++<input type="checkbox" name="devLanguage" value="C++" class="form-check-input">
+                JS<input type="checkbox" name="devLanguage" value="JavaScript" class="form-check-input">
+                PHP<input type="checkbox" name="devLanguage" value="PHP" class="form-check-input">
+                Swift<input type="checkbox" name="devLanguage" value="Swift" class="form-check-input">
+                Kotlin<input type="checkbox" name="devLanguage" value="Kotlin" class="form-check-input">
+                TypeScript<input type="checkbox" name="devLanguage" value="TypeScript" class="form-check-input">
             </div>
         </div>
         <!--프로그래밍 언어 끝-->
@@ -311,11 +314,11 @@
 
     dupIdBtn.addEventListener('click', async function () { // 이메일 중복 검사
 
-        const mentor_id = document.getElementById('email').value;
-        const result = await checkId(mentor_id);
+        const memberId = document.getElementById('email').value;
+        const result = await checkId(memberId);
         const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 
-        if (mentor_id === ''.trim()) {
+        if (memberId === ''.trim()) {
             alert('이메일을 입력해 주세요.');
             btnSubmit.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -327,7 +330,7 @@
                 e.preventDefault();
                 e.stopPropagation();
             });
-        }else if (!regExp.test(mentor_id)) {
+        }else if (!regExp.test(memberId)) {
             alert('이메일 양식을 확인해 주세요');
             btnSubmit.addEventListener('click', function (e) {
                 e.preventDefault();

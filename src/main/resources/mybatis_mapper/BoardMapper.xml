@@ -2,58 +2,66 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.nomadlab.progrow_project.board.mapper.BoardMapper">
+<mapper namespace="kr.nomadlab.mentors.board.mapper.BoardMapper">
 
-    <select id="getTime" resultType="string">
-        select now()
-    </select>
-
-    <!--insert mapper-->
-    <insert id="insert" parameterType="kr.nomadlab.progrow_project.board.domain.BoardVO">
-        INSERT INTO `board`(`boardNo`, `id`, `nickname`, `title`, `content`,  `hit`, `addDate`, `fileNames`, `replyCount`)
-        VALUES (#{boardNo}, #{id}, #{nickname}, #{title}, #{content}, 0, NOW(), #{fileNames}, 0)
+    <!-- 게시글 등록 -->
+    <insert id="insertBoard">
+        INSERT INTO `board`(`boardNo`, `memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
+        VALUES (#{boardNo}, #{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
     </insert>
 
-    <!--update mapper-->
-    <update id="modify">
-        update `board`  set `title` = #{title}, `content` = #{content}, `fileNames` = #{fileNames}
+    <!-- 게시글 수정 -->
+    <update id="updateBoard">
+        update `board` set `title` = #{title}, `content` = #{content}
         where `boardNo` = #{boardNo}
     </update>
 
-
-    <!--update mapper-->
-    <update id="save">
-        update `Image`  set `uuid` = #{uuid}, `fileNames` = #{fileNames}, `ord` = #{ord}
-        where `boardNo` = #{boardNo}
-    </update>
-
-<!-- 조회수 -->
-    <update id="hit" parameterType="int">
+    <!-- 조회수 업데이트 -->
+    <update id="updateHit">
         update `board` set `hit` = `hit` + 1 where `boardNo` = #{boardNo}
     </update>
 
-
-
-    <delete id="removeOne">
-        delete from `board` where `boardNo` = #{boardNo};
+    <!-- 게시글 삭제 -->
+    <delete id="deleteBoard">
+        delete from `board` where `boardNo` = #{boardNo}
     </delete>
 
-    <select id="selectOne">
-        select *  from  `board`  where `boardNo` = #{boardNo};
+    <!-- 게시글 조회 -->
+    <select id="selectBoard">
+        SELECT b.*, COUNT(br.boardNo) AS replyCount
+        FROM board AS b
+        LEFT JOIN boardReply AS br ON b.boardNo = br.boardNo
+        WHERE b.boardNo = #{boardNo}
     </select>
 
-    <select id="selectList" resultType="kr.nomadlab.progrow_project.board.dto.BoardListReplyCountDTO">
-        select `b`.`boardNo`, `b`.`title`, `b`.`content`, `b`.`id`, `b`.`nickname`, `b`.`hit`, `b`.`fileNames`, `b`.`addDate`, count(`r`.`rno`) AS 'replyCount' from `board` `b` LEFT JOIN `reply` `r` on `b`.`boardNo` = `r`.`boardNo`
-        <include refid="search" />
-        group by `b`.`boardNo` order by `boardNo` desc limit #{skip}, #{size}
+    <!-- 게시글 좋아요 추가 -->
+    <insert id="insertLike">
+        INSERT INTO `boardLike`(`boardNo`, `mno`) VALUES (#{boardNo}, #{mno})
+    </insert>
+
+    <!-- 좋아요 조회 -->
+    <select id="selectLikeList" resultType="kr.nomadlab.mentors.board.domain.BoardLikeVO">
+        SELECT * FROM `boardLike` WHERE `boardNo` = #{boardNo}
     </select>
 
-
-    <select id="list">
-        select * from `board`
-        <if test="types != null and types.length > 0">
-            where `board`.`boardNo` like '%' || #{boardNo} || '%'
-        </if>
+    <!-- 게시글 전체 조회 -->
+    <select id="selectBoardList" resultType="kr.nomadlab.mentors.board.domain.BoardVO">
+        SELECT `b`.*, COUNT(`br`.`boardNo`) AS replyCount, COUNT(`bl`.`boardNo`) AS likeCount
+        FROM `board` AS `b`
+        LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
+        LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
+        <include refid="search"/>
+        GROUP BY `b`.`boardNo`
+        ORDER BY
+            <!-- 정렬 조건 -->
+            <choose>
+                <when test="order == 'reply'">`replyCount`</when>
+                <when test="order == 'like'">`likeCount`</when>
+                <!-- 추가적인 컬럼이 있으면 위와 같이 추가 -->
+                <otherwise>`boardNo`</otherwise>
+            </choose>
+            <!-- 여기까지 -->
+        DESC LIMIT #{skip}, #{size}
     </select>
 
     <sql id="search">
@@ -61,13 +69,13 @@
             <if test="types != null and types.length > 0">
                 <foreach collection="types" item="type" open="(" close=")" separator=" OR">
                     <if test="type == 't'.toString()">
-                        `title` like concat('%', #{keyword}, '%')
+                        `b`.`title` like concat('%', #{keyword}, '%')
                     </if>
                     <if test="type == 'w'.toString()">
-                        `name` like concat('%', #{keyword}, '%')
+                        `b`.`writer` like concat('%', #{keyword}, '%')
                     </if>
                     <if test="type == 'c'.toString()">
-                        `content` like concat('%', #{keyword}, '%')
+                        `b`.`content` like concat('%', #{keyword}, '%')
                     </if>
                 </foreach>
             </if>
@@ -76,16 +84,13 @@
 
     <!--게시물 갯수-->
     <select id="getCount" resultType="int">
-        select count(*) from `board`
+        select count(*) from `board` as `b`
         <include refid="search" />
     </select>
 
-
     <!--myPage 유저가 쓴 게시글-->
-    <select id="myPage" resultType="kr.nomadlab.progrow_project.board.domain.BoardVO">
-        select title, content, hit, addDate, boardNo from board where id = #{mid}
+    <select id="myPage" resultType="kr.nomadlab.mentors.board.domain.BoardVO">
+        select title, content, hit, addDate, boardNo from board where memberId = #{memberId}
     </select>
-
-
 
 </mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.member.mapper.MemberMapper">
+
+        <resultMap id="getMember" type="kr.nomadlab.mentors.member.domain.MemberVO">
+            <id property="mno" column="mno"></id>
+            <result property="memberId" column="memberId"></result>
+            <result property="passwd" column="passwd"></result>
+            <result property="del" column="del"></result>
+            <result property="social" column="social"></result>
+            <result property="nickname" column="nickname"></result>
+            <result property="memberName" column="memberName"></result>
+            <result property="coin" column="coin"></result>
+            <collection property="roleSet" javaType="java.util.HashSet" ofType="int">
+                <result property="role_set" column="role_set"></result>
+            </collection>
+        </resultMap>
+        <!--해당 회원테이블의 이메일의 정보와 회원Role테이블의 role_set을 조인 문으로 가져와서 resultMap에 넣어준다.-->
+
+
+
+    <insert id="addMember">
+        insert into `member` (`memberId`, `passwd`, `regdate`, `moddate`, `del`, `social`, `nickname`, `memberName`, `coin`)
+        VALUES (#{memberId}, #{passwd}, now(), now(), 0, #{social}, #{nickname}, #{memberName}, #{coin})
+    </insert>
+
+    <insert id="addMemberRole">
+        insert into `member_role_set` (`memberId`, `role_set`)
+        VALUES (#{memberId}, #{role_set})
+    </insert>
+
+    <select id="getMemberId" resultMap="getMember" parameterType="String">
+
+        select `m`.*, `mrs`.`role_set`
+        from `member` `m`
+            left join `member_role_set` `mrs`
+                on `m`.`memberId` = `mrs`.`memberId`
+        where `m`.`memberId` = #{memberId}
+
+    </select>
+
+    <update id="updateMember">
+        update `member` set `moddate` = now(), `nickname` = #{nickname} where `memberId` = #{memberId}
+    </update>
+
+    <update id="updatePassword">
+        update `member` `m` set `m`.`passwd` = #{passwd} where `m`.`memberId` = #{memberId}
+    </update>
+
+    <select id="getMemberNickname" resultType="kr.nomadlab.mentors.member.domain.MemberVO">
+        select * from `member` where `nickname` = #{nickname}
+    </select>
+
+    <delete id="deleteMember">
+        delete from `member` where `memberId` = #{memberId}
+    </delete>
+
+
+</mapper>

@@ -2,90 +2,98 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout/inc.html}">
 
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/boardModify.css">
     <meta charset="UTF-8">
-    <title>Board Register</title>
+    <title>상세페이지</title>
 </head>
-     <br>
+
+<body>
+
+
 <div layout:fragment="content">
-    <div class="row mt-3">
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    Board Read
-                </div>
-                <form th:action="@{/board/read}" method="post">
-                    <div class="card-body">
+    <style>
+        * { margin: 0; padding: 0; }
+        ul, li { list-style: none; padding-left: 0; }
+        a { text-decoration: none; }
 
-                        <div class="input-group">
-                            <label th:for="boardNo">BoardNo</label>
-                            <input type="text" class="form-control" name="boardNo" th:value="${dto.boardNo}" readonly>
-                        </div>
+        .view-container { background-color: #FFFFFF; }
+        .view-body { min-height: 600px; }
+        .view-footer { padding: 20px; text-align: right; }
+        .comment-container { background-color: #f8f9fa; padding: 50px; }
+        .comment-list { padding-top: 40px; }
+        .comment { margin-bottom: 20px; padding: 20px 30px; border-radius: 5px; border: 1px solid #dee2e6; background-color: #FFFFFF; }
+        .reply-list {margin: 20px 0; }
+        .reply { border-left: 4px solid #9a9a9a; padding: 15px; }
+    </style>
 
-                        <div class="form-group">
-                            <label th:for="title">Title</label>
-                            <input type="text" class="form-control" name="title" th:value="${dto.title}" readonly>
-                        </div>
+    <main>
+        <div th:with="link = ${pageRequestDTO.getLink()}">
+            <a th:href="|@{/board/list}?${link}|" class="text-decoration-none">
+                <button type="button" class="btn btn-primary">📋 뒤로가기</button>
+            </a>
+            <th:block th:if="${#authentication.principal != 'anonymousUser'}">
+                <a th:href="|@{/board/modify(boardNo=${board.boardNo})}&${link}|">
+                    <button type="button" class="btn btn-secondary">✏ 수정</button>
+                </a>
+            </th:block>
+        </div>
 
-                        <div class="form-group">
-                            <label th:for="id">ID</label>
-                            <input type="text" class="form-control" th:value="${dto.id}" name="id" readonly>
-                        </div>
+        <!-- 게시글 섹션 -->
+        <section class="view-container">
 
-                        <div class="form-group">
-                            <label th:for="nickname">NickName</label>
-                            <input type="text" class="form-control" th:value="${dto.nickname}" name="nickname" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label th:for="Content">Content</label>
-                            <textarea class="form-control" rows="5" name="content">[[${dto.content}]]</textarea>
-                        </div>
-
-                        <div class="my-4">
-                            <div class="float-end" th:with="link = ${pageRequestDTO.getLink()}">
-                                <a th:href="|@{/board/list}?${link}|" class="text-decoration-none">
-                                    <button type="button" class="btn btn-primary">📋 목록</button>
-                                </a>
-                                <th:block th:if="${#authentication.principal != 'anonymousUser'}">
-                                    <a th:href="|@{/board/modify(boardNo=${dto.boardNo})}&${link}|"  class="text-decoration-none">
-                                        <button type="button" class="btn btn-secondary" th:value="${#authentication.principal.getNickname()}">✏ 수정</button>
-                                    </a>
-                                </th:block>
-
-                            </div>
-                        </div>
-                    </div> <!--end card body-->
-                    <!-- 이미지 섬네일 -->
-                    <div class="col">
-                        <div class="card" th:if="${dto.fileNames != null && dto.fileNames.length() > 0}">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                                            <div class="carousel-inner d-flex">
-                                                <th:block th:each="fileName, iterStat : ${dto.fileNames.split(',')}">
-                                                    <div class="carousel-item" th:class="${iterStat.first ? 'active' : ''}">
-                                                        <img style="width: 30%;" th:src="@{/viewReal/{fileName}(fileName=${fileName})}"
-                                                             class="d-block w-100"
-                                                             alt="Image">
-                                                    </div>
-                                                </th:block>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 이미지 섬네일 end -->
+            <h1>[[${board.title}]]</h1>
+            <div class="view-header">
+                <h6><a href="#">[[${board.writer}]]</a></h6>
+                <span>작성일 &nbsp;[[${#temporals.format(board.addDate, 'yyyy-MM-dd HH:mm')}]]</span>
+                <span>조회수 &nbsp;[[${board.replyCount}]]</span>
+            </div>
+            <hr>
+            <div class="view-body" th:utext="${board.content}"></div>
+            <div class="view-footer">
+                <form action="/board/remove" method="post">
+                    <button type="button" id="likeBtn" class="btn btn-primary">좋아요</button>
+                    <a th:href="|@{/board/modify(boardNo=${board.boardNo})}&${link}|">
+                        <button type="button" class="btn btn-secondary">✏ 수정</button>
+                    </a>
+                    <button type="submit" id="removeBtn" class="btn btn-danger">삭제</button>
                 </form>
-            </div> <!--end card-->
-        </div><!--end col-->
-    </div><!--end row-->
+            </div>
+
+            <script th:inline="javascript">
+                // 삭제 버튼 클릭 시 이벤트
+                const boardNo = [[${board.boardNo}]];
+                document.getElementById('removeBtn').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const form = document.querySelector('.view-footer form');
+
+                    if (confirm("정말 삭제하시겠습니까?")) {
+                        form.innerHTML += `<input type="hidden" name="boardNo" value="${boardNo}">`;
+                        form.submit();
+                    }
+                });
+
+            </script>
+
+        </section>
+
+        <!-- 댓글 섹션 -->
+        <section class="comment-container">
+            <h3>댓글 <span>[[${board.replyCount}]]</span></h3>
+            <input type="text" id="comment-input" name="content" class="form-control" placeholder="댓글을 작성해보세요">
+            <ul class="comment-list">
+
+            </ul>
+            <ul class="pagination reply-paging">
+
+            </ul>
+        </section>
+    </main>
+
     <!-- register modal start -->
     <div class="modal registerModal" tabindex="-1">
         <div class="modal-dialog">
@@ -102,9 +110,8 @@
 
                     <div class="input-group mb-3">
                         <span class="input-group-text">nickname</span>
-                        <input type="text" class="form-control replyNickname" th:value="${dto.nickname}" name="nickname">
+                        <input type="text" class="form-control replyNickname" th:value="${board.writer}" name="nickname">
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary registerBtn">댓글 달기</button>
@@ -129,208 +136,225 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info modifyBtn" th:value="${#authentication.principal.nickname}">수정</button>
-                    <button type="button" class="btn btn-danger removeBtn" th:value="${#authentication.principal.nickname}">삭제</button>
+<!--                    <button type="button" class="btn btn-info modifyBtn" th:value="${#authentication.principal.nickname}">수정</button>-->
+<!--                    <button type="button" class="btn btn-danger removeBtn" th:value="${#authentication.principal.nickname}">삭제</button>-->
                     <button type="button" class="btn btn-outline-dark closeModifyBtn">닫기</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- reply start -->
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <div class="my-4">
-                <button class="btn btn-info addReplyBtn">댓글 달기</button>
-            </div>
-            <ul class="list-group replyList">
-
-            </ul>
-        </div>
-        <div class="row mt-3">
-            <div class="col">
-                <ul class="pagination replyPaging">
-
-                </ul>
-            </div>
-        </div>
-    </div>
     <!-- modify modal end-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/board/board.js"></script>
     <script src="/js/reply.js"></script>
 
 </div> <!-- reply end -->
-     <script layout:fragment="script" th:inline="javascript">
-
-         const boardNo = [[${dto.boardNo}]];
-         // console.log(get1(boardNo));
-
-         function printReplies(page, size, goLast){
-             getList({boardNo, page, size, goLast}).then(
-                 data => {console.log(data);
-                     printList(data.dtoList);
-                     printPages(data);
-                 }
-             ).catch(e => {
-                 console.error();
-             });
-         }
-         printReplies(1, 10); //무조건 호출
-         printReplies(1, 10, true);
-
-         const replyList = document.querySelector('.replyList');//댓글 목록 DOM
-         const replyPaging = document.querySelector('.replyPaging'); //페이지 목록 DOM
-
-         function printList(dtoList){ //댓글 목록 출력
-             let str ='';
-             if (dtoList && dtoList.length > 0){
-                 for(const dto of dtoList){
-                     str += `<li class ="list-group-item d-flex replyItem">
-                            <span class="col-2">${dto.rno}</span>
-                            <span class="col-6" data-rno="${dto.rno}">${dto.content}</span>
-                            <span class="col-2">${dto.nickname}</span>
-                            </li>`;
-                 }
-             }
-             replyList.innerHTML = str;
-         }
-
-         function printPages(data){ //페이지 목록 출력
-             let pageStr = '';
-             if (data.prev){
-                 pageStr += `<li class="page-item"><a class="page-link" data-page="${data.start -1}">PREV</a></li>`;
-             }
-             for (let i = data.start; i <= data.end; i++){
-                 pageStr += `<li class="page-item ${i === data.page ? "active" : ""}">
-                          <a class="page-link" data-page="${i}">${i}</a></li>`;
-             }
-             if (data.next){
-                 pageStr += `<li class="page-item"><a class="page-link" data-page="${data.end + 1}">NEXT</a></li>`;
-             }
-             console.log(pageStr);
-             replyPaging.innerHTML = pageStr;
-         }
-
-         const registerModal = new bootstrap.Modal(document.querySelector('.registerModal'));
-         const registerBtn = document.querySelector('.registerBtn');
-         const content = document.querySelector('.replyContent');
-         const nickname = document.querySelector('.replyNickname')
-         const closeRegisterBtn = document.querySelector('.closeRegisterBtn');
-
-
-         //ADD Reply, Close 버튼을 눌렀을 때 모달창을 보여주도록 이벤트 처리
-         document.querySelector('.addReplyBtn').addEventListener('click', function (e){
-             registerModal.show();
-         });
-
-         closeRegisterBtn.addEventListener('click', function (e){
-             registerModal.hide();
-         });
-
-         //댓글등록
-         registerBtn.addEventListener('click', function (e){
-             //매개변수로 사용할 객체 작성
-             const replyObj = {boardNo:boardNo, content:content.value, nickname:nickname.value}
-             addReply(replyObj).then(result => { //등록이 된 후 결과처리
-                 alert(result.data.rno);
-                 registerModal.hide();
-                 content.value = '';
-                 nickname.value = '';
-                 printReplies(1, 10, true); //댓글목록갱신
-             }).catch(e => {
-                 alert('exception');
-             });
-         });
-
-         // 3. 페이징 클릭
-         let page = 1;
-         let size = 10;
-         replyPaging.addEventListener('click', function (e){
-             e.preventDefault();
-             e.stopPropagation();
-
-             const target = e.target;
-             if (!target || target.tagName != 'A'){
-                 return;
-             }
-
-             const pageNum = target.getAttribute("data-page");
-             page = pageNum
-             printReplies(page, size);
-         }, false);
-
-         //4. 댓글 수정 관련
-         const modifyModal = new bootstrap.Modal(document.querySelector('.modifyModal'));
-         const replyHeader = document.querySelector('.replyHeader');
-         const modifyText = document.querySelector('.modifyText');
-         const modifyBtn = document.querySelector('.modifyBtn');
-         const removeBtn = document.querySelector('.removeBtn');
-         const closeModifyBtn = document.querySelector('.closeModifyBtn');
-
-         // 댓글 내용을 클릭했을 때 수정 모달창 띄우기!
-         replyList.addEventListener('click', function (e){
-             e.preventDefault();
-             e.stopPropagation();
-
-             const target = e.target;
-             if(!target || target.tagName != 'SPAN'){
-                 return;
-             }
-             const rno = target.getAttribute("data-rno");
-             if (!rno){
-                 return;
-             }
-
-             getReply(rno).then(reply => {
-                 console.log(reply);
-                 replyHeader.innerHTML = reply.rno;
-                 modifyText.value = reply.content;
-                 modifyModal.show();
-             }).catch(e => alert('error'));
-         });
-
-         //댓글 모달창 수정
-         modifyBtn.addEventListener('click', function (e) {
-             console.log('modifyBtn...click');
-             const replyObj = { boardNo: boardNo, rno: replyHeader.innerHTML, content: modifyText.value };
-             modifyReply(replyObj)
-                 .then(result => {
-                     alert(result.rno + '댓글이 수정되었습니다!');
-                     modifyText.value = '';
-                     modifyModal.hide();
-                     printReplies(page, size);
-                 })
-                 .catch(e => {
-                     console.log(e);
-                     alert('댓글 수정이 불가능합니다.');
-                     return;
-                 });
-         });
-
-
-
-         //모달창의 close 버튼 클릭
-         closeModifyBtn.addEventListener('click', function (e){
-             modifyModal.hide();
-         });
-
-         //5. 댓글 삭제 관련
-         removeBtn.addEventListener('click', function (e){
-             removeReply(replyHeader.innerHTML).then(result => {
-                 alert(result.rno + '댓글이 삭제되었습니다.');
-                 modifyText.value = '';
-                 modifyModal.hide();
-                 page = 1; //해당 댓글이 삭제되었으니 1페이지로 이동!
-                 printReplies(page, size);
-             }).catch(e => {
-                 console.log(e);
-             });
-         });
-     </script>
-
-
-
-
-
 </body>
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const boardNo = [[${board.boardNo}]];
+
+        // 좋아요 추가 이벤트
+        document.getElementById('likeBtn').addEventListener('click', async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const boardLikeDTO = { boardNo: boardNo, mno: 2 };
+
+            const result = await addLike(boardLikeDTO);
+            console.log(result);
+            e.target.disabled = 'true';
+        });
+
+        function printReplies(page, size, goLast){
+            getList({boardNo, page, size, goLast}).then(
+                data => {console.log(data);
+                    printList(data.dtoList);
+                    printPages(data);
+                }
+            ).catch(e => {
+                console.error();
+            });
+        }
+        printReplies(1, 10); //무조건 호출
+        // printReplies(1, 10, true);
+
+        const commentList = document.querySelector('.comment-list');//댓글 목록 DOM
+        const replyPaging = document.querySelector('.reply-paging'); //페이지 목록 DOM
+
+        function printList(dtoList){ //댓글 목록 출력
+            let str = '';
+            let date;
+            let dateFomatter;
+            if (dtoList && dtoList.length > 0){
+                for(const comment of dtoList){ // 댓글
+                    date = comment.addDate; // 댓글 등록 날짜
+                    dateFomatter = `${date[0]}-${date[1]}-${date[2]} ${date[3]}:${date[4]}`; // 날짜 포맷
+                    console.log(date);
+                    str += `<li class ="comment">
+                            <div class="comment-header">
+                                <h6><a href="#">${comment.writer}</a></h6>
+                                <span>${dateFomatter}</span>
+                                <span>
+                                    <button id="modCommentBtn">수정</button>
+                                    <button class="remove-comment-btn" data-rno="${comment.rno}">삭제</button>
+                                </span>
+                            </div>
+                            <hr>
+                            <div class="comment-body">
+                                <p>${comment.content}</p>
+                                <div>
+                                    <button>숨기기 / 더보기</button>
+                                    <button>답글달기</button>
+                                </div>
+                            </div>
+                            <ul class="reply-list">`;
+                    for (const reply of comment.children) { // 대댓글
+                        date = reply.addDate; // 대댓글 등록 날짜
+                        dateFomatter = `${date[0]}-${date[1]}-${date[2]} ${date[3]}:${date[4]}`; // 날짜 포맷
+                        str += `<li class="reply">
+                                <div>
+                                    <span>${reply.writer}</span>
+                                    <span>&nbsp;·&nbsp;</span>
+                                    <span>${dateFomatter}</span>
+                                </div>
+                                <p>${reply.content}</p>
+                             </li>`;
+                    }
+                    str += `</ul></li>`;
+                }
+            }
+            commentList.innerHTML = str;
+        }
+
+        function printPages(data){ //페이지 목록 출력
+            let pageStr = '';
+            if (data.prev){ // 이전 페이지
+                pageStr += `<li class="page-item"><a class="page-link" data-page="${data.start -1}">PREV</a></li>`;
+            }
+            for (let i = data.start; i <= data.end; i++){
+                pageStr += `<li class="page-item ${i === data.page ? "active" : ""}">
+                          <a class="page-link" data-page="${i}">${i}</a></li>`;
+            }
+            if (data.next){ // 다음 페이지
+                pageStr += `<li class="page-item"><a class="page-link" data-page="${data.end + 1}">NEXT</a></li>`;
+            }
+            console.log(pageStr);
+            replyPaging.innerHTML = pageStr;
+        }
+
+        const registerModal = new bootstrap.Modal(document.querySelector('.registerModal'));
+        const commentInput = document.getElementById('comment-input'); // 댓글 등록 입력창
+
+        // 댓글등록
+        commentInput.addEventListener('keyup', async function (e){
+            console.log(e.key);
+            const content = e.target; // 댓글 작성 내용
+            if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
+
+            if (e.key === 'Enter') {
+                console.log('엔터키 누름');
+                console.log('댓글작성 내용: ', content.value);
+
+                // 매개변수로 전달할 객체
+                const replyObj = {
+                    boardNo: boardNo,
+                    content: content.value,
+                    writer: 'testNick' // 임시 닉네임
+                };
+
+                await addReply(replyObj).then(result => { //등록이 된 후 결과처리
+                    alert(result.data.rno);
+                    content.value = '';
+                    printReplies(1, 10); //댓글목록갱신
+                }).catch(e => {
+                    alert('exception');
+                });
+            }
+        });
+
+        // 3. 페이징 클릭
+        let page = 1;
+        let size = 10;
+        replyPaging.addEventListener('click', function (e){
+            e.preventDefault();
+            e.stopPropagation();
+
+            const target = e.target;
+            if (!target || target.tagName != 'A'){
+                return;
+            }
+
+            const pageNum = target.getAttribute("data-page");
+            page = pageNum
+            printReplies(page, size);
+        }, false);
+
+        // 4. 댓글 수정 관련
+        const modifyModal = new bootstrap.Modal(document.querySelector('.modifyModal'));
+        const replyHeader = document.querySelector('.replyHeader');
+        const modifyText = document.querySelector('.modifyText');
+        const modCommentBtn = document.querySelector('.modCommentBtn');
+        const removeCommentBtn = document.querySelector('.removeCommentBtn');
+        const closeModifyBtn = document.querySelector('.closeModifyBtn');
+
+        // 댓글 내용을 클릭했을 때 수정 모달창 띄우기!
+        // replyList.addEventListener('click', function (e){
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //
+        //     const target = e.target;
+        //     if(!target || target.tagName != 'SPAN'){
+        //         return;
+        //     }
+        //     const rno = target.getAttribute("data-rno");
+        //     if (!rno){
+        //         return;
+        //     }
+        //
+        //     getReply(rno).then(reply => {
+        //         console.log(reply);
+        //         replyHeader.innerHTML = reply.rno;
+        //         modifyText.value = reply.content;
+        //         modifyModal.show();
+        //     }).catch(e => alert('error'));
+        // });
+
+        //댓글 모달창 수정
+        // modCommentBtn.addEventListener('click', function (e) {
+        //     console.log('modifyBtn...click');
+        //     const replyObj = { boardNo: boardNo, rno: replyHeader.innerHTML, content: modifyText.value };
+        //     modifyReply(replyObj)
+        //         .then(result => {
+        //             alert(result.rno + '댓글이 수정되었습니다!');
+        //             modifyText.value = '';
+        //             modifyModal.hide();
+        //             printReplies(page, size);
+        //         })
+        //         .catch(e => {
+        //             console.log(e);
+        //             alert('댓글 수정이 불가능합니다.');
+        //             return;
+        //         });
+        // });
+
+        //5. 댓글 삭제 관련
+        commentList.addEventListener('click', function (e) {
+
+            if (e.target.classList.contains('remove-comment-btn')) { // 삭제 버튼이 클릭된 경우
+                const rno = e.target.dataset.rno; // 삭제할 댓글의 ID를 가져옴
+                console.log(rno);
+
+                removeReply(rno).then(result => {
+                    alert(result.rno + '댓글이 삭제되었습니다.');
+                    page = 1; // 해당 댓글이 삭제시 1페이지로 이동
+                    printReplies(page, size);
+                }).catch(e => {
+                    console.log(e);
+                });
+            }
+        });
+    });
+</script>
 </html>

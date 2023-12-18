@@ -2,35 +2,31 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.nomadlab.progrow_project.member.mapper.MentorMapper">
+<mapper namespace="kr.nomadlab.mentors.member.mapper.MentorMapper">
     <insert id="insert">
-        INSERT INTO `user_mentor` (`mentor_id`, `passwd`, `name`, `region`, `nickname`, `devLanguage`, `fileNames`, `intro`, `mNo`, `rating`)
-        VALUES (#{mentor_id}, #{passwd}, #{name}, #{region},  #{nickname}, #{devLanguage}, #{fileNames}, #{intro}, #{mNo}, #{rating})
+        INSERT INTO `mentor` (`memberId`, `region`, `nickname`, `devLanguage`, `fileNames`, `intro`, `rating`)
+        VALUES (#{memberId}, #{region},  #{nickname}, #{devLanguage}, #{fileNames}, #{intro},  #{rating})
     </insert>
     
-    <select id="selectAll" resultType="kr.nomadlab.progrow_project.member.domain.MentorVO">
-        SELECT * FROM `user_mentor` ORDER BY `mentorNo` DESC;
+    <select id="selectAll" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
+        SELECT * FROM `mentor` ORDER BY `mno` DESC;
     </select>
 
-    <select id="selectOne" resultType="kr.nomadlab.progrow_project.member.domain.MentorVO">
-        SELECT * FROM `user_mentor` WHERE `mentor_id` = #{mentor_id};
+    <select id="selectOne" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
+        SELECT * FROM `mentor` WHERE `memberId` = #{memberId};
     </select>
 
     <update id="update">
-        UPDATE `user_mentor`
-        SET `name` = #{name}, `region` = #{region},
+        UPDATE `mentor`
+        SET `region` = #{region},
             `nickname` = #{nickname}, `devLanguage` = #{devLanguage},
             `fileNames` = #{fileNames}, `intro` = #{intro}
-        WHERE `mentor_id` = #{mentor_id}
+        WHERE `memberId` = #{memberId}
     </update>
 
     <delete id="delete">
-        DELETE FROM `user_mentor` WHERE `mentor_id` = #{mentor_id}
+        DELETE FROM `mentor` WHERE `memberId` = #{memberId}
     </delete>
-
-    <update id="updatePw">
-        UPDATE `user_mentor` SET `passwd` = #{passwd} where `mentor_id` = #{mentor_id}
-    </update>
 
 
 </mapper>

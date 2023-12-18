@@ -56,7 +56,7 @@
     <div class="form-group row" style="margin-top: 20px;">
       <label class="col-sm-2 control-label">이메일</label>
       <div class="col-sm-3" style="display: flex; align-items: center;">
-        <span class="form-control" id="email" style="width: 320px; background-color: #cccccc; border: solid 1px #727272;" readonly>[[${#authentication.principal.getMid()}]]</span>
+        <span class="form-control" id="email" style="width: 320px; background-color: #cccccc; border: solid 1px #727272;" readonly>[[${#authentication.principal.getMemberId()}]]</span>
       </div>
     </div>
     <!--이메일 아이디 끝-->
@@ -96,7 +96,7 @@
     <div class="form-group row">
       <label class="col-sm-2 control-label">이름</label>
       <div class="col-sm-5">
-        <input name="name" type="text" class="form-control name" id="name" maxlength="10" th:value="${menteeDTO.name}" placeholder="name">
+        <input name="memberName" type="text" class="form-control name" id="name" maxlength="10" th:value="${menteeDTO.name}" placeholder="name">
       </div>
     </div>
     <!--이름 끝-->
@@ -115,7 +115,7 @@
 
     <!--프로그래밍 언어 시작-->
     <div class="form-group row">
-      <label class="col-sm-2 control-label">프로그래밍 언어</label>
+      <label class="col-sm-2 control-label">관심 언어</label>
       <div class="col-sm-5">
         <select name="devLanguage" class="form-select lngName" id="lngName">
           <option value="JAVA">JAVA</option>

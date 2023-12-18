@@ -4,16 +4,14 @@
       layout:decorate="~{layout/inc.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>팀 프로젝트 소개</title>
 </head>
 <body>
 <div layout:fragment="content">
-    <br>
     <!--/* 검색 폼 start */-->
     <div class="row mt-3">
         <form action="/board/list" method="get">
             <div class="col">
-                <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <select class="form-select" name="type">
@@ -36,64 +34,119 @@
     </div>
     <!--/* 검색 폼 end */-->
 
-    <div style="padding-top: 50px">
-        <table class="table table-hover">
-            <h5 class="card-title">Board List</h5>
-            <h5 class="card-title">Total : [[${responseDTO.total}]] 개</h5>
-            <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>아이디</th>
-                <th>작성자</th>
-                <th>조회수</th>
-                <th>작성일</th>
-            </tr>
-            </thead>
-            <tbody th:with="link = ${pageRequestDTO.getLink()}, no = ${responseDTO.sno}">
-            <tr th:each="dto, status:${responseDTO.dtoList}">
-                <td>[[${dto.boardNo}]]</td>
-                <td><a th:href="|@{/board/view(boardNo =${dto.boardNo})}&${link}|">[[${dto.title}]]</a>
-                    <!-- 댓글 -->
-                    <span class="badge progress-bar-success" style="background-color: #0a53be">[[${dto.replyCount}]]</span>
-                    <!-- 이미지 나오는 부분-->
-                    <div th:if="${dto.fileNames != null && dto.fileNames.length() > 0}">
-                        <img style="width: 30px;"
-                             th:src="|@{/viewReal}/${dto.fileNames.split(',')[0]}|"> <!-- 이미지 섬네일 첫번째 사진이 뜨도록 함-->
-                    </div>
-                </td>
-                <!-- 이미지 나오는 부분-->
-                <td>[[${dto.id}]]</td>
-                <td>[[${dto.nickname}]]</td>
-                <td>[[${dto.hit}]]</td>
-                <td>[[${#temporals.format(dto.addDate, 'yyyy-MM-dd')}]]</td>
-            </tr>
-            </tbody>
-        </table>
-        <!--/* 페이징 start */-->
-        <div class="float-end">
-            <ul class="pagination flex-wrap">
-                <li class="page-item" th:if="${responseDTO.prev}">
-                    <a class="page-link" th:data-num="${responseDTO.start - 1}">Previous</a>
-                </li>
-                <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
-                    <li th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
-                        <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+    <style>
+        * { margin: 0; padding: 0; }
+        ul, li { list-style: none; }
+        a { text-decoration: none; }
+
+        #main { padding-top: 50px; display: flex; }
+        .left-side-menu li { width: 200px; line-height: 60px; text-align: center; }
+        #main section { flex: 1 0 auto; }
+        #main ul { padding-left: 0 !important; }
+        .board-list-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; }
+        .board-list-header ul { display: inline-flex; }
+        .board-list-header ul li { margin: 0 1rem; list-style-type: disc; }
+        .board-list-header ul li:hover { font-weight: 600; }
+        .board-list-header ul li:hover::marker { color: #0abe94; }
+        .active { font-weight: 600; }
+        .active::marker { color: #0abe94; }
+        .board-list-header a { color: #000000; }
+        .board-list { border-top: 1px solid #dee2e6;padding-left: 0 !important; }
+        .board-container { border-bottom: 1px solid #dee2e6; padding: 18px; box-sizing: border-box; }
+        .board-title { font-size: 21px; }
+        .board-footer { display: flex; justify-content: space-between; color: #868e96; }
+        .board-footer span, dt, dd { font-size: 14px; }
+        .footer-right { display: flex; }
+        /*.footer-right dt { visibility: hidden; }*/
+        .footer-right dd { margin: 0 5px;}
+    </style>
+
+    <!-- 메인 -->
+    <main id="main">
+        <aside class="left-side-menu">
+            <nav>
+                <ul>
+                    <li><a href="/board/list">팀프로젝트소개</a></li>
+                    <li><a href="#">팀프로젝트모집</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <section>
+            <!-- 정렬 방식 -->
+            <div class="board-list-header">
+                <ul>
+                    <li th:class="${pageRequestDTO.order == 'new' ? 'active' : ''}">
+                        <a th:href="@{/board/list}">최신순</a>
                     </li>
-                </th:block>
-                <li class="page-item" th:if="${responseDTO.next}">
-                    <a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+                    <li th:class="${pageRequestDTO.order == 'reply' ? 'active' : ''}">
+                        <a th:href="|@{/board/list(order='reply')}|">댓글많은순</a>
+                    </li>
+                    <li th:class="${pageRequestDTO.order == 'like' ? 'active' : ''}">
+                        <a th:href="@{/board/list(order='like')}">좋아요순</a>
+                    </li>
+                </ul>
+
+                <div th:with="link = ${pageRequestDTO.getLink()}">
+                    <a th:href="|@{/board/register}?${link}|">
+                        <button type="button" class="btn btn-primary">글쓰기</button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 게시글 목록 -->
+            <ul class="board-list" th:with="link = ${pageRequestDTO.getLink()}">
+                <li class="board-container" th:each="dto, status:${responseDTO.dtoList}">
+                    <a th:href="|@{/board/view(boardNo =${dto.boardNo})}&${link}|" class="view-link">
+                        <div class="board">
+                            <h3 class="board-title">
+                                [[${dto.title}]]
+                            </h3>
+                            <p class="board-content">내용</p>
+                            <div class="board-footer">
+                                <div class="footer-left">
+                                    <span class="writer">
+                                        [[${dto.writer}]]
+                                    </span>
+                                    <span>&nbsp;·&nbsp;</span>
+                                    <span th:text="${dto.elapsedTime}"></span>
+                                </div>
+                                <dl class="footer-right">
+                                    <dt>좋아요</dt>
+                                    <dd>[[${dto.likeCount}]]</dd>
+                                    <dt>조회수</dt>
+                                    <dd>[[${dto.hit}]]</dd>
+                                    <dt>댓글수</dt>
+                                    <dd>[[${dto.replyCount}]]</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </a>
                 </li>
             </ul>
-        </div>
-        <!--/* 페이징 end */-->
-        <div class="float-left" th:with="link = ${pageRequestDTO.getLink()}">
-            <a th:href="|@{/board/register}?${link}|" class="text-decoration-none">
-                <button type="button" class="btn btn-primary">글쓰기</button>
-            </a>
-    </div>
 
+            <div style="padding-top: 50px">
+                <!--/* 페이징 start */-->
+                <div class="float-end">
+                    <ul class="pagination flex-wrap">
+                        <li class="page-item" th:if="${responseDTO.prev}">
+                            <a class="page-link" th:data-num="${responseDTO.start - 1}">Previous</a>
+                        </li>
+                        <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                            <li th:if="${i != 0}" th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
+                                <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                            </li>
+                        </th:block>
+                        <li class="page-item" th:if="${responseDTO.next}">
+                            <a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--/* 페이징 end */-->
+        </section>
 
+    </main>
 </div>
 <script layout:fragment="script" th:inline="javascript">
 

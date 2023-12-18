@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.payment.mapper.PaymentMapper">
+    <insert id="paymentReqInsert">
+        INSERT INTO `payment` (payType, paymentKey, amount, orderName, orderId, mno, memberId, memberName, createdAt, approveAt, paySuccessYN, payFailYN, failReason, cancelReason)
+        values (#{payType}, #{paymentKey}, #{amount}, #{orderName}, #{orderId}, #{mno}, #{memberId}, #{memberName}, now(), #{approveAt}, #{paySuccessYN}, #{payFailYN}, #{failReason}, #{cancelReason})
+    </insert>
+    <select id="findByOrderId" resultType="kr.nomadlab.mentors.payment.vo.PaymentVO">
+        SELECT * FROM `payment` WHERE orderId = #{orderId}
+    </select>
+    <update id="update">
+        UPDATE payment
+        SET paySuccessYN = #{paySuccessYN}, paymentKey = #{paymentKey},
+                           approveAt=now(), failReason = #{failReason}
+       WHERE orderId=#{orderId}
+    </update>
+</mapper>

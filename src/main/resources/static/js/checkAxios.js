@@ -21,7 +21,7 @@
     async function checkId(inputId) { // 이메일 비동기 중복확인
         // console.log(inputId);
         const request = await axios.post('/member/idCheck', null, {
-            params: {mentee_id : inputId},
+            params: {memberId : inputId},
             responseType: 'text'
         });
         // console.log(request.data);

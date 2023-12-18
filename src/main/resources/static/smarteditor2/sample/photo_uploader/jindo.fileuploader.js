@@ -240,9 +240,9 @@ jindo.FileUploader = jindo.$Class({
     _appendIframe: function () {
         var sIframeName = 'tmpFrame_' + this._makeUniqueId();
         this._welIframe = jindo.$Element(jindo.$('<iframe name="' + sIframeName + '" src="' + this.option("sCallback") + '?blank">')).css({
-            width: '500px', // 기존 10px -> 500px
+            width: '500px',
             border: '2px',
-            height: '500px', // 기존 10px -> 500px
+            height: '500px',
             left: '10px',
             top: '10px'
         });

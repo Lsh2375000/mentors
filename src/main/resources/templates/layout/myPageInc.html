@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8" />
@@ -98,11 +99,11 @@
     </div> <!--End Sidebar Head-->
 
     <div class="list-group list-group-flush">
-      <th:block th:if="${#authentication.principal.getType() == 'tor'}">
+      <th:block sec:authorize="hasRole('ROLE_MENTOR')">
         <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentor">멘토링 목록</a>
         <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/answer">내가 쓴 답변</a>
       </th:block>
-      <th:block th:if="${#authentication.principal.getType() == 'tee'}">
+      <th:block sec:authorize="hasRole('ROLE_MENTEE')">
         <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentee">멘토링</a>
         <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/question">내가 쓴 질문</a>
       </th:block>
@@ -132,10 +133,10 @@
               <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-family: 'Orbit', sans-serif;">개인정보</a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <th:block th:if="${#authentication.principal.getType() == 'tor'}">
+                <th:block sec:authorize="hasRole('ROLE_MENTOR')">
                   <a class="dropdown-item" th:href="|/member/mentorModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
                 </th:block>
-                <th:block th:if="${#authentication.principal.getType() == 'tee'}">
+                <th:block sec:authorize="hasRole('ROLE_MENTEE')">
                   <a class="dropdown-item" th:href="|/member/menteeModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
                 </th:block>
                 <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>

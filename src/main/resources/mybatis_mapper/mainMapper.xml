@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.main.mapper.MainMapper">
+
+    <sql id="Search">
+            <choose>
+
+                <!-- Case 1: Keyword, Language, and PaidFree -->
+                <when test="keyword != null and language != null and language.size() > 0 and paidFree != 'all'">
+                   and (
+                    `title` Like concat('%',#{keyword},'%') OR
+                    `nickName` Like concat('%',#{keyword},'%') OR
+                    `devLanguage` Like concat('%',#{keyword},'%') OR
+                    `position` Like concat('%',#{keyword},'%') OR
+                    `career` Like concat('%',#{keyword},'%') OR
+                    `introduce` Like concat('%',#{keyword},'%')
+                    )
+                    AND
+                    (
+                    <foreach collection="language" item="lang" separator="or">
+                        `devLanguage` Like concat('%',#{lang},'%')
+                    </foreach>
+                    )
+                    AND
+                        `paidFree` = #{paidFree}
+                </when>
+                <!-- Case 2: Keyword and Language -->
+                <when test="keyword != null and language != null and language.size() > 0">
+                   and (
+                    `title` Like concat('%',#{keyword},'%') OR
+                    `nickName` Like concat('%',#{keyword},'%') OR
+                    `devLanguage` Like concat('%',#{keyword},'%') OR
+                    `position` Like concat('%',#{keyword},'%') OR
+                    `career` Like concat('%',#{keyword},'%') OR
+                    `introduce` Like concat('%',#{keyword},'%')
+                    )
+                    AND
+                    (
+                    <foreach collection="language" item="lang" separator="or">
+                        `devLanguage` Like concat('%',#{lang},'%')
+                    </foreach>
+                    )
+                </when>
+                <!-- Case 3: Keyword and paidFree -->
+                <when test="keyword != null and paidFree != 'all'">
+                   and (
+                    `title` Like concat('%',#{keyword},'%') OR
+                    `nickName` Like concat('%',#{keyword},'%') OR
+                    `devLanguage` Like concat('%',#{keyword},'%') OR
+                    `position` Like concat('%',#{keyword},'%') OR
+                    `career` Like concat('%',#{keyword},'%') OR
+                    `introduce` Like concat('%',#{keyword},'%')
+                    )
+                    AND
+                    `paidFree` = #{paidFree}
+                </when>
+
+                <!-- Case 4: language and paidFree -->
+                <when test="language != null and language.size() > 0 and paidFree != 'all'">
+                    and  (
+                    <foreach collection="language" item="lang" separator="or">
+                        `devLanguage` Like concat('%',#{lang},'%')
+                    </foreach>
+                    )
+                    AND
+                        `paidFree` = #{paidFree}
+                </when>
+                <!-- Case 5: Keyword Only -->
+                <when test="keyword != null">
+                    and (
+                    `title` Like concat('%',#{keyword},'%') OR
+                    `nickName` Like concat('%',#{keyword},'%') OR
+                    `devLanguage` Like concat('%',#{keyword},'%') OR
+                    `position` Like concat('%',#{keyword},'%') OR
+                    `career` Like concat('%',#{keyword},'%') OR
+                    `introduce` Like concat('%',#{keyword},'%')
+                    )
+                </when>
+                <!-- Case 6: Language Only -->
+                <when test="language != null and language.size() > 0">
+                    and (
+                    <foreach collection="language" item="lang" separator="OR">
+                        `devLanguage` Like concat('%',#{lang},'%')
+                    </foreach>
+                    )
+                </when>
+                <!-- Case 7: paidFree Only -->
+                <when test="paidFree != 'all'">
+                    and `paidFree` = #{paidFree}
+                </when>
+            </choose>
+    </sql>
+
+    <!--    게시물 등록-->
+    <insert id="insert">
+        insert into `main` (mNo, paidFree, nickName, devLanguage, title, position, career, introduce, startDate, endDate, addDate, price)
+        values (#{mNo}, #{paidFree}, #{nickName}, #{devLanguage}, #{title}, #{position}, #{career}, #{introduce}, #{startDate}, #{endDate} now(), #{price})
+    </insert>
+<!--    총 게시물 수-->
+    <select id="getCount" resultType="int">
+        SELECT COUNT(mbNo) FROM main <where>
+                                    `endDate` >= CURDATE()
+                                    <if test="keyword != null or language != null or paidFree != null"> <include refid="Search"/></if>
+                                </where>
+    </select>
+<!--    게시물 목록-->
+    <select id="list" resultType="kr.nomadlab.mentors.main.domain.MainVO">
+        select * from main <where>
+                                `endDate` >= CURDATE()
+                                <if test="keyword != null or language != null or paidFree != null"> <include refid="Search"/></if>
+                            </where>         order by case when #{sort} = 'latest' then `mbNo`
+                                             when #{sort} = 'popular' then `score`
+                                             else `mbNo` end
+                                             desc limit #{skip},#{size}
+    </select>
+<!--    멘토링 횟수-->
+    <select id="getMentoringCnt" resultType="int">
+        <![CDATA[
+            select count(*) from main where `endDate` < CURDATE() and mno = #{mno}
+        ]]>
+    </select>
+<!--    게시물 상세-->
+    <select id="getOne" resultType="kr.nomadlab.mentors.main.domain.MainVO">
+        select * from main where mbNo = #{mbNo}
+    </select>
+<!--    게시물 수정-->
+    <update id="updateOne">
+        update main set title = #{title}, position = #{position}, career = #{career}, introduce = #{introduce}, price = #{price} where mbNo = #{mbNo}
+    </update>
+<!--    게시물 삭제-->
+    <delete id="deleteOne">
+        DELETE FROM main WHERE mbNo = #{mbNo}
+    </delete>
+</mapper>
