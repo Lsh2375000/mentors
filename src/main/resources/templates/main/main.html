@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/inc.html}">
+<head>
+    <script src="https://kit.fontawesome.com/ff50ff83ce.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Mentors Main</title>
+</head>
+<style layout:fragment="style">
+    body{
+        background-color: #efefef;
+    }
+    .banner{
+        background-color: #0dcaf0;
+    }
+    .fa-crown{
+        font-size: 50px;
+    }
+    .writeBtn{
+        position: fixed;
+        right: 200px;
+        top: 400px;
+        color: whitesmoke;
+        height: 40px;
+        border-radius: 5px;
+        background-color: #00b000;
+    }
+    .tabBtn{
+        background-color: transparent;
+        background-image: none;
+        border: none;
+        width: 100px;
+        height: 40px;
+        font-size: 20px;
+    }
+    .tabBtn:hover{
+        color: #0dcaf0;
+        font-weight: 600;
+    }
+    input{
+        border-radius: 3px;
+    }
+    .inputKeyword{
+        height: 44px;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+    }
+    .searchBtn{
+        height: 44px;
+        color: #363636;
+        background-color: #f5f5f5;
+        border-color: #e4e4e4;
+    }
+    .select{
+        height: 44px;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding-left: 1rem;
+        cursor: pointer;
+    }
+    .category_wrap{
+        border: 2px solid #e4e4e4;
+        margin-bottom: 10px;
+    }
+    .category_header{
+        border: 2px solid #e4e4e4;
+        height: 50px;
+        padding-left: 2rem;
+        line-height: 50px;
+    }
+    .checkbox_category{
+        background-color: white;
+        padding: 1rem;
+        line-height: 2;
+    }
+    .checkbox_content{
+        cursor: pointer;
+    }
+    select{
+        font-size: 18px;
+        font-weight: 700;
+    }
+    label{
+        font-weight: 700;
+        font-size: 18px
+    }
+    .filter_reset{
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+    }
+    .mentoringList{
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 20px;
+    }
+    .card-body{
+        display: flex;
+        min-height: 241px;
+        max-height: 300px;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        height: 100%;
+        padding: 24px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid #e9ebee;
+        box-shadow: 0 8px 18px -5px rgba(23, 39, 75, .05);
+        transition: transform .2s ease-in-out;
+        cursor: pointer;
+    }
+    .card-body:hover{
+        transform: translate(-5px, -5px);
+    }
+    .card-bottom{
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+    .card_nickName{
+        color: #e9ebee;
+    }
+    .card_score{
+        background-color: rgba(255,210,77,.2);
+        color: red;
+    }
+    .modal-content{
+        padding: 2rem;
+    }
+    .modal-body-content{
+        overflow-y: scroll;
+    }
+    .modalNickName{
+        color: black;
+        font-weight: bold;
+    }
+    .mentorInfo{
+        color: #00c471;
+        background-color: #e5f9f1;
+    }
+    .card_job{
+        border-bottom: 1px solid #dee2e6;
+    }
+    .enrollBtn{
+        width: 90px;
+        height: 40px;
+        border-radius: 4px;
+        color: white;
+        border-color: #00c471;
+        background-color: #00c471;
+        font-weight: 700;
+    }
+</style>
+<body>
+<!--        멘토 랭킹 배너-->
+    <div layout:fragment="banner">
+    <div class="d-flex justify-content-between w-75" style="margin: 0 auto; padding-top: 50px; height: 100px;">
+        <div class="text-center">
+            <i class="fa-solid fa-crown" style="color: #ffd700;"></i><br>
+            멘토1번 닉네임<br>
+            멘토1번 전공언어<br>
+            멘토1번 스코어
+        </div>
+        <div class="text-center">
+            <i class="fa-solid fa-crown" style="color: #c0c0c0;"></i><br>
+            멘토2번 닉네임<br>
+            멘토2번 전공언어<br>
+            멘토2번 스코어
+        </div>
+        <div class="text-center">
+            <i class="fa-solid fa-crown" style="color: #b87333;"></i><br>
+            멘토3번 닉네임<br>
+            멘토3번 전공언어<br>
+            멘토3번 스코어
+        </div>
+    </div>
+</div>
+<!--        멘토 랭킹 배너 끝 -->
+    <div layout:fragment="content">
+<!--        멘토로 로그인한 사람만 보이게-->
+        <button type="button" class="writeBtn">멘토링 작성</button>
+
+        <div class="d-flex justify-content-center w-75 mt-4 ms-auto gap-xxl-5">
+            <button type="button" class="tabBtn" id="allBtn" th:style="${paidFree == 'all' ? 'background-color: yellow;' : ''}">전체</button>
+            <button type="button" class="tabBtn" id="freeBtn" value="free" th:style="${paidFree == 'free' ? 'background-color: yellow;' : ''}">무료</button>
+            <button type="button" class="tabBtn" id="paidBtn" value="paid" th:style="${paidFree == 'paid' ? 'background-color: yellow;' : ''}">유료</button>
+        </div>
+<!--        메인 콘텐츠-->
+        <div class="d-flex mt-3 gap-4">
+            <!--        멘토링 검색조건-->
+            <div class="mentoringSearch w-25">
+                <form name="searchFrm" action="/main" method="get" class="w-100">
+                    <input type="hidden" name="page" th:value="${mainList.page}">
+                    <input type="hidden" name="size" th:value="${mainList.size}">
+                    <input type="hidden" name="sort" th:value="${sort}">
+
+                    <input type="hidden" name="paidFree" th:value="${paidFree}">
+                    <div class="w-100">
+                        <input type="text" name="keyword" class="inputKeyword w-75" th:value="${keyword}">
+                        <button type="submit" class="btn btn-secondary searchBtn">검색</button>
+                    </div>
+                    <div class="w-100 mt-2">
+                        <select class="select w-75" name="sort">
+                            <option class="latest" name="sort" th:data="latest" value="latest" selected th:selected="${sort == 'latest'}">최신순</option>
+                            <option class="popular" name="sort" th:data="popular" value="popular" th:selected="${sort == 'popular'}">인기순</option>
+                        </select>
+                    </div>
+                    <div class="category_wrap w-75 mt-2">
+                        <div class="category_header">
+                            언어별
+                        </div>
+                        <div class="checkbox_category">
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="Java" value="Java" th:checked="${language != null and language.contains('Java')}">
+                                <label for="Java">자바</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="Python" value="Python" th:checked="${language != null and language.contains('Python')}">
+                                <label for="Python">파이썬</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="C" value="C" th:checked="${language != null and language.contains('C')}">
+                                <label for="C">C언어</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="C++" value="C++" th:checked="${language != null and language.contains('C++')}">
+                                <label for="C++">C++</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="JavaScript" value="JavaScript" th:checked="${language != null and language.contains('JavaScript')}">
+                                <label for="JavaScript">JavaScript</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="PHP" value="PHP" th:checked="${language != null and language.contains('PHP')}">
+                                <label for="PHP">PHP</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="Swift" value="Swift" th:checked="${language != null and language.contains('Swift')}">
+                                <label for="Swift">Swift</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="Kotlin" value="Kotlin" th:checked="${language != null and language.contains('Kotlin')}">
+                                <label for="Kotlin">Kotlin</label>
+                            </div>
+                            <div class="checkbox_content">
+                                <input name="language" type="checkbox" id="TypeScript" value="TypeScript" th:checked="${language != null and language.contains('TypeScript')}">
+                                <label for="TypeScript">TypeScript</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="filter_reset">
+                        <i class="fa-solid fa-repeat" style="color: #000000;"></i>
+                        &nbsp&nbsp 필터 초기화
+                    </button>
+                </form>
+            </div>
+
+            <!--        멘토링 목록-->
+            <div class="mentoringList w-75 d-grid">
+                <div class="card-body" th:each="mainList:${mainList.dtoList}">
+                    <a th:onclick="|modalBtn(${mainList.mbNo})|">
+                        <div class="card-top">
+                            <h3 th:text="${mainList.title}"></h3> <br>
+                            <div class="card_job">
+                                <div class="d-flex">
+                                    <span>직무</span>
+                                    <p>[[${mainList.position}]]</p>
+                                </div>
+                                <div class="d-flex">
+                                    <span>경력</span>
+                                    <p>[[${mainList.career}]]</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-bottom d-flex justify-content-between">
+                            <div class="card_nickName">
+                                <a href="#">[[${mainList.nickName}]]</a>
+                            </div>
+                            <div class="card_score">
+                                <a href="#"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mainList.score}]]</a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+<!--        메인 콘텐츠 끝-->
+        <!--    페이징-->
+        <div class="page_wrap paging d-flex justify-content-center w-75 float-end mt-3">
+            <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
+                <li class="page-item" th:if="${mainList.prev}">
+                    <a class="page-link pageNum" th:data-num="${mainList.start - 1}">이전</a>
+                </li>
+                <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
+                    <th:block th:if="${i != 0}">
+                        <li th:class="${mainList.page == i} ? 'page-item-active' : 'page-item'" >
+                            <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'color:red; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                </th:block>
+                <li class="page-item" th:if="${mainList.next}">
+                    <a class="page-link pageNum" th:data-num="${mainList.end + 1}">다음</a>
+                </li>
+            </ul>
+        </div>
+        <!--페이징 끝-->
+<!--        상세 뷰 모달-->
+        <div class="modal contentModal" id="contentModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">멘토링 소개</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-body-content">
+                            <div>
+                                <a href="#" class="modalNickName"></a>
+                            </div>
+                            <h2 class="mt-2 modalTitle"></h2>
+                            <span class="mt-2 mentorInfo">멘토 정보</span>
+                            <div class="mt-3">
+                                <div class="card_job">
+                                    <div class="d-flex gap-2">
+                                        <span>직무</span>
+                                        <p class="modalPosition"></p>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <span>경력</span>
+                                        <p class="modalCareer"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3 modalIntroduce">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <p>멘토링 : <span class="modalPrice"></span></p>
+                        <button type="button" class="enrollBtn">신청하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </div>
+<script layout:fragment="script" th:inline="javascript">
+
+    const contentModal = new bootstrap.Modal(document.getElementById('contentModal'));
+    const modalNickName = document.querySelector('.modalNickName');
+    const modalTitle = document.querySelector('.modalTitle');
+    const modalPosition = document.querySelector('.modalPosition');
+    const modalCareer = document.querySelector('.modalCareer');
+    const modalIntroduce = document.querySelector('.modalIntroduce');
+    const modalPrice = document.querySelector('.modalPrice');
+
+    // 게시물 정보 가져오기
+    async function getBoard(mbNo){
+        const response = await axios.get(`/main/${mbNo}`);
+        console.log("response");
+        return response.data;
+    }
+    // 모달창
+    function modalBtn(mbNo){
+        getBoard(mbNo).then(data => {
+            console.log(data);
+            modalNickName.innerHTML = `${data.nickName}`;
+            modalTitle.innerHTML = `${data.title}`;
+            modalPosition.innerHTML = `${data.position}`;
+            modalCareer.innerHTML = `${data.career}`;
+            modalIntroduce.innerHTML = `${data.introduce}`;
+            modalPrice.innerHTML = `${data.price}`;
+        })
+
+        contentModal.show();
+    }
+
+    // 리셋 버튼
+    const filter_reset = document.querySelector('.filter_reset');
+    filter_reset.addEventListener('click', function (){
+        location.href = '/main';
+    })
+
+    // 페이징, 검색
+    const searchFrm = document.querySelector('form[name=searchFrm]'); // 검색 폼
+    const pageNums = document.querySelectorAll('.pageNum'); // 페이지번호
+    const keyword = document.querySelector('.inputKeyword'); // 키워드
+    const select = document.querySelector('.select'); // 셀렉트폼
+    let curPage = [[${mainList.page}]]; // 현재페이지
+    const checkboxes = document.querySelectorAll('input[name=language]'); // 체크박스
+    let checkLanguage = [[${language}]]; // 현재 검색 언어
+    const allBtn = document.getElementById('allBtn');
+    const freeBtn = document.getElementById('freeBtn');
+    const paidBtn = document.getElementById('paidBtn');
+    let paidFree = [[${paidFree}]]; // 무료/유료
+
+    // 무료/유료 검색
+    allBtn.addEventListener('click', function (){
+        paidFree = 'all';
+        updateLocation();
+    })
+    freeBtn.addEventListener('click', function (){
+        paidFree = 'free';
+        updateLocation();
+    })
+    paidBtn.addEventListener('click', function (){
+        paidFree = 'paid';
+        updateLocation();
+    })
+
+    function updateLocation(){
+        location.href =`/main?page=${curPage}&size=20&keyword=${keyword.value}&sort=${select.value}&language=${checkLanguage}&paidFree=${paidFree}`;
+    }
+    // 페이지번호 클릭
+    pageNums.forEach(pageNum => {
+        pageNum.addEventListener('click', function (){
+            const page = pageNum.getAttribute('data-num');
+            curPage = page;
+            updateLocation();
+        })
+    })
+    // 정렬기준 (최신순, 인기순)
+    select.addEventListener('change', function (){
+        updateLocation();
+    })
+    // 체크박스 (언어별 검색)
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function (){
+            const checkedValue = [];
+            checkboxes.forEach(function (checkbox){
+                if(checkbox.checked){
+                    checkedValue.push(checkbox.value);
+                }
+            })
+            checkLanguage = checkedValue;
+            console.log(checkedValue);
+            updateLocation();
+        })
+    })
+
+
+
+</script>
+</body>
+</html>

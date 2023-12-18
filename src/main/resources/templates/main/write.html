@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/inc.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Write</title>
+</head>
+<style layout:fragment="style">
+
+</style>
+<body>
+<div layout:fragment="content">
+    멘토링 글쓰기
+    <form action="/main/write">
+<!--        로그인한 사람 정보를 value로-->
+        <input type="hidden" name="mno">
+        <input type="hidden" name="nickName">
+<!--        끝-->
+
+        <th:block th:if="${mentoringCnt > 5}">
+            <input type="checkbox" name="paidFree" value="paid">유료
+        </th:block>
+        <input type="checkbox" name="paidFree" value="free" checked>무료
+
+        <input type="checkbox" name="devLanguage" value="Java">자바
+        <input type="checkbox" name="devLanguage" value="Python">파이썬
+        <input type="checkbox" name="devLanguage" value="C">C언어
+        <input type="checkbox" name="devLanguage" value="C++">C++
+        <input type="checkbox" name="devLanguage" value="JavaScript">JavaScript
+        <input type="checkbox" name="devLanguage" value="PHP">PHP
+        <input type="checkbox" name="devLanguage" value="Swift">Swift
+        <input type="checkbox" name="devLanguage" value="Kotlin">Kotlin
+        <input type="checkbox" name="devLanguage" value="TypeScript">TypeScript
+
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title">
+
+        <label for="position">직무</label>
+        <input type="text" id="position" name="title">
+
+        <label for="career">경력</label>
+        <input type="text" id="career" name="title">
+
+        <label for="content">멘토 소개</label>
+        <textarea id="content"></textarea>
+
+        <label for="startDate">수업 시작일</label>
+        <input type="date" id="startDate" name="startDate">
+
+        <label for="endDate">수업 종료일</label>
+        <input type="date" id="endDate" name="endDate">수업 종료일
+
+        <input type="number" name="price" min="0" max="1000">개
+
+        <button type="submit" class="writeBtn">등록</button>
+        <button type="button" class="cancelBtn">취소</button>
+    </form>
+</div>
+</body>
+</html>

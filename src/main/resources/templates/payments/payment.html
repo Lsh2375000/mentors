@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>결제하기</title>
+  <script src="https://js.tosspayments.com/v1/payment"></script>
+
+  <style>
+    .payment-box {
+      text-align: center;
+      margin: 20px auto;
+      padding: 20px;
+      border: 2px solid #007b7f; /* 두꺼운 테두리 */
+      border-radius: 15px; /* 둥근 테두리 */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 그림자 */
+      max-width: 600px; /* 적절한 최대 너비 지정 */
+    }
+
+    h1 {
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    img {
+      max-width: 100px; /* 이미지 최대 너비 지정 */
+      height: auto;
+    }
+
+    .payment-button {
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .payment-button:hover {
+      background-color: #218838;
+    }
+  </style>
+
+</head>
+
+<body>
+<div layout:fragment="content">
+  <div class="payment-box">
+    <h1>쿠키샵</h1>
+    <table>
+      <thead>
+      <tr>
+        <th>이미지</th>
+        <th>제목</th>
+        <th>금액</th>
+        <th>구매하기</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><img src="/img/coin.png" alt="상품 이미지"></td>
+        <td class="product">쿠키 1개</td>
+        <td class="product-price">1000</td>
+        <td><button class="payment-button btn-success">구매하기</button></td>
+      </tr>
+      <tr>
+        <td><img src="/img/coin.png" alt="상품 이미지"></td>
+        <td class="product">쿠키 10개</td>
+        <td class="product-price">10000</td>
+        <td><button class="payment-button btn-success">구매하기</button></td>
+      </tr>
+      <tr>
+        <td><img src="/img/coin.png" alt="상품 이미지"></td>
+        <td class="product">쿠키 30개</td>
+        <td class="product-price">30000</td>
+        <td><button class="payment-button btn-success">구매하기</button></td>
+      </tr>
+      <tr>
+        <td><img src="/img/coin.png" alt="상품 이미지"></td>
+        <td class="product">쿠키 50개</td>
+        <td class="product-price">50000</td>
+        <td><button class="payment-button btn-success">구매하기</button></td>
+      </tr>
+      <tr>
+        <td><img src="/img/coin.png" alt="상품 이미지"></td>
+        <td class="product">쿠키 100개</td>
+        <td class="product-price">100000</td>
+        <td><button class="payment-button btn-success">구매하기</button></td>
+      </tr>
+      <!-- 추가 상품은 필요에 따라 계속해서 추가할 수 있습니다. -->
+      </tbody>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/payment.js?1"></script>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+  // ------ 클라이언트 키로 객체 초기화 ------
+  const clientKey = 'test_ck_KNbdOvk5rkoYXjgPBaYErn07xlzm'
+  const tossPayments = TossPayments(clientKey)
+
+  // ------ 충전하기 버튼에 기능 추가 ------
+  const buttons = document.querySelectorAll('.payment-button') // 충전하기 버튼
+  buttons.forEach(function(button) {
+    button.addEventListener('click', function () {
+      const product = this.closest('tr').querySelector('.product').textContent;
+      const price = this.closest('tr').querySelector('.product-price').textContent;
+
+      console.log(product);
+      console.log(price);
+
+      const tossObj = {payType: 'toss', amount: price, orderName: product};
+
+      //결제요청 데이터 저장
+      axios.post('/payment/toss', tossObj)
+        .then(response => {
+          console.log('서버 응답:', response.data);
+
+          const reqOrderId = response.data.orderId;
+
+          // ------ 결제창 띄우기 ------
+          tossPayments.requestPayment('CARD', {
+            amount: price,
+            orderId: reqOrderId,
+            orderName: product,
+            customerName: '주문자1',
+            successUrl: window.location.origin + '/payments/success',
+            failUrl: window.location.origin + '/payments/fail',
+          })
+        })
+        .catch(error => {
+          console.error('에러 발생:', error);
+        });
+    })
+  });
+</script>
+</body>
+</html>

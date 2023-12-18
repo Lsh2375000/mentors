@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
+    <title>결제하기</title>
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+    <link th:href="@{/css/tossstyle.css}" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="wrapper w-100">
+        <div class="flex-column align-center confirm-success w-100 max-w-540">
+            <img src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" width="120" height="120"></img>
+            <h2 class="title">결제를 완료했어요</h2>
+            <div class="response-section w-100">
+                <div class="flex justify-between">
+                    <span class="response-label">결제 금액</span>
+                    <span id="amount" class="response-text"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="response-label">주문번호</span>
+                    <span id="orderId" class="response-text">[[${payments.orderId}]]</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="response-label">paymentKey</span>
+                    <span id="paymentKey" class="response-text">[[${payments.paymentKey}]]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = urlParams.get("amount");
+
+    const confirmSuccessSection = document.querySelector('.confirm-success');
+
+    confirmSuccessSection.style.display = 'flex';
+
+
+    const amountElement = document.getElementById("amount");
+    amountElement.textContent = `${amount}원`;
+
+</script>
+</html>
