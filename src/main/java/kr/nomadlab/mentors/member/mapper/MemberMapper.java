@@ -22,4 +22,5 @@ public interface MemberMapper {
     void updatePassword(String passwd, String memberId); // 비밀번호 재설정
 
     void deleteMember(String memberId);
+    void updateCoin(Long mno, int coin); //멤버 코인 구매
 }

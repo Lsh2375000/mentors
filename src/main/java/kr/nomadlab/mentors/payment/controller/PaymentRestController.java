@@ -36,7 +36,6 @@ public class PaymentRestController {
                 .orderName(paymentDto.getOrderName())
                 .customerName(paymentDto.getMemberName())
                 .createdAt(paymentDto.getCreatedAt())
-                .cancelYN(paymentDto.isCancelYN())
                 .failReason(paymentDto.getFailReason())
                 .build();
         paymentResDto.setSuccessUrl(tossPaymentConfig.getSuccessUrl());

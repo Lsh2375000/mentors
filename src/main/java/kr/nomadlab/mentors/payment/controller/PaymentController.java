@@ -55,6 +55,12 @@ public class PaymentController {
         PaymentFailDto paymentFailDto = paymentService.tossPaymentFail(code, message, orderId);
         model.addAttribute("paymentFail", paymentFailDto);
 
-        return "payments/fail";
+        if(paymentFailDto.getErrorMessage().equals("Payment already approved") && paymentFailDto.getErrorCode().equals("ALREADY_APPROVED")){
+            return "payments/successed";
+        }
+
+        else {
+            return "payments/fail";
+        }
     }
 }
