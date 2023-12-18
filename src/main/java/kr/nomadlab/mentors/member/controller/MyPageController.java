@@ -1,4 +1,4 @@
-package kr.nomadlab.mentors.myPage.controller;
+package kr.nomadlab.mentors.member.controller;
 
 
 

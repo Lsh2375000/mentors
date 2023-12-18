@@ -1,6 +1,6 @@
 package kr.nomadlab.mentors.editor.controller;
 
-import kr.nomadlab.progrow_project.editor.dto.EditorUploadDTO;
+import kr.nomadlab.mentors.editor.dto.EditorUploadDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -32,7 +32,7 @@ import java.util.UUID;
 @RequestMapping("/editor")
 public class EditorController {
 
-    @Value("${kr.nomadlab.progrow_project.upload.path}")
+    @Value("${kr.nomadlab.upload.path}")
     private String uploadPath;
 
     @PostMapping(value = "/upload")

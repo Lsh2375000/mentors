@@ -23,8 +23,11 @@ public class PageRequestDTO {
     @Builder.Default
     private int size=10;
 
+    @Builder.Default
+    private String order = "new"; // 정렬 기준 컬럼
+
     public int getSkip() {
-        return (page-1)*size;
+        return (page - 1) * size;
     }
 
     // 검색 관련
