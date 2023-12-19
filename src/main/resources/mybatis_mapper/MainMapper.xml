@@ -133,4 +133,8 @@
     <delete id="deleteOne">
         DELETE FROM main WHERE mbNo = #{mbNo}
     </delete>
+<!--    마이페이지 메인 목록-->
+    <select id="myPageList" resultType="kr.nomadlab.mentors.main.domain.MainVO">
+        select * from main where mno = #{mno} order by mbNo desc limit #{skip}, #{size}
+    </select>
 </mapper>

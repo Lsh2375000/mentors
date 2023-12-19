@@ -21,4 +21,6 @@ public interface MainMapper {
 
     void updateOne(MainVO mainVO); // 게시물 수정
     void deleteOne(Long mbNo); // 게시물 삭제
+    
+    List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 마이페이지 멘토링 목록 리스트 출력
 }

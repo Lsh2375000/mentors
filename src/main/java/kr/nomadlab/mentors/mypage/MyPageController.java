@@ -2,6 +2,10 @@ package kr.nomadlab.mentors.mypage;
 
 
 
+import kr.nomadlab.mentors.common.PageRequestDTO;
+import kr.nomadlab.mentors.common.PageResponseDTO;
+import kr.nomadlab.mentors.main.dto.MainDTO;
+import kr.nomadlab.mentors.main.service.MainService;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.member.dto.MenteeDTO;
 import kr.nomadlab.mentors.member.dto.MentorDTO;
@@ -27,6 +31,7 @@ public class MyPageController {
 
     private final MentorService mentorService;
     private final MenteeService menteeService;
+    private final MainService mainService;
 
     /*멘토 마이페이지 시작*/
     @GetMapping("/mentor")
@@ -94,11 +99,20 @@ public class MyPageController {
 //    }
     
     
-    @GetMapping("/mainList")
-    public void mainList(){ // 내가 작성한 멘토링 목록 보기
-        
+    @GetMapping("/mainList")// 내가 작성한 멘토링 목록 보기
+    public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
+        pageRequestDTO.setSize(12);
+        PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
+
+        model.addAttribute("mainList", mainList);
     }
 
+    @GetMapping("/mainList/remove")
+    public String removeMain(Long mbNo){
+        mainService.removeOne(mbNo);
+
+        return "redirect:/mypage/mainList";
+    }
 
 
 }
