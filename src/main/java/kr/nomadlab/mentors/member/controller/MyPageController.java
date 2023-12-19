@@ -92,8 +92,12 @@ public class MyPageController {
 //        String type = memberSecurityDTO.getType();
 //
 //    }
-
-
+    
+    
+    @GetMapping("/mainList")
+    public void mainList(){ // 내가 작성한 멘토링 목록 보기
+        
+    }
 
 
 
