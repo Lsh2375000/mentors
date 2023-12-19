@@ -17,10 +17,17 @@
     .fa-crown{
         font-size: 50px;
     }
+    a{
+        text-decoration: none;
+        color: inherit;
+    }
+    a:hover{
+        color: inherit;
+    }
     .writeBtn{
         position: fixed;
-        right: 200px;
-        top: 400px;
+        right: 0.5%;
+        top: 50%;
         color: whitesmoke;
         height: 40px;
         border-radius: 5px;
@@ -74,7 +81,7 @@
         padding: 1rem;
         line-height: 2;
     }
-    .checkbox_content{
+    .checkbox_content input,label{
         cursor: pointer;
     }
     select{
@@ -178,7 +185,7 @@
 <!--        멘토 랭킹 배너 끝 -->
     <div layout:fragment="content">
 <!--        멘토로 로그인한 사람만 보이게-->
-        <button type="button" class="writeBtn">멘토링 작성</button>
+        <button type="button" class="writeBtn"><a href="/main/write">멘토링 작성</a></button>
 
         <div class="d-flex justify-content-center w-75 mt-4 ms-auto gap-xxl-5">
             <button type="button" class="tabBtn" id="allBtn" th:style="${paidFree == 'all' ? 'background-color: yellow;' : ''}">전체</button>

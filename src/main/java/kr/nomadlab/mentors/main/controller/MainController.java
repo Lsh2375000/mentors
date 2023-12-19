@@ -67,7 +67,7 @@ public class MainController {
     public String write(MainDTO mainDTO){ // 글등록
         mainService.register(mainDTO);
 
-        return "/main/main";
+        return "redirect:/main";
     }
 
 
