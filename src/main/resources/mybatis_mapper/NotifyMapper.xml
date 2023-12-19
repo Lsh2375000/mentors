@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.notify.mapper.NotifyMapper">
     <insert id="addNotify">
-        INSERT INTO `notify` (receiverMno, content, isRead, sendDate)
-        values (#{receiverMno}, #{content}, #{isRead}, now())
+        INSERT INTO `notify` (receiverMno, content, isRead, types, sendDate)
+        values (#{receiverMno}, #{content}, #{isRead}, #{types}, now())
     </insert>
     <select id="countNotify" resultType="int">
         select count(*) from `notify` where receiverMno=#{mno} and isRead=false

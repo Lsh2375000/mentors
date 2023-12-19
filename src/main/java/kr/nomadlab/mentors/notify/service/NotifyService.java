@@ -5,7 +5,7 @@ import kr.nomadlab.mentors.notify.dto.NotifyDto;
 import java.util.List;
 
 public interface NotifyService {
-    void addNotify(Long mno, String message);
+    void addNotify(Long mno, String types);
 
     int countNotify(Long mno);
 

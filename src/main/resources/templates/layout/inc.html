@@ -22,7 +22,7 @@
       border: black solid 2px;
       left: auto;
       position: absolute;
-      top: 50px;
+      top: 70px;
       width: 200px;
       height: 100%;
       background-color: white;
@@ -90,7 +90,7 @@
               <img src="/img/basic/notify.png" alt="알림 이미지" height="50" width="50">
               <span class="notifyCnt"></span>
             </div>
-            <div id="notifyModal" class="notifyModal">
+            <div id="notifyModal" class="notifyModal" style="font-size: 12px;">
               <!-- 모달 내용 -->
                 <span class="close" onclick="closeNotifyModal()">&times;</span>
                 <span class="newNotifyList"></span>
@@ -176,13 +176,12 @@
       getNotReadNotify().then(data => {
         let str ='';
         if(data.length === 0){
-          str = `<div class=notifyContent-inc style="font-size: 12px;">새로운 알림이 없습니다.</div>`
+          str = `<div class="notifyContent-inc">새로운 알림이 없습니다.</div>`
         }
         else{
         data.forEach(notify =>{
            str +=
-                  `<div class=notifyContent-inc>${notify.content}</div>
-                    <div class="notifyDate-inc>${notify.sendDate}</div>"`
+                  `<div class="notifyContent-inc">${notify.content}</div>`
           });
         }
         newNotifyList.innerHTML = str;

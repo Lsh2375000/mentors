@@ -20,9 +20,15 @@ public class NotifyServiceImpl implements NotifyService{
 
 
     @Override
-    public void addNotify(Long mno, String message) {
+    public void addNotify(Long mno, String types) {
+        String message = null;
+        if(types.equals("payments")){
+            message = "결제에 성공하였습니다";
+        }
+
         NotifyVO notifyVO = NotifyVO.builder()
                 .receiverMno(mno)
+                .types(types)
                 .content(message)
                 .build();
         notifyMapper.addNotify(notifyVO);

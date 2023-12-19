@@ -22,11 +22,7 @@ public class NotifyController {
     @PutMapping("/repository/{types}")
     public ResponseEntity<String> sendNotify(@AuthenticationPrincipal MemberSecurityDTO member, @PathVariable String types){
         log.info("this is repository/types");
-        String message = null;
-        if(types.equals("payment")){
-            message = "결제에 성공하였습니다";
-        }
-        notifyService.addNotify(member.getMno(), message);
+        notifyService.addNotify(member.getMno(), types);
 
         return ResponseEntity.ok("Request processed successfully");
     }

@@ -14,5 +14,6 @@ public class NotifyVO {
     private Long receiverMno;
     private String content;
     private boolean isRead;
+    private String types;
     private LocalDateTime sendDate;
 }
