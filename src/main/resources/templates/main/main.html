@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout/inc.html}">
 <head>
     <script src="https://kit.fontawesome.com/ff50ff83ce.js" crossorigin="anonymous"></script>
@@ -185,7 +186,11 @@
 <!--        멘토 랭킹 배너 끝 -->
     <div layout:fragment="content">
 <!--        멘토로 로그인한 사람만 보이게-->
-        <button type="button" class="writeBtn"><a href="/main/write">멘토링 작성</a></button>
+        <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}">
+            <th:block sec:authorize="hasRole('ROLE_MENTOR')"> <!--멘토 로그인시-->
+                <button type="button" class="writeBtn"><a href="/main/write">멘토링 작성</a></button>
+            </th:block>
+        </th:block>
 
         <div class="d-flex justify-content-center w-75 mt-4 ms-auto gap-xxl-5">
             <button type="button" class="tabBtn" id="allBtn" th:style="${paidFree == 'all' ? 'background-color: yellow;' : ''}">전체</button>

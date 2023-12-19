@@ -15,7 +15,7 @@
                     `devLanguage` Like concat('%',#{keyword},'%') OR
                     `position` Like concat('%',#{keyword},'%') OR
                     `career` Like concat('%',#{keyword},'%') OR
-                    `introduce` Like concat('%',#{keyword},'%')
+                    `content` Like concat('%',#{keyword},'%')
                     )
                     AND
                     (
@@ -34,7 +34,7 @@
                     `devLanguage` Like concat('%',#{keyword},'%') OR
                     `position` Like concat('%',#{keyword},'%') OR
                     `career` Like concat('%',#{keyword},'%') OR
-                    `introduce` Like concat('%',#{keyword},'%')
+                    `content` Like concat('%',#{keyword},'%')
                     )
                     AND
                     (
@@ -51,7 +51,7 @@
                     `devLanguage` Like concat('%',#{keyword},'%') OR
                     `position` Like concat('%',#{keyword},'%') OR
                     `career` Like concat('%',#{keyword},'%') OR
-                    `introduce` Like concat('%',#{keyword},'%')
+                    `content` Like concat('%',#{keyword},'%')
                     )
                     AND
                     `paidFree` = #{paidFree}
@@ -75,7 +75,7 @@
                     `devLanguage` Like concat('%',#{keyword},'%') OR
                     `position` Like concat('%',#{keyword},'%') OR
                     `career` Like concat('%',#{keyword},'%') OR
-                    `introduce` Like concat('%',#{keyword},'%')
+                    `content` Like concat('%',#{keyword},'%')
                     )
                 </when>
                 <!-- Case 6: Language Only -->
@@ -127,7 +127,7 @@
     </select>
 <!--    게시물 수정-->
     <update id="updateOne">
-        update main set title = #{title}, position = #{position}, career = #{career}, introduce = #{introduce}, price = #{price} where mbNo = #{mbNo}
+        update main set title = #{title}, position = #{position}, career = #{career}, content = #{content}, price = #{price} where mbNo = #{mbNo}
     </update>
 <!--    게시물 삭제-->
     <delete id="deleteOne">
