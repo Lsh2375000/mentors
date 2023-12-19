@@ -4,11 +4,81 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.board.mapper.BoardMapper">
 
+    <!-- BoardVO에 대한 resultMap 설정 -->
+    <resultMap id="boardResultMap" type="kr.nomadlab.mentors.board.domain.BoardVO">
+        <id property="boardNo" column="boardNo" />
+        <result property="memberId" column="memberId" />
+        <result property="writer" column="writer" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="hit" column="hit" />
+        <result property="addDate" column="addDate" />
+        <!-- boardReply, boardLike에 대한 매핑 -->
+        <result property="replyCount" column="replyCount" />
+        <result property="likeCount" column="likeCount" />
+        <!-- HashTag에 대한 매핑 -->
+        <collection property="tagVOList" column="boardNo" ofType="kr.nomadlab.mentors.board.domain.HashTagVO"
+                    select="selectTagList" />
+    </resultMap>
+
+    <select id="selectTagList" resultType="kr.nomadlab.mentors.board.domain.HashTagVO" >
+        SELECT *
+        FROM `hashTag`
+        WHERE `boardNo` = #{boardNo}
+    </select>
+
+    <!-- 게시글 전체 조회 -->
+    <select id="selectBoardList" resultMap="boardResultMap">
+        SELECT `b`.*, COUNT(`br`.`boardNo`) AS replyCount, COUNT(`bl`.`boardNo`) AS likeCount
+        FROM `board` AS `b`
+        LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
+        LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
+        <include refid="search"/>
+        GROUP BY `b`.`boardNo`
+        ORDER BY
+        <!-- 정렬 조건 -->
+        <choose>
+            <when test="order == 'reply'">replyCount</when>
+            <when test="order == 'like'">likeCount</when>
+            <!-- 추가적인 컬럼이 있으면 위와 같이 추가 -->
+            <otherwise>b.boardNo</otherwise>
+        </choose>
+        <!-- 여기까지 -->
+        DESC LIMIT #{skip}, #{size}
+    </select>
+
+    <sql id="search">
+        <where>
+            <if test="types != null and types.length > 0">
+                <foreach collection="types" item="type" open="(" close=")" separator=" OR">
+                    <if test="type == 't'.toString()">
+                        `b`.`title` like concat('%', #{keyword}, '%')
+                    </if>
+                    <if test="type == 'w'.toString()">
+                        `b`.`writer` like concat('%', #{keyword}, '%')
+                    </if>
+                    <if test="type == 'c'.toString()">
+                        `b`.`content` like concat('%', #{keyword}, '%')
+                    </if>
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
     <!-- 게시글 등록 -->
     <insert id="insertBoard">
-        INSERT INTO `board`(`boardNo`, `memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
-        VALUES (#{boardNo}, #{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
+        INSERT INTO `board` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
+        VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
     </insert>
+
+    <!-- 태그 등록 -->
+    <insert id="insertTag">
+        INSERT INTO `hashTag` (`boardNo`, `tagName`) VALUES (#{boardNo}, #{tagName})
+    </insert>
+
+    <delete id="deleteTag">
+        DELETE FROM `hashTag` WHERE `htNo` = #{htNo}
+    </delete>
 
     <!-- 게시글 수정 -->
     <update id="updateBoard">
@@ -35,62 +105,24 @@
     </select>
 
     <!-- 게시글 좋아요 추가 -->
-    <insert id="insertLike">
+    <insert id="insertLike" parameterType="kr.nomadlab.mentors.board.domain.BoardLikeVO" useGeneratedKeys="true" keyProperty="blNo">
         INSERT INTO `boardLike`(`boardNo`, `mno`) VALUES (#{boardNo}, #{mno})
     </insert>
+
+    <!-- 게시글 좋아요 삭제 -->
+    <delete id="deleteLike">
+        delete from `boardLike` where `blNo` = #{blNo}
+    </delete>
 
     <!-- 좋아요 조회 -->
     <select id="selectLikeList" resultType="kr.nomadlab.mentors.board.domain.BoardLikeVO">
         SELECT * FROM `boardLike` WHERE `boardNo` = #{boardNo}
     </select>
 
-    <!-- 게시글 전체 조회 -->
-    <select id="selectBoardList" resultType="kr.nomadlab.mentors.board.domain.BoardVO">
-        SELECT `b`.*, COUNT(`br`.`boardNo`) AS replyCount, COUNT(`bl`.`boardNo`) AS likeCount
-        FROM `board` AS `b`
-        LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
-        LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
-        <include refid="search"/>
-        GROUP BY `b`.`boardNo`
-        ORDER BY
-            <!-- 정렬 조건 -->
-            <choose>
-                <when test="order == 'reply'">`replyCount`</when>
-                <when test="order == 'like'">`likeCount`</when>
-                <!-- 추가적인 컬럼이 있으면 위와 같이 추가 -->
-                <otherwise>`boardNo`</otherwise>
-            </choose>
-            <!-- 여기까지 -->
-        DESC LIMIT #{skip}, #{size}
-    </select>
-
-    <sql id="search">
-        <where>
-            <if test="types != null and types.length > 0">
-                <foreach collection="types" item="type" open="(" close=")" separator=" OR">
-                    <if test="type == 't'.toString()">
-                        `b`.`title` like concat('%', #{keyword}, '%')
-                    </if>
-                    <if test="type == 'w'.toString()">
-                        `b`.`writer` like concat('%', #{keyword}, '%')
-                    </if>
-                    <if test="type == 'c'.toString()">
-                        `b`.`content` like concat('%', #{keyword}, '%')
-                    </if>
-                </foreach>
-            </if>
-        </where>
-    </sql>
-
     <!--게시물 갯수-->
     <select id="getCount" resultType="int">
         select count(*) from `board` as `b`
         <include refid="search" />
-    </select>
-
-    <!--myPage 유저가 쓴 게시글-->
-    <select id="myPage" resultType="kr.nomadlab.mentors.board.domain.BoardVO">
-        select title, content, hit, addDate, boardNo from board where memberId = #{memberId}
     </select>
 
 </mapper>

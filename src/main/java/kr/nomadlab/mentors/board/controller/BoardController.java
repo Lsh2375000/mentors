@@ -1,6 +1,7 @@
 package kr.nomadlab.mentors.board.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.nomadlab.mentors.board.dto.BoardDTO;
 import kr.nomadlab.mentors.board.service.BoardService;
@@ -43,14 +44,9 @@ public class BoardController {
     public String registerPOST(BoardDTO boardDTO){ // 게시글 등록
         log.info("/board/register(POST)...");
         log.info(boardDTO);
-        boardDTO.setMemberId("testId");
+        log.info(boardDTO.getTagList());
 
-        // file (현재는 임시폴더 Temporary 위치에 저장됨)를 읽어서, 원하는 위치(디렉토리)에 저장(파일 복사)
-        // +@ 디렉토리권한, 파일권한 나(owner) 7, 그룹(group) 7, 다른사람(guest/browser) 5
-             /* 데이터가 저장된 후에 이미지 파일 이동*/
-        //List<String> fileName = Collections.singletonList(boardDTO.getFileNames());
-//        String fileNames = boardDTO.getFileNames();
-//        moveFile(fileNames); //tmp에 있는 s_로 시작하는 파일을 찾는다.
+        boardDTO.setMemberId("testId");
         
         boardService.registerBoard(boardDTO);
 

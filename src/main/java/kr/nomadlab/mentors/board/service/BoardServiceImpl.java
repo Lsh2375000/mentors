@@ -2,8 +2,10 @@ package kr.nomadlab.mentors.board.service;
 
 import kr.nomadlab.mentors.board.domain.BoardLikeVO;
 import kr.nomadlab.mentors.board.domain.BoardVO;
+import kr.nomadlab.mentors.board.domain.HashTagVO;
 import kr.nomadlab.mentors.board.dto.BoardDTO;
 import kr.nomadlab.mentors.board.dto.BoardLikeDTO;
+import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.board.mapper.BoardMapper;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
@@ -30,6 +32,12 @@ public class BoardServiceImpl implements BoardService {
         log.info(boardDTO);
 
         BoardVO boardVO = modelMapper.map(boardDTO, BoardVO.class);
+
+        if (boardDTO.getTagList().size() > 0) { // 태그 목록이 존재하는 경우
+            List<HashTagDTO> tagList = boardDTO.getTagList();
+            tagList.forEach(this::addHashTag); // DB에 태그 저장
+        }
+
         boardMapper.insertBoard(boardVO);
     }
 
@@ -77,17 +85,28 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void addLike(BoardLikeDTO boardLikeDTO) { // 게시글 좋아요 추가
+    public Long addLike(BoardLikeDTO boardLikeDTO) { // 게시글 좋아요 추가
         BoardLikeVO boardLikeVO = modelMapper.map(boardLikeDTO, BoardLikeVO.class);
         boardMapper.insertLike(boardLikeVO);
+
+        return boardLikeVO.getBlNo();
     }
 
-//    @Override
-//    public List<BoardDTO> myPage(String mid) {
-//        List<BoardVO> boardVOS = boardMapper.myPage(mid);
-//        List<BoardDTO> boardDTOList = new ArrayList<>();
-//        boardVOS.forEach(boardVO -> boardDTOList.add(modelMapper.map(boardVO, BoardDTO.class)));
-//        return boardDTOList;
-//    }
+    @Override
+    public Boolean removeLike(Long blNo) { // 게시글 좋아요 삭제
+        Boolean result = boardMapper.deleteLike(blNo);
+        return result;
+    }
+
+    @Override
+    public void addHashTag(HashTagDTO hashTagDTO) { // 해쉬태그 추가
+        HashTagVO hashTagVO = modelMapper.map(hashTagDTO, HashTagVO.class);
+        boardMapper.insertTag(hashTagVO);
+    }
+
+    @Override
+    public void removeHashTag(Long htNo) { // 해쉬태그 삭제
+        boardMapper.deleteTag(htNo);
+    }
 
 }

@@ -3,6 +3,8 @@ package kr.nomadlab.mentors.board.domain;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -18,5 +20,7 @@ public class BoardVO {
     private Long hit; // 게시글 조회수
     private LocalDateTime addDate; // 게시글 등록 날짜
     private Long replyCount; // 게시글 댓글 수
-    private Long likeCount; // 좋아요 수
+    private Long likeCount; // 게시글 좋아요 수
+
+    private List<HashTagVO> tagVOList = new ArrayList<>(); // 게시글 해쉬태그 목록
 } 
