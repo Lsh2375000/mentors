@@ -127,6 +127,7 @@
                 <!--        로그인한 사람 정보를 value로-->
                 <input type="hidden" name="mno" th:value="${#authentication.principal.getMno()}">
                 <input type="hidden" name="nickName" th:value="${#authentication.principal.getNickname()}">
+                <input type="hidden" name="score">
                 <!--        끝-->
                 <div class="paidFree">
                         <div>
@@ -202,6 +203,10 @@
                                         <option value="시니어 (9년이상)">시니어 (9년이상)</option>
                                         <option value="Lead 레벨">Lead 레벨</option>
                                 </select>
+                        </div>
+                        <div class="maxPeople mt-3 d-flex gap-2">
+                                <label for="maxPeople">최대 인원수</label>
+                                <input id="maxPeople" type="number" min="1" max="8" value="1">명
                         </div>
                 </div>
                 <div class="introduce mt-3">

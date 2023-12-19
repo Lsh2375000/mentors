@@ -370,7 +370,10 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <p>멘토링 : <img src="/img/basic/비타민.png" width="25px" height="25px"><span class="modalPrice"></span> 개</p>
-                        <button type="button" class="enrollBtn">신청하기</button>
+<!--                        본인 글이거나 멘토는 신청하기 안보임-->
+                        <div class="enrollBtnDiv">
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -388,9 +391,10 @@
     const modalCareer = document.querySelector('.modalCareer');
     const modalIntroduce = document.querySelector('.modalIntroduce');
     const modalPrice = document.querySelector('.modalPrice');
+    const enrollBtnDiv = document.querySelector('.enrollBtnDiv');
 
-    const enrollBtn = document.querySelector('.enrollBtn');
-
+    const auth = [[${#authentication.principal}]];
+    console.log("현재 사용자는 ? " , auth )
     // 게시물 정보 가져오기
     async function getBoard(mbNo){
         const response = await axios.get(`/main/${mbNo}`);
@@ -411,12 +415,16 @@
             modalCareer.innerHTML = `${data.career}`;
             modalIntroduce.innerHTML = `${data.content}`;
             modalPrice.innerHTML = `${data.price}`;
+            if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
+                console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
+                enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+            }
         })
 
         contentModal.show();
 
         //등록버튼 클릭시 알림 보내기
-        enrollBtn.addEventListener('click', function() {
+        enrollBtnDiv.addEventListener('click', function() {
             let messageObj ={
                 receiverMno : modalDataMno,
                 types : "mentoring",

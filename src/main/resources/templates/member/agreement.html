@@ -430,8 +430,8 @@
                         </section>
 
                         <div class="btn_confirm">
-                            <a href="/member/menteeRegister" class="btn_cancel btnInput" id="btn_mentee" disabled>멘티 회원가입</a>
-                            <a href="/member/mentorRegister" class="btn_submit btnInput" id="btn_mentor" disabled>멘토 회원가입</a>
+                            <a href="/member/menteeRegister" class="btn_submit btnInput" id="btn_mentee" disabled>멘티 회원가입</a>
+                            <a href="/" class="btn_cancel btnInput" id="btn_cancel">최소</a>
                         </div>
                     </div>
             </div>
@@ -447,12 +447,10 @@
         // 모두선택
 
         document.querySelector("input[name=chk_all]").addEventListener("click", function () {
-            const btn_mentor = document.getElementById('btn_mentor');
             const btn_mentee = document.getElementById('btn_mentee');
             if (this.checked) {
                 document.querySelectorAll("input[name^=agree]").forEach(function (e) {
                     e.checked = true;
-                    btn_mentor.disabled = false;
                     btn_mentee.disabled = false;
                 });
             } else {
@@ -462,7 +460,7 @@
             }
         });
         // a태그 작동 방지
-        document.querySelectorAll('.btnInput').forEach(button => {
+        document.getElementById('.btnInput').forEach(button => {
             button.addEventListener('click', function (e) {
                 const checked1 = document.getElementById('agree11');
                 const checked2 = document.getElementById('agree21');
@@ -477,7 +475,6 @@
                     e.preventDefault();
                     e.stopPropagation();
                     return;
-
                 } else if (!checked1.checked || !checked2.checked) {
                     alert('회원약관 필수동의 해주세요.');
                     e.preventDefault();

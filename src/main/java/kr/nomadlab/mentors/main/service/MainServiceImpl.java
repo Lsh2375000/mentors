@@ -77,4 +77,30 @@ public class MainServiceImpl implements MainService{
     public void removeOne(Long mbNo) { // 삭제
         mainMapper.deleteOne(mbNo);
     }
+
+    @Override
+    public PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno) {
+
+        List<MainVO> voList = mainMapper.myPageList(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), mno);
+
+        List<MainDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(mainVO -> {
+            MainDTO mainDTO = modelMapper.map(mainVO, MainDTO.class);
+            dtoList.add(mainDTO);
+        });
+
+        int total = mainMapper.getCount(pageRequestDTO);
+
+        PageResponseDTO<MainDTO> responseDTO = PageResponseDTO.<MainDTO>withAll()
+                .dtoList(dtoList)
+                .total(total)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+        return responseDTO;
+    }
+
+
+
+
 }
