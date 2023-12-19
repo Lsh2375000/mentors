@@ -389,15 +389,21 @@
     const modalIntroduce = document.querySelector('.modalIntroduce');
     const modalPrice = document.querySelector('.modalPrice');
 
+    const enrollBtn = document.querySelector('.enrollBtn');
+
     // 게시물 정보 가져오기
     async function getBoard(mbNo){
         const response = await axios.get(`/main/${mbNo}`);
         console.log("response");
         return response.data;
     }
+
     // 모달창
     function modalBtn(mbNo){
+        let modalDataMno = null;
+
         getBoard(mbNo).then(data => {
+            modalDataMno = data.mno;
             console.log(data);
             modalNickName.innerHTML = `${data.nickName}`;
             modalTitle.innerHTML = `${data.title}`;
@@ -408,6 +414,23 @@
         })
 
         contentModal.show();
+
+        //등록버튼 클릭시 알림 보내기
+        enrollBtn.addEventListener('click', function() {
+            let messageObj ={
+                receiverMno : modalDataMno,
+                types : "mentoring",
+            }
+            passMessage(messageObj).then(data => {
+                alert(data)
+            })
+        })
+    }
+
+    //상대방에게 알림 전달
+    async function passMessage(messageObj) {
+        const result = await axios.post(`/notify/repository`,messageObj);
+        return result.data;
     }
 
     // 리셋 버튼

@@ -26,6 +26,15 @@ public class NotifyController {
 
         return ResponseEntity.ok("Request processed successfully");
     }
+    //알림 메세지 보내기
+    @PostMapping("/repository")
+    public ResponseEntity<String> passNotify(@AuthenticationPrincipal MemberSecurityDTO member, @RequestBody NotifyDto notifyDto){
+        log.info("this is repository/passNotify");
+        notifyService.passNotify(notifyDto.getTypes(), notifyDto.getReceiverMno(), member.getNickname());
+
+        return ResponseEntity.ok("Request passMessage successfully");
+    }
+
 
     @GetMapping("/count")
     public int countNotify(@AuthenticationPrincipal MemberSecurityDTO member){

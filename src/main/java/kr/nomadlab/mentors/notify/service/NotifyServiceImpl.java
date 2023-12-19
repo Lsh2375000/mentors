@@ -55,4 +55,19 @@ public class NotifyServiceImpl implements NotifyService{
         });
         return notifyDtoList;
     }
+
+    @Override
+    public void passNotify(String types, Long receiverMno, String nickName) {
+        String message = null;
+
+        if(types.equals("mentoring")){
+            message = nickName + "님이 멘토링을 신청하셨습니다.";
+        }
+        NotifyVO notifyVO = NotifyVO.builder()
+                .receiverMno(receiverMno)
+                .types(types)
+                .content(message)
+                .build();
+        notifyMapper.addNotify(notifyVO);
+    }
 }
