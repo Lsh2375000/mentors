@@ -22,8 +22,6 @@ public class PaymentDto {
     private String createdAt;
     private String approveAt;
     private String failReason;
-    private String cancelReason;
     private boolean paySuccessYN;
     private boolean payFailYN;
-    private boolean cancelYN;
 }

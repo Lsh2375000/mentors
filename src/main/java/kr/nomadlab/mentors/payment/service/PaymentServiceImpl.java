@@ -4,6 +4,7 @@ import kr.nomadlab.mentors.exception.CustomLogicException;
 import kr.nomadlab.mentors.exception.ExceptionCode;
 import kr.nomadlab.mentors.member.dto.MemberDTO;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
+import kr.nomadlab.mentors.member.mapper.MemberMapper;
 import kr.nomadlab.mentors.payment.config.TossPaymentConfig;
 import kr.nomadlab.mentors.payment.dto.PaymentDto;
 import kr.nomadlab.mentors.payment.dto.PaymentFailDto;
@@ -32,8 +33,8 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService{
     private final ModelMapper modelMapper;
     private final PaymentMapper paymentMapper;
-
     private final TossPaymentConfig tossPaymentConfig;
+    private final MemberMapper memberMapper;
 
     @Override
     public PaymentDto paymentReqRegister(MemberSecurityDTO memberSecurityDTO, PaymentPAO paymentPAO) {
@@ -64,6 +65,9 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
         paymentDto.setPaymentKey(paymentKey);
         paymentDto.setPaySuccessYN(true);
+        Long mno = paymentVO.getMno();
+        int coin = (int)((amount)/1000);
+        memberMapper.updateCoin(mno,coin);
 
         //성공시 DB업데이트
         PaymentVO paymentVOUp = modelMapper.map(paymentDto, PaymentVO.class);
@@ -78,23 +82,31 @@ public class PaymentServiceImpl implements PaymentService{
     @Override
     public PaymentFailDto tossPaymentFail(String code, String message, String orderId) {
         log.info("----------------"+message);
-        if(!message.equals("Payment already approved")) {
-            PaymentVO paymentVO = paymentMapper.findByOrderId(orderId);
-            if (paymentVO == null) {
-                throw new CustomLogicException(ExceptionCode.PAYMENT_NOT_FOUND);
-            }
-            PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
-            paymentDto.setFailReason(message);
-            paymentDto.setPaySuccessYN(false);
-            PaymentVO resultPaymentVO = modelMapper.map(paymentDto, PaymentVO.class);
+        PaymentVO paymentVO = paymentMapper.findByOrderId(orderId);
 
-            paymentMapper.update(resultPaymentVO);
+        PaymentFailDto paymentFailDto = null;
+        if (paymentVO == null) {
+            paymentFailDto = PaymentFailDto.builder()
+                    .errorCode("PAYMENT_NOT_FOUND")
+                    .errorMessage("결제내역을 찾을 수 없습니다.")
+                    .orderId(orderId).build();
         }
+        else {
+            if(!paymentVO.isPaySuccessYN()) {
+                PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
+                paymentDto.setFailReason(message);
+                paymentDto.setPaySuccessYN(false);
+                paymentDto.setPayFailYN(true);
+                PaymentVO resultPaymentVO = modelMapper.map(paymentDto, PaymentVO.class);
 
-        PaymentFailDto paymentFailDto = PaymentFailDto.builder()
-                .errorCode(code)
-                .errorMessage(message)
-                .orderId(orderId).build();
+                paymentMapper.update(resultPaymentVO);
+            }
+
+            paymentFailDto = PaymentFailDto.builder()
+                    .errorCode(code)
+                    .errorMessage(message)
+                    .orderId(orderId).build();
+        }
 
         return paymentFailDto;
     }
