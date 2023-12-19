@@ -107,11 +107,19 @@ public class MyPageController {
         model.addAttribute("mainList", mainList);
     }
 
-    @GetMapping("/mainList/remove")
+    @GetMapping("/mainList/remove") // 내가 작성한 멘토링 삭제
     public String removeMain(Long mbNo){
         mainService.removeOne(mbNo);
 
         return "redirect:/mypage/mainList";
+    }
+
+    @GetMapping("/mainList/modify") // 내가 작성한 멘토링 수정
+    public String modifyMain(Long mbNo){
+        MainDTO mainDTO = mainService.getBoard(mbNo);
+        mainService.modifyBoard(mainDTO);
+
+        return "/mypage/mainModify";
     }
 
 
