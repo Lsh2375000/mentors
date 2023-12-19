@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 public class MainVO {
     private Long mbNo; // 메인게시물 번호
-    private Long mNo; // 회원번호(멘토)
+    private Long mno; // 회원번호(멘토)
     private String paidFree; // 무료인지 유료인지
     private String nickName; // 멘토닉네임
     private String devLanguage; // 멘토 전공언어
@@ -24,5 +24,5 @@ public class MainVO {
     private LocalDate endDate; // 수업 종료일
     private LocalDateTime addDate; // 등록일
     private double score; // 수강평점수
-    private String price; // 가격
+    private int price; // 가격
 }

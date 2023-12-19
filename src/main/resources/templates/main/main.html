@@ -14,6 +14,8 @@
     }
     .banner{
         background-color: #0dcaf0;
+        margin-top: 148px;
+        height: 200px;
     }
     .fa-crown{
         font-size: 50px;
@@ -25,10 +27,14 @@
     a:hover{
         color: inherit;
     }
+    .title{
+        height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     .writeBtn{
-        position: fixed;
-        right: 0.5%;
-        top: 50%;
+        position: absolute;
+        right: 1.7%;
         color: whitesmoke;
         height: 40px;
         border-radius: 5px;
@@ -121,15 +127,22 @@
     .card-body:hover{
         transform: translate(-5px, -5px);
     }
+    .card_job{
+        width: 200px;
+    }
+    .card_job span{
+        background-color: rgba(10,190,148,0.5);
+        height: 25px;
+    }
     .card-bottom{
         margin-top: 12px;
         padding-top: 12px;
     }
     .card_nickName{
-        color: #e9ebee;
+        border-bottom: 1px solid black;
     }
     .card_score{
-        background-color: rgba(255,210,77,.2);
+        background-color: rgba(255,210,77,.5);
         color: red;
     }
     .modal-content{
@@ -157,6 +170,10 @@
         border-color: #00c471;
         background-color: #00c471;
         font-weight: 700;
+    }
+    .enrollBtn:hover{
+        background-color: #00884FFF;
+        border-color: #00884FFF;
     }
 </style>
 <body>
@@ -272,13 +289,13 @@
                 <div class="card-body" th:each="mainList:${mainList.dtoList}">
                     <a th:onclick="|modalBtn(${mainList.mbNo})|">
                         <div class="card-top">
-                            <h3 th:text="${mainList.title}"></h3> <br>
+                            <h3 class="title" th:text="${mainList.title}"></h3> <br>
                             <div class="card_job">
-                                <div class="d-flex">
+                                <div class="d-flex gap-2">
                                     <span>직무</span>
                                     <p>[[${mainList.position}]]</p>
                                 </div>
-                                <div class="d-flex">
+                                <div class="d-flex gap-2">
                                     <span>경력</span>
                                     <p>[[${mainList.career}]]</p>
                                 </div>
@@ -349,7 +366,7 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
-                        <p>멘토링 : <span class="modalPrice"></span></p>
+                        <p>멘토링 : <img src="/img/basic/비타민.png" width="25px" height="25px"><span class="modalPrice"></span> 개</p>
                         <button type="button" class="enrollBtn">신청하기</button>
                     </div>
                 </div>
@@ -383,7 +400,7 @@
             modalTitle.innerHTML = `${data.title}`;
             modalPosition.innerHTML = `${data.position}`;
             modalCareer.innerHTML = `${data.career}`;
-            modalIntroduce.innerHTML = `${data.introduce}`;
+            modalIntroduce.innerHTML = `${data.content}`;
             modalPrice.innerHTML = `${data.price}`;
         })
 

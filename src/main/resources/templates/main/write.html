@@ -126,11 +126,11 @@
         <form action="/main/write" name="writeFrm" method="post" enctype="multipart/form-data">
                 <!--        로그인한 사람 정보를 value로-->
                 <input type="hidden" name="mno" th:value="${#authentication.principal.getMno()}">
-                <input type="hidden" name="nickName" th:value="${#authentication.principal.getNickName()}">
+                <input type="hidden" name="nickName" th:value="${#authentication.principal.getNickname()}">
                 <!--        끝-->
                 <div class="paidFree">
                         <div>
-                                <th:block th:if="${mentoringCnt > 5}">
+                                <th:block th:if="${mentoringCnt >= 5}">
                                         <input type="radio" name="paidFree" value="paid">유료강의
                                 </th:block>
                         </div>
