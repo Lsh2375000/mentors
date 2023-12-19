@@ -23,13 +23,16 @@
 
     <select id="selectTagList" resultType="kr.nomadlab.mentors.board.domain.HashTagVO" >
         SELECT *
-        FROM `hashTag`
-        WHERE `boardNo` = #{boardNo}
+        FROM `hashTag` AS `ht`
+        WHERE `ht`.`boardNo` = #{boardNo}
     </select>
 
     <!-- 게시글 전체 조회 -->
     <select id="selectBoardList" resultMap="boardResultMap">
-        SELECT `b`.*, COUNT(`br`.`boardNo`) AS replyCount, COUNT(`bl`.`boardNo`) AS likeCount
+        SELECT
+        `b`.*,
+        COUNT(DISTINCT `br`.`rno`) AS replyCount,
+        COUNT(DISTINCT `bl`.`blNo`) AS likeCount
         FROM `board` AS `b`
         LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
         LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
@@ -66,7 +69,7 @@
     </sql>
 
     <!-- 게시글 등록 -->
-    <insert id="insertBoard">
+    <insert id="insertBoard" parameterType="kr.nomadlab.mentors.board.domain.BoardVO" useGeneratedKeys="true" keyProperty="boardNo">
         INSERT INTO `board` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
         VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
     </insert>

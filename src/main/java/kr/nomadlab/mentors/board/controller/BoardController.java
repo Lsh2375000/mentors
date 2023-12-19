@@ -1,9 +1,9 @@
 package kr.nomadlab.mentors.board.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.nomadlab.mentors.board.dto.BoardDTO;
+import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.board.service.BoardService;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
@@ -12,11 +12,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Controller
@@ -30,6 +31,7 @@ public class BoardController {
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model){ // 게시글 전체 목록 페이지
         log.info("/board/list(GET)...");
+        log.info("keyword: " + pageRequestDTO.getKeyword());
         PageResponseDTO<BoardDTO> pageResponseDTO = boardService.getBoardList(pageRequestDTO);
         model.addAttribute("responseDTO", pageResponseDTO);
     }
@@ -41,10 +43,20 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-    public String registerPOST(BoardDTO boardDTO){ // 게시글 등록
+    public String registerPOST(BoardDTO boardDTO, @RequestParam("hashTags") String[] hashTags){ // 게시글 등록
         log.info("/board/register(POST)...");
         log.info(boardDTO);
-        log.info(boardDTO.getTagList());
+
+        if (hashTags != null) { // 태그가 존재할 경우
+            log.info("Hash Tags: " + Arrays.toString(hashTags));
+            List<HashTagDTO> tagList = new ArrayList<>();
+            Arrays.asList(hashTags).forEach(tag -> tagList.add(HashTagDTO.builder()
+                    .tagName(tag)
+                    .build()));
+            boardDTO.setTagList(tagList);
+        } else {
+            log.info("No Hash Tags provided.");
+        }
 
         boardDTO.setMemberId("testId");
         

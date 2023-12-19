@@ -365,6 +365,7 @@
     }
     // 모달창
     function modalBtn(mbNo){
+
         getBoard(mbNo).then(data => {
             console.log(data);
             modalNickName.innerHTML = `${data.nickName}`;

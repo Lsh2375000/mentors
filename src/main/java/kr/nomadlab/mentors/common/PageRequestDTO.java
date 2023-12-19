@@ -18,10 +18,10 @@ import java.util.List;
 public class PageRequestDTO {
 
     @Builder.Default
-    private int page=1;
+    private int page = 1;
 
     @Builder.Default
-    private int size=10;
+    private int size = 10;
 
     @Builder.Default
     private String order = "new"; // 정렬 기준 컬럼
@@ -40,7 +40,7 @@ public class PageRequestDTO {
     private String paidFree = "all"; // 무료유료기준
 
     public String[] getTypes() { // 검색
-        if(this.type==null || type.isEmpty()) {
+        if(this.type == null || type.isEmpty()) {
             return null;
         }
         return this.type.split("");

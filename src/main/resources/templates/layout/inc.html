@@ -12,7 +12,7 @@
   <link th:href="@{/css/styles.css}" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   <script th:src="@{/js/scripts.js}"></script>
-  <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+<!--  <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>-->
 
 </head>
 <body>
@@ -40,19 +40,20 @@
         </th:block>
         <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getMpw() != '1111'}"><!-- 회원 로그인 -->
           <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/logout">로그아웃</a></li>
-          <th:block sec:authorize="hasRole('ROLE_MENTOR')"> <!--멘토 로그인시-->
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage/mentor">마이페이지</a></li>
-          </th:block>
-          <th:block sec:authorize="hasRole('ROLE_MENTEE')"> <!--멘티 로그인시-->
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage/mentee">마이페이지</a></li>
-          </th:block>
+<!--          <th:block sec:authorize="hasRole('ROLE_MENTOR')"> &lt;!&ndash;멘토 로그인시&ndash;&gt;-->
+<!--            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage/mentor">마이페이지</a></li>-->
+<!--          </th:block>-->
+<!--          <th:block sec:authorize="hasRole('ROLE_MENTEE')"> &lt;!&ndash;멘티 로그인시&ndash;&gt;-->
+<!--            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage/mentee">마이페이지</a></li>-->
+<!--          </th:block>-->
         </th:block>
       </ul>
     </div>
   </div>
 </nav>
 
-<div class="banner" layout:fragment="banner" style="margin-top: 148px; height: 200px">
+<div class="banner" layout:fragment="banner"
+>
 
 </div>
 <div class="container" layout:fragment="content">
