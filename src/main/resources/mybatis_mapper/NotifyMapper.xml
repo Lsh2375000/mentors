@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.notify.mapper.NotifyMapper">
+    <insert id="addNotify">
+        INSERT INTO `notify` (receiverMno, content, isRead, sendDate)
+        values (#{receiverMno}, #{content}, #{isRead}, now())
+    </insert>
+    <select id="countNotify" resultType="int">
+        select count(*) from `notify` where receiverMno=#{mno} and isRead=false
+    </select>
+    <update id="readNotify">
+        update `notify` set isRead=true where receiverMno=#{mno}
+    </update>
+    <select id="getNotReadNotify" resultType="kr.nomadlab.mentors.notify.vo.NotifyVO">
+        select * from `notify` where receiverMno=#{mno} and isRead=false order by sendDate desc
+    </select>
+</mapper>
