@@ -95,8 +95,8 @@
 
     <!--    게시물 등록-->
     <insert id="insert">
-        insert into `main` (mno, paidFree, nickName, devLanguage, title, position, career, content, startDate, endDate, addDate, price)
-        values (#{mno}, #{paidFree}, #{nickName}, #{devLanguage}, #{title}, #{position}, #{career}, #{content}, #{startDate}, #{endDate}, now(), #{price})
+        insert into `main` (mno, paidFree, nickName, devLanguage, title, position, career, content, startDate, endDate, addDate, price, maxPeople)
+        values (#{mno}, #{paidFree}, #{nickName}, #{devLanguage}, #{title}, #{position}, #{career}, #{content}, #{startDate}, #{endDate}, now(), #{price}, #{maxPeople})
     </insert>
 <!--    총 게시물 수-->
     <select id="getCount" resultType="int">

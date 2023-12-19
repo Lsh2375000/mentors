@@ -25,4 +25,6 @@ public class MainVO {
     private LocalDateTime addDate; // 등록일
     private double score; // 수강평점수
     private int price; // 가격
+    private int maxPeople; // 최대인원수
+    private int curPeople; // 현재 인원수
 }
