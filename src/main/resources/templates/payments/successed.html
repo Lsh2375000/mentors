@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
+  <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="wrapper w-100">
+    <div class="flex-column align-center w-100 max-w-540">
+      <img src="https://static.toss.im/lotties/error-spot-no-loop-space-apng.png" width="160" height="160"></img>
+      <h2 class="title">이미 완료된 주문입니다.</h2>
+      <div class="response-section w-100">
+        <div class="flex justify-between">
+          <span class="response-label">주문번호</span>
+          <span id="error-code" class="response-text">[[${paymentFail.orderId}]]</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="response-label">message</span>
+          <span id="error-message" class="response-text">[[${paymentFail.errorMessage}]]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

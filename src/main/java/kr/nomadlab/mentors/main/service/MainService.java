@@ -4,6 +4,7 @@ package kr.nomadlab.mentors.main.service;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.dto.MainDTO;
+import org.apache.ibatis.annotations.Param;
 
 public interface MainService {
     // 게시판 등록
@@ -20,4 +21,7 @@ public interface MainService {
     void modifyBoard(MainDTO mainDTO);
     // 게시판 삭제
     void removeOne(Long mbNo);
+
+    // 마이페이지 멘토링목록 출력
+    PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno);
 }

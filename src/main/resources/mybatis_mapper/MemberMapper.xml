@@ -57,5 +57,7 @@
         delete from `member` where `memberId` = #{memberId}
     </delete>
 
-
+    <update id="updateCoin">
+        update `member` set coin = coin+#{coin} where mno=#{mno}
+    </update>
 </mapper>

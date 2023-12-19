@@ -88,19 +88,18 @@
   .btnLightBlue.btnPush:hover {
     box-shadow: 0px 0px 0px 0px #e09f66;
   }
-
 </style>
 <body>
 <div class="d-flex" id="wrapper">
   <!-- Sidebar-->
   <div class="outerSidebar"  id="sidebar-wrapper" style="border: none;">
     <div class="sidebar-heading border-none">
-      <span class="sidebar_header">마이 페이지</span>
+      <span class="sidebar_header">프로필</span>
     </div> <!--End Sidebar Head-->
 
     <div class="list-group list-group-flush">
       <th:block sec:authorize="hasRole('ROLE_MENTOR')">
-        <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentor">멘토링 목록</a>
+        <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentor">프로필</a>
         <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/answer">내가 쓴 답변</a>
       </th:block>
       <th:block sec:authorize="hasRole('ROLE_MENTEE')">
@@ -135,6 +134,7 @@
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <th:block sec:authorize="hasRole('ROLE_MENTOR')">
                   <a class="dropdown-item" th:href="|/member/mentorModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                  <a class="dropdown-item" th:href="|/mypage/mainList|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
                 </th:block>
                 <th:block sec:authorize="hasRole('ROLE_MENTEE')">
                   <a class="dropdown-item" th:href="|/member/menteeModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>

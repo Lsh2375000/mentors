@@ -4,8 +4,10 @@ import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.dto.MainDTO;
 import kr.nomadlab.mentors.main.service.MainService;
+import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping({"/main"})
+@RequestMapping({"/main", "/"})
 @Log4j2
 @RequiredArgsConstructor
 public class MainController {
@@ -56,8 +58,8 @@ public class MainController {
 
 
     @GetMapping("/write")
-    public void write(Model model){ // 글쓰기페이지
-        Long mno = 1L;
+    public void write(Model model, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){ // 글쓰기페이지
+        Long mno = memberSecurityDTO.getMno();
         int mentoringCnt = mainService.mentoringCnt(mno);
 
         model.addAttribute("mentoringCnt", mentoringCnt);
@@ -67,7 +69,7 @@ public class MainController {
     public String write(MainDTO mainDTO){ // 글등록
         mainService.register(mainDTO);
 
-        return "/main/main";
+        return "redirect:/main";
     }
 
 

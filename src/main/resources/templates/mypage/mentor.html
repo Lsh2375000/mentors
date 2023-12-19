@@ -13,24 +13,7 @@
 </style>
 <div layout:fragment="content">
     <div class="row mt-3">
-        <div class="col">
-            <div class="card" style="width: 1000px; height: 500px;">
-                <div class="card-header">
-                    멘토링 방 목록
-                </div>
-                <div class="card-body">
-                    <div th:each="list:${mentoringList}" class="contentBox" style="width: 300px; height: 200px; border: 1px solid black; border-radius: 5px; padding: 10px; background-color: #f1f1f1">
-                        <span style="font-size: 20px; font-weight: bold;">[[${list.devLanguage}]]</span><br>
-<!--                            <span>[[${list.materials}]]</span><br>--><br>
-<!--                            <span>[[${list.rentNo}]]</span>-->
-                        <br><br><br><br><br>
-                        <span>멘토링 생성 날짜: [[${#temporals.format(list.addDate, 'yyyy-MM-dd')}]]</span><br>
-                        <a class="badge bg-primary room" href="/mentoring/mentorRoom" style="margin-top: 20px; text-decoration: none;">참여중인 멘토링 방으로 이동</a>
-                    </div>
-                    <!--                            <span th:if="${list.payment == false}"> 결제 : X</span>-->
-                </div>
-            </div>
-        </div>
+
     </div>
     <!--회원 탈퇴 모달창 form 태그-->
     <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">

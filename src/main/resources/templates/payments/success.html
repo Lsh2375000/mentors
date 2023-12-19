@@ -21,16 +21,17 @@
                     <span id="amount" class="response-text"></span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="response-label">주문번호</span>
-                    <span id="orderId" class="response-text">[[${payments.orderId}]]</span>
+                    <span class="response-label">상품명</span>
+                    <span id="paymentKey" class="response-text">[[${payments.orderName}]]</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="response-label">paymentKey</span>
-                    <span id="paymentKey" class="response-text">[[${payments.paymentKey}]]</span>
+                    <span class="response-label">주문번호</span>
+                    <span id="orderId" class="response-text">[[${payments.orderId}]]</span>
                 </div>
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </div>
 </body>
 <script layout:fragment="script" th:inline="javascript">
@@ -44,6 +45,15 @@
 
     const amountElement = document.getElementById("amount");
     amountElement.textContent = `${amount}원`;
+
+    addMessage("payments").then(data => {
+        console.log(data);
+    });
+
+    async function addMessage(types) {
+        const result = await axios.put(`/notify/repository/${types}`);
+        return result.data;
+    }
 
 </script>
 </html>
