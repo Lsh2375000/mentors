@@ -14,7 +14,6 @@
     }
     .banner{
         background-color: #0dcaf0;
-        margin-top: 148px;
         height: 200px;
     }
     .fa-crown{
@@ -175,6 +174,9 @@
         background-color: #00884FFF;
         border-color: #00884FFF;
     }
+    .pageNum{
+        cursor: pointer;
+    }
 </style>
 <body>
 <!--        멘토 랭킹 배너-->
@@ -315,7 +317,7 @@
         </div>
 <!--        메인 콘텐츠 끝-->
         <!--    페이징-->
-        <div class="page_wrap paging d-flex justify-content-center w-75 float-end mt-3">
+        <div class="page_wrap paging d-flex justify-content-end w-75 mt-3 mb-5">
             <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
                 <li class="page-item" th:if="${mainList.prev}">
                     <a class="page-link pageNum" th:data-num="${mainList.start - 1}">이전</a>
