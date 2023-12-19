@@ -72,6 +72,8 @@
     #modifyBtn{
         color: white;
         background-color: #00c471;
+        text-align: center;
+        line-height: 25px;
     }
     #modifyBtn:hover{
         background-color: #00884FFF;
@@ -114,11 +116,27 @@
                 </a>
             </div>
             <div class="d-flex justify-content-center gap-3 mt-3 mb-5">
-                <button type="button" class="myPageBtn" id="modifyBtn">수정</button>
-
+                <a th:href="@{/mypage/mainList/modify(mbNo=${mainList.mbNo})}" class="myPageBtn" id="modifyBtn">수정</a>
+                <button type="button" class="myPageBtn removeBtn" id="removeBtn" th:attr="data-mbNo=${mainList.mbNo}">삭제</button>
             </div>
         </div>
     </div>
 </div>
+<script layout:fragment="script" th:inline="javascript">
+    // 멘토링 글 삭제
+    const removeBtns = document.querySelectorAll('.removeBtn');
+
+    removeBtns.forEach(removeBtn => {
+        removeBtn.addEventListener('click', function (){
+            if (confirm("정말 삭제하시겠습니까 ? ")){
+                const mbNo = this.getAttribute('data-mbNo');
+                // 페이지 이동
+                window.location.href = '/mypage/mainList/remove?mbNo=' + mbNo;
+            }else{
+            }
+        })
+    })
+
+</script>
 </body>
 </html>
