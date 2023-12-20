@@ -25,7 +25,7 @@ public class MainController {
     private final MainService mainService;
 
     @GetMapping("")
-    public String main(Model model, PageRequestDTO pageRequestDTO) {
+    public String main(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO) {
         pageRequestDTO.setSize(20);
         PageResponseDTO<MainDTO> mainList = mainService.list(pageRequestDTO);
 
@@ -36,6 +36,13 @@ public class MainController {
         String sort = pageRequestDTO.getSort();
         List<String> language = pageRequestDTO.getLanguage();
         String paidFree = pageRequestDTO.getPaidFree();
+
+        if(memberSecurityDTO != null){
+            Long mno = memberSecurityDTO.getMno();
+            boolean isMentoring = mainService.isMentoring(mno);
+            model.addAttribute("isMentoring", isMentoring);
+            log.info("멘토링 여부 /? " + isMentoring);
+        }
 
 
         log.info("키워드 ? " + keyword);
@@ -48,7 +55,6 @@ public class MainController {
         }
 
         model.addAttribute("paidFree", paidFree);
-
         model.addAttribute("sort", sort);
         model.addAttribute("keyword", keyword);
         model.addAttribute("mainList", mainList);

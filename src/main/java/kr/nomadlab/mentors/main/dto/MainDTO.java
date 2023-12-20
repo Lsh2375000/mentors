@@ -30,4 +30,6 @@ public class MainDTO {
     private int price; // 가격
     private int maxPeople; // 최대인원수
     private int curPeople; // 현재 인원수
+
+    private int isMentoring; // 멘토가 작성한 수업이 있는지 없는지
 }

@@ -79,6 +79,18 @@ public class MainServiceImpl implements MainService{
     }
 
     @Override
+    public boolean isMentoring(Long mno) {
+        boolean isMentoring;
+
+        if(mainMapper.isMentoring(mno) == 0){
+            isMentoring = false;
+        }else{
+            isMentoring = true;
+        }
+        return isMentoring;
+    }
+
+    @Override
     public PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno) {
 
         List<MainVO> voList = mainMapper.myPageList(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), mno);

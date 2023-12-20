@@ -159,9 +159,6 @@
         color: #00c471;
         background-color: #e5f9f1;
     }
-    .card_job{
-        border-bottom: 1px solid #dee2e6;
-    }
     .enrollBtn{
         width: 90px;
         height: 40px;
@@ -207,7 +204,7 @@
     <div layout:fragment="content">
 <!--        멘토로 로그인한 사람만 보이게-->
         <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}">
-            <th:block sec:authorize="hasRole('ROLE_MENTOR')"> <!--멘토 로그인시-->
+            <th:block sec:authorize="hasRole('ROLE_MENTOR')" th:if="${isMentoring == false}"> <!--멘토 로그인시-->
                 <button type="button" class="writeBtn"><a href="/main/write">멘토링 작성</a></button>
             </th:block>
         </th:block>
@@ -350,16 +347,39 @@
                                 <a href="#" class="modalNickName"></a>
                             </div>
                             <h2 class="mt-2 modalTitle"></h2>
-                            <span class="mt-2 mentorInfo">멘토 정보</span>
-                            <div class="mt-3">
-                                <div class="card_job">
-                                    <div class="d-flex gap-2">
-                                        <span>직무</span>
-                                        <p class="modalPosition"></p>
+                            <div class="d-flex justify-content-between" style="border-bottom: 1px solid black">
+                                <div>
+                                    <span class="mt-2 mentorInfo">멘토 정보</span>
+                                    <div class="mt-3">
+                                        <div class="card_job">
+                                            <div class="d-flex gap-2">
+                                                <span>직무</span>
+                                                <p class="modalPosition"></p>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <span>경력</span>
+                                                <p class="modalCareer"></p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="d-flex gap-2">
-                                        <span>경력</span>
-                                        <p class="modalCareer"></p>
+                                </div>
+                                <div>
+                                    <span class="mt-2 mentorInfo">수업 정보</span>
+                                    <div class="mt-3">
+                                        <div class="card_job">
+                                            <div class="d-flex gap-2">
+                                                <span>강의 언어</span>
+                                                <p class="modalLanguage"></p>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <span>수업 시작일</span>
+                                                <p class="modalStartDate"></p>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <span>수업 종료일</span>
+                                                <p class="modalEndDate"></p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -369,7 +389,7 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
-                        <p>멘토링 : <img src="/img/basic/비타민.png" width="25px" height="25px"><span class="modalPrice"></span> 개</p>
+                        <p>비타민 : <img src="/img/basic/비타민.png" width="25px" height="25px"><span class="modalPrice"></span> 개</p>
 <!--                        본인 글이거나 멘토는 신청하기 안보임-->
                         <div class="enrollBtnDiv">
 
@@ -391,6 +411,9 @@
     const modalCareer = document.querySelector('.modalCareer');
     const modalIntroduce = document.querySelector('.modalIntroduce');
     const modalPrice = document.querySelector('.modalPrice');
+    const modalLanguage = document.querySelector('.modalLanguage');
+    const modalStartDate = document.querySelector('.modalStartDate');
+    const modalEndDate = document.querySelector('.modalEndDate');
     const enrollBtnDiv = document.querySelector('.enrollBtnDiv');
 
     const auth = [[${#authentication.principal}]];
@@ -411,9 +434,17 @@
             modalCareer.innerHTML = `${data.career}`;
             modalIntroduce.innerHTML = `${data.content}`;
             modalPrice.innerHTML = `${data.price}`;
+            modalLanguage.innerHTML = `${data.devLanguage}`;
+            modalStartDate.innerHTML = `${data.startDate}`;
+            modalEndDate.innerHTML = `${data.endDate}`;
             if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
                 console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
-                enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                // 만석이면 disabled 적용
+                if(data.curPeople === data.maxPeople){
+                    enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn" style="background-color: #555555; border: none;" disabled><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                }else{
+                    enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                }
             }
         })
         contentModal.show();

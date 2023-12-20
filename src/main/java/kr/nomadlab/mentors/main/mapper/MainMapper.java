@@ -22,5 +22,9 @@ public interface MainMapper {
     void updateOne(MainVO mainVO); // 게시물 수정
     void deleteOne(Long mbNo); // 게시물 삭제
     
+    int isMentoring(Long mno); // 멘토 본인이 작성한 글이 있는지
+    
+    
+    
     List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 마이페이지 멘토링 목록 리스트 출력
 }

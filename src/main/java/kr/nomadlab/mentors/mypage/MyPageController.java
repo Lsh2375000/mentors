@@ -114,11 +114,14 @@ public class MyPageController {
         return "redirect:/mypage/mainList";
     }
 
-    @GetMapping("/mainList/modify") // 내가 작성한 멘토링 수정
-    public String modifyMain(Long mbNo){
+    @GetMapping("/mainList/modify") // 내가 작성한 멘토링 수정페이지
+    public String modifyMain(Model model, Long mbNo, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
         MainDTO mainDTO = mainService.getBoard(mbNo);
-        mainService.modifyBoard(mainDTO);
+        Long mno = memberSecurityDTO.getMno();
+        int mentoringCnt = mainService.mentoringCnt(mno);
 
+        model.addAttribute("mentoringCnt", mentoringCnt);
+        model.addAttribute("mainDTO", mainDTO);
         return "/mypage/mainModify";
     }
 
