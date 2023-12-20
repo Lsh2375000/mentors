@@ -4,37 +4,27 @@
       layout:decorate="~{layout/myPageInc.html}">
 <head>
     <meta charset="UTF-8">
-    <title>My Write</title>
+    <title>멘티 마이페이지</title>
 </head>
+
 <style layout:fragment="style">
     .col {
         font-family: 'Orbit', sans-serif;
     }
-    span.boardContent {
-        display: block;
-        margin-bottom: 10px;
-    }
 </style>
+
 <div layout:fragment="content">
     <div class="row mt-3">
         <div class="col">
             <div class="card" style="width: 1000px; height: 500px;">
                 <div class="card-header">
-                    내가 쓴 글
+                    프로필
                 </div>
                 <div class="card-body">
-                    <div th:each="list:${boardList}" class="contentBox" style="width: 300px; height: 200px; border: 1px solid black; border-radius: 5px; padding: 10px; background-color: #f1f1f1">
-                        <span class="boardContent">게시글 제목 : [[${list.title}]]</span><br>
-                        <span class="boardContent">게시글 내용 : [[${list.content}]]</span><br>
-                        <span class="boardContent">작성 날짜 : [[${#temporals.format(list.addDate, 'yyyy-MM-dd')}]]</span><br>
-                        <span class="boardContent">조회수 : [[${list.hit}]]</span><br>
-<!--                        <a class="badge bg-primary boardContent" th:href="|/board/view?boardNo=[[${boardNo}]]|" style="text-decoration: none;">게시글로 이동</a>-->
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <!--회원 탈퇴 모달창 form 태그-->
     <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">
         <div class="modal" id="qmpwModal" tabindex="-1">
@@ -65,7 +55,7 @@
 </div>
 <script layout:fragment="script" th:inline="javascript">
 
-    const frmQuitPw = document.getElementById('frmQuitPw'); // 회원탈퇴 form 태그
+    const frmQuitPw = document.getElementById('frmQuitPw'); // 비밀번호 수정 form 태그
     const qmpwModal = new bootstrap.Modal(document.getElementById('qmpwModal')); // 회원 탈퇴 모달창 모달창
     const qcloseModal = document.getElementById('qcloseModal'); // 모달창 닫기 버튼
 

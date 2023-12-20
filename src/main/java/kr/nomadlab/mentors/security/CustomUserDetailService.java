@@ -21,10 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor // 추가
 public class CustomUserDetailService implements UserDetailsService {
-//    private final MemberService memberService;
     private final MemberMapper memberMapper;
-
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -52,7 +49,7 @@ public class CustomUserDetailService implements UserDetailsService {
         log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         log.info(member);
 
-        if(member == null) { // 해당 이메일를 가진 사용자가 없다면
+        if(member == null || member.isDel() == true) { // 해당 이메일를 가진 사용자가 없거나 del이 ture로 바뀌거나
             throw new UsernameNotFoundException("username not found...");
         }
 
@@ -64,7 +61,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
         MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
                 member.getMno(), member.getMemberId(), member.getPasswd(), member.isDel(), false,  member.getNickname(), member.getMemberName(), member.getCoin(),
-                member.getRoleSet().stream()
+                member.getRegion(), member.getRoleSet().stream()
                         .map(memberRole -> new SimpleGrantedAuthority("ROLE_" + memberRole.name()))
                         .collect(Collectors.toList())
         );

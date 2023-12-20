@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.notify.service;
 
+import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.notify.dto.NotifyDto;
 import kr.nomadlab.mentors.notify.mapper.NotifyMapper;
 import kr.nomadlab.mentors.notify.vo.NotifyVO;
@@ -57,15 +58,18 @@ public class NotifyServiceImpl implements NotifyService{
     }
 
     @Override
-    public void passNotify(String types, Long receiverMno, String nickName) {
+    public void passNotify(NotifyDto notifyDto, MemberSecurityDTO member) {
         String message = null;
 
-        if(types.equals("mentoring")){
-            message = nickName + "님이 멘토링을 신청하셨습니다.";
+        log.info("this is mentoring" + member);
+        if(notifyDto.getTypes().equals("mentoring")){
+            message = member.getNickname() + "님이 멘토링을 신청하셨습니다.";
         }
         NotifyVO notifyVO = NotifyVO.builder()
-                .receiverMno(receiverMno)
-                .types(types)
+                .receiverMno(notifyDto.getReceiverMno())
+                .sendMno(member.getMno())
+                .types(notifyDto.getTypes())
+                .typesNo(notifyDto.getTypesNo())
                 .content(message)
                 .build();
         notifyMapper.addNotify(notifyVO);

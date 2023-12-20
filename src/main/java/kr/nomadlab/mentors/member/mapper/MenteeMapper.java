@@ -21,4 +21,5 @@ public interface MenteeMapper {
 
     void updatePw(String passwd ,String memberId); // 비밀번호 수정
 
+
 }

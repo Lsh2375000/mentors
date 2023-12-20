@@ -77,14 +77,14 @@
         <table>
           <tr style="display: flex;">
             <td>
-              <input name="region" class="form-control" id="zipcode" size="10" maxlength="7" th:value="${menteeDTO.region.split(',')[0]}" style="width: 300px" readonly>
+              <input name="region" class="form-control" id="zipcode" size="10" maxlength="7" th:value="${memberDTO.region.split(',')[0]}" style="width: 300px" readonly>
             </td>
             <td><span type="button" class="btn btn-primary btnFindZipcode inputBtn">우편번호 검색</span><br/></td>
           </tr>
           <tr>
             <td>
-              <input name="region" class="form-control" id="address01" size="70" maxlength="70" th:value="${menteeDTO.region.split(',')[1]}" style="width: 470px" readonly>
-              <input name="region" class="form-control" id="address02" size="70" maxlength="70" th:value="${menteeDTO.region.split(',')[2]}" style="width: 470px">
+              <input name="region" class="form-control" id="address01" size="70" maxlength="70" th:value="${memberDTO.region.split(',')[1]}" style="width: 470px" readonly>
+              <input name="region" class="form-control" id="address02" size="70" maxlength="70" th:value="${memberDTO.region.split(',')[2]}" style="width: 470px">
             </td>
           </tr>
         </table>
@@ -96,7 +96,7 @@
     <div class="form-group row">
       <label class="col-sm-2 control-label">이름</label>
       <div class="col-sm-5">
-        <input name="memberName" type="text" class="form-control name" id="name" maxlength="10" th:value="${menteeDTO.name}" placeholder="name">
+        <input name="memberName" type="text" class="form-control name" id="name" maxlength="10" th:value="${#authentication.principal.getMemberName()}" placeholder="name">
       </div>
     </div>
     <!--이름 끝-->
@@ -321,8 +321,8 @@
   const frmModify = document.getElementById('frmModify');
   btnSubmit.addEventListener('click', async function (e) {
     const nickname = document.getElementById('nickname').value;
-    const result = await lastModifyCheck(nickname);
     if (nickname === ''.trim() || nickname.onchange) {
+      const result = await lastModifyCheck(nickname);
       if (result) {
         alert('닉네임 중복체크를 진행해 주세요.');
         e.preventDefault();

@@ -3,10 +3,8 @@ package kr.nomadlab.mentors.member.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import kr.nomadlab.mentors.member.dto.MemberDTO;
-import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
-import kr.nomadlab.mentors.member.dto.MenteeDTO;
-import kr.nomadlab.mentors.member.dto.MentorDTO;
+import kr.nomadlab.mentors.member.domain.MentorApplyVO;
+import kr.nomadlab.mentors.member.dto.*;
 import kr.nomadlab.mentors.member.service.MemberService;
 import kr.nomadlab.mentors.member.service.MenteeService;
 import kr.nomadlab.mentors.member.service.MentorService;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -48,7 +47,6 @@ public class MemberController {
         }
     }
 
-
     // 에러페이지
     @GetMapping("/errorPage")
     public void errorPageGET() {
@@ -64,37 +62,21 @@ public class MemberController {
 
     }
     // ----------------------------------------------------
-    //멘토 회원가입
-    @GetMapping("/mentorRegister")
-    public void registerGET() {
-        log.info("/member/mentorRegister......");
-        String isConfirmKey = (String) session.getAttribute("confirmKey");
-        log.info("confirmKey: " + isConfirmKey);
-    }
-    // ----------------------------------------------------
     // 일반 회원 가입 시작
     @PostMapping("/register")
-    public String registerPOST(MentorDTO mentorDTO, MenteeDTO menteeDTO, MemberDTO memberJoinDTO, List<MultipartFile> files, HttpServletRequest request, HttpSession session) {
+    public String registerPOST(MenteeDTO menteeDTO, MemberDTO memberDTO, HttpServletRequest request, HttpSession session) {
         log.info("/register...");
 
         String referer = (String)request.getHeader("REFERER"); // 이전의 URL경로를 들고 온다
         log.info("backHistory........." + referer);
-
-        log.info("여기에 파일 이름찍혀야 함 ㅠㅠ : " + files);
-        String torRegisterURL = "http://localhost:8080/member/mentorRegister"; // 멘토 회원가입 주소
         String teeRegisterURL = "http://localhost:8080/member/menteeRegister"; // 멘티 회원가입 주소
 
         String inputEmail = (String) session.getAttribute("inputEmail");
         String inputNickname = (String) session.getAttribute("inputNickname");
 
-        if (referer.equals(torRegisterURL)) { // URL : /member/mentorRegister
-            memberService.add(memberJoinDTO);
-            mentorService.add(mentorDTO, files);
-
-        } else if (referer.equals(teeRegisterURL)) { // URL : /member/menteeRegister
-            memberService.add(memberJoinDTO);
+        if (referer.equals(teeRegisterURL)) { // URL : /member/menteeRegister
+            memberService.add(memberDTO);
             menteeService.add(menteeDTO);
-
         } else {
             return "redirect:/member/errorPage";
         }
@@ -118,19 +100,36 @@ public class MemberController {
         menteeDTO.setMemberId(memberSecurityDTO.getMemberId());
         menteeService.add(menteeDTO);
 
-        MemberDTO memberJoinDTO = MemberDTO.builder()
+        MemberDTO memberDTO = MemberDTO.builder()
                 .memberId(menteeDTO.getMemberId())
                 .passwd(socialPw)
                 .del(false)
                 .social(false)
                 .nickname(menteeDTO.getNickname())
                 .build();
-        memberService.add(memberJoinDTO);
+        memberService.add(memberDTO);
 
         return "redirect:/member/login";
     }
     // 소셜 회원 가입 끝
 
+    // ----------------------------------------------------
+    //멘토 신청
+    @PreAuthorize("hasRole('ROLE_MENTEE')")
+    @GetMapping("/mentorApply")
+    public void MentorApplyGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO) {
+        log.info("MentorApplyGET......");
+        log.info("getMno() : " + memberSecurityDTO.getMno());
+    }
+
+    @PreAuthorize("hasRole('ROLE_MENTEE')")
+    @PostMapping("/mentorApply")
+    public String MentorApplyPOST(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, List<MultipartFile> files, MentorApplyDTO mentorApplyDTO) {
+        log.info("MentorApplyPOST");
+        mentorApplyDTO.setMno(memberSecurityDTO.getMno());
+        memberService.addMentorApply(mentorApplyDTO, files);
+        return "redirect:/";
+    }
     // ---------------------------------------------------- 회원 수정 ----------------------------------------------- //
     // ============= 로그인 기능 ============== //
     // 회원 정보 수정 시작
@@ -139,6 +138,9 @@ public class MemberController {
     public void mentorModifyGet(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model) {
         log.info("mentor Modify GET...");
         log.info("memberSecurityDTO : " + memberSecurityDTO);
+        MemberDTO memberDTO = memberService.getOne(memberSecurityDTO.getMemberId());
+        log.info(memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
         MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
         model.addAttribute("mentorDTO", mentorDTO);
 
@@ -148,6 +150,9 @@ public class MemberController {
     public void menteeModifyGet(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model) {
         log.info("mentee Modify GET...");
         log.info("memberSecurityDTO : " + memberSecurityDTO);
+        MemberDTO memberDTO = memberService.getOne(memberSecurityDTO.getMemberId());
+        log.info(memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
         MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
         model.addAttribute("menteeDTO", menteeDTO);
     }
@@ -158,15 +163,14 @@ public class MemberController {
         log.info( "닉네임 확인 " + memberSecurityDTO.getNickname());
         log.info("추가하려는 파일 크기: " + files);
 
-        MemberDTO memberJoinDTO = MemberDTO.builder()
+        MemberDTO memberDTO = MemberDTO.builder()
                 .nickname(memberSecurityDTO.getNickname())
                 .memberId(memberSecurityDTO.getMemberId())
                 .build();
-        memberService.modifyMember(memberJoinDTO);
+        memberService.modifyMember(memberDTO);
         mentorDTO.setMemberId(memberSecurityDTO.getMemberId());
         log.info("등록하려는 파일 : " + files);
         mentorService.modify(mentorDTO, files);
-
         return "redirect:/mypage/mentor";
     }
     @PreAuthorize("hasRole('ROLE_MENTEE')")
@@ -175,11 +179,11 @@ public class MemberController {
         log.info("mentee Modify POST() ....");
         log.info( "닉네임 확인 " + memberSecurityDTO.getNickname());
 
-        MemberDTO memberJoinDTO = MemberDTO.builder()
+        MemberDTO memberDTO = MemberDTO.builder()
                 .nickname(memberSecurityDTO.getNickname())
                 .memberId(memberSecurityDTO.getMemberId())
                 .build();
-        memberService.modifyMember(memberJoinDTO);
+        memberService.modifyMember(memberDTO);
         menteeDTO.setMemberId(memberSecurityDTO.getMemberId());
         menteeService.modify(menteeDTO);
 
@@ -219,8 +223,8 @@ public class MemberController {
                 log.info("멘티 회원 탈퇴...");
                 menteeService.remove(memberSecurityDTO.getMemberId());
             }
+            memberService.updateMemberIsDel(memberSecurityDTO.getMemberId());
             session.invalidate(); // 세션 삭제
-            memberService.removeMember(memberSecurityDTO.getMemberId());
 
             return "redirect:/";
         }

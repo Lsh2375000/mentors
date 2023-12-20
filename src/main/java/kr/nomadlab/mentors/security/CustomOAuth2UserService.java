@@ -88,7 +88,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info("social member");
 
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
-                    0L, email, "1111", false, true, "", "", 0,
+                    0L, email, "1111", false, true, "", "", 0, "",
                     Arrays.asList(new SimpleGrantedAuthority("ROLE_"))
             );
             memberSecurityDTO.setProps(params);
@@ -114,6 +114,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     member.getNickname(),
                     member.getMemberName(),
                     member.getCoin(),
+                    member.getRegion(),
                     member.getRoleSet().stream()
                             .map(memberRole -> new SimpleGrantedAuthority("ROLE_" + memberRole.name()))
                             .collect(Collectors.toList())

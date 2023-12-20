@@ -50,7 +50,6 @@ public class MentorServiceImpl implements MentorService{
         }
 
         MentorVO mentorVO = modelMapper.map(mentorDTO, MentorVO.class);
-
         Integer role_set = 0; // ROLE_MENTOR로 저장
         memberMapper.addMemberRole(mentorVO.getMemberId(), role_set);
         mentorMapper.insert(mentorVO);
@@ -115,12 +114,6 @@ public class MentorServiceImpl implements MentorService{
     public void remove(String memberId) {
         log.info("MentorService remove()....");
         mentorMapper.delete(memberId);
-    }
-
-    @Override
-    public void modifyPw(String passwd, String memberId) {
-        log.info("Mentor Service ModifyPw()...");
-        mentorMapper.updatePw(passwd, memberId);
     }
 
 

@@ -109,11 +109,16 @@
   // ------ 클라이언트 키로 객체 초기화 ------
   const clientKey = 'test_ck_KNbdOvk5rkoYXjgPBaYErn07xlzm'
   const tossPayments = TossPayments(clientKey)
+  const auth = [[${#authentication.principal}]];
 
   // ------ 충전하기 버튼에 기능 추가 ------
   const buttons = document.querySelectorAll('.payment-button') // 충전하기 버튼
   buttons.forEach(function(button) {
     button.addEventListener('click', function () {
+      if(auth ==='anonymousUser'){
+        alert('로그인을 해주세요.');
+        return;
+      }
       const product = this.closest('tr').querySelector('.product').textContent;
       const price = this.closest('tr').querySelector('.product-price').textContent;
 

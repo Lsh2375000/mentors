@@ -4,16 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.payment.mapper.PaymentMapper">
     <insert id="paymentReqInsert">
-        INSERT INTO `payment` (payType, paymentKey, amount, orderName, orderId, mno, memberId, memberName, createdAt, approveAt, paySuccessYN, payFailYN, failReason)
+        INSERT INTO `payment` (`payType`, `paymentKey`, `amount`, `orderName`, `orderId`, `mno`, `memberId`, `memberName`, `createdAt`, `approveAt`, `paySuccessYN`, `payFailYN`, `failReason`)
         values (#{payType}, #{paymentKey}, #{amount}, #{orderName}, #{orderId}, #{mno}, #{memberId}, #{memberName}, now(), #{approveAt}, #{paySuccessYN}, #{payFailYN}, #{failReason})
     </insert>
     <select id="findByOrderId" resultType="kr.nomadlab.mentors.payment.vo.PaymentVO">
-        SELECT * FROM `payment` WHERE orderId = #{orderId}
+        SELECT * FROM `payment` WHERE `orderId` = #{orderId}
     </select>
     <update id="update">
-        UPDATE payment
-        SET paySuccessYN = #{paySuccessYN}, paymentKey = #{paymentKey},
-            approveAt=now(), failReason = #{failReason}
-        WHERE orderId=#{orderId}
+        UPDATE `payment`
+        SET `paySuccessYN` = #{paySuccessYN}, `paymentKey` = #{paymentKey},
+            `approveAt` = now(), `failReason` = #{failReason}
+        WHERE `orderId` = #{orderId}
     </update>
+    <select id="getCount" resultType="int">
+        select count(*) from `payment` where `mno`=#{mno}
+    </select>
+    <select id="selectList" resultType="kr.nomadlab.mentors.payment.vo.PaymentVO">
+        SELECT * FROM `payment` WHERE `mno`=#{mno} and `paySuccessYN` = 1 ORDER BY `approveAt` desc LIMIT #{skip}, #{size}
+    </select>
 </mapper>

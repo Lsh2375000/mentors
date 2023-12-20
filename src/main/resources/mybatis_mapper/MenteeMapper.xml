@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.member.mapper.MenteeMapper">
     <insert id="insert">
-        INSERT into `mentee` (`memberId`, `region`,  `nickname`, `devLanguage`)
-        values (#{memberId}, #{region},  #{nickname}, #{devLanguage})
+        INSERT into `mentee` (`memberId`, `nickname`, `devLanguage`)
+        values (#{memberId}, #{nickname}, #{devLanguage})
     </insert>
     
     <select id="selectAll" resultType="kr.nomadlab.mentors.member.domain.MenteeVO">
@@ -18,8 +18,7 @@
 
     <update id="update">
         update `mentee`
-        set `name` = #{name}, `region` = #{region},
-            `nickname` = #{nickname}, `devLanguage` = #{devLanguage}
+        set `name` = #{name}, `nickname` = #{nickname}, `devLanguage` = #{devLanguage}
         where `memberId` = #{memberId}
     </update>
 

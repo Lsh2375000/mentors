@@ -127,14 +127,24 @@
     </select>
 <!--    게시물 수정-->
     <update id="updateOne">
-        update main set title = #{title}, position = #{position}, career = #{career}, content = #{content}, price = #{price} where mbNo = #{mbNo}
+        update main set nickName = #{nickName}, paidFree = #{paidFree}, devLanguage = #{devLanguage}, title = #{title}, position = #{position}, career = #{career}, content = #{content}, startDate = #{startDate}, endDate = #{endDate}, price = #{price}, maxPeople = #{maxPeople} where mbNo = #{mbNo}
     </update>
 <!--    게시물 삭제-->
     <delete id="deleteOne">
         DELETE FROM main WHERE mbNo = #{mbNo}
     </delete>
+<!--    내가 작성한 메인 글 여부-->
+    <select id="isMentoring" resultType="int">
+        select count(*) from main where mno = #{mno};
+    </select>
+
+
 <!--    마이페이지 메인 목록-->
     <select id="myPageList" resultType="kr.nomadlab.mentors.main.domain.MainVO">
         select * from main where mno = #{mno} order by mbNo desc limit #{skip}, #{size}
+    </select>
+<!--    마이페이지 갯수 새기-->
+    <select id="myPageCount" resultType="int">
+        select count(mbNo) from main
     </select>
 </mapper>

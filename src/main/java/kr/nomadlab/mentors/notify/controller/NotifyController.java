@@ -30,7 +30,8 @@ public class NotifyController {
     @PostMapping("/repository")
     public ResponseEntity<String> passNotify(@AuthenticationPrincipal MemberSecurityDTO member, @RequestBody NotifyDto notifyDto){
         log.info("this is repository/passNotify");
-        notifyService.passNotify(notifyDto.getTypes(), notifyDto.getReceiverMno(), member.getNickname());
+        log.info(notifyDto);
+        notifyService.passNotify(notifyDto, member);
 
         return ResponseEntity.ok("Request passMessage successfully");
     }

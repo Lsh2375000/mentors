@@ -22,6 +22,8 @@ public interface MainService {
     // 게시판 삭제
     void removeOne(Long mbNo);
 
+    boolean isMentoring(Long mno);
+
     // 마이페이지 멘토링목록 출력
     PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno);
 }

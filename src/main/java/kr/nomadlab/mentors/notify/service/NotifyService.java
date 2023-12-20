@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.notify.service;
 
+import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.notify.dto.NotifyDto;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface NotifyService {
 
     List<NotifyDto> getNotReadNotify(Long mno);
 
-    void passNotify(String types, Long receiverMno, String nickName);
+    void passNotify(NotifyDto notifyDto, MemberSecurityDTO member);
 }

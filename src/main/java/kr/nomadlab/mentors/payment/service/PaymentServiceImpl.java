@@ -1,5 +1,7 @@
 package kr.nomadlab.mentors.payment.service;
 
+import kr.nomadlab.mentors.common.PageRequestDTO;
+import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.exception.CustomLogicException;
 import kr.nomadlab.mentors.exception.ExceptionCode;
 import kr.nomadlab.mentors.member.dto.MemberDTO;
@@ -23,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -109,6 +109,22 @@ public class PaymentServiceImpl implements PaymentService{
         }
 
         return paymentFailDto;
+    }
+    //페이징된 구매내역 불러오기
+    @Override
+    public PageResponseDTO<PaymentDto> getListPayments(Long mno, PageRequestDTO pageRequestDTO) {
+        List<PaymentVO> paymentVOList = paymentMapper.selectList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
+        List<PaymentDto> paymentDtoList = new ArrayList<>();
+        paymentVOList.forEach(paymentVO -> {
+            PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
+            paymentDtoList.add(paymentDto);
+        });
+
+        return PageResponseDTO.<PaymentDto>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(paymentDtoList)
+                .total(paymentMapper.getCount(mno))
+                .build();
     }
 
     //주문번호 존재여부, 금액 확인

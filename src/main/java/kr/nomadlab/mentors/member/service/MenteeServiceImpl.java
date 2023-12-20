@@ -69,11 +69,4 @@ public class MenteeServiceImpl implements MenteeService{
         menteeMapper.delete(memberId);
     }
 
-    @Override
-    public void modifyPw(String passwd, String memberId) {
-        log.info("service modifyPw() ....");
-        menteeMapper.updatePw(passwd, memberId);
-    }
-
-
 }

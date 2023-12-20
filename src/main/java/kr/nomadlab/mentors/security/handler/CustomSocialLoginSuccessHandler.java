@@ -36,7 +36,7 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
             response.sendRedirect("/member/socialRegister");
 
         } else {
-            response.sendRedirect("/");
+            response.sendRedirect("/main");
         }
 
     }
