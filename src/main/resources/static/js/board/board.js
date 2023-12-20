@@ -10,3 +10,11 @@ async function addLike(boardLikeDTO) {
     });
     return response.data;
 }
+
+// 게시글 좋아요 삭제 요청
+async function removeLike(blNo) {
+    console.log(blNo);
+    const response = await axios.delete(`/board/like/${blNo}`);
+
+    return response.data;
+}

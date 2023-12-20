@@ -23,10 +23,15 @@
         .view-body { min-height: 600px; }
         .view-footer { padding: 20px; text-align: right; }
         .comment-container { background-color: #f8f9fa; padding: 50px; }
+        .comment-container #comment-input { line-height: 2; }
         .comment-list { padding-top: 40px; }
         .comment { margin-bottom: 20px; padding: 20px 30px; border-radius: 5px; border: 1px solid #dee2e6; background-color: #FFFFFF; }
-        .reply-list {margin: 20px 0; }
-        .reply { border-left: 4px solid #9a9a9a; padding: 15px; }
+        .edit-btn-area button { background: none; border: none; text-decoration-line: underline; color: #6c757d; }
+        .comment-body .btn-area { margin-top: 1rem; }
+        .btn-area button { font-weight: 600; }
+        .reply-list { margin: 20px 0; }
+        .reply { border-left: 5px solid #dee2e6; padding: 15px; }
+        .hide { display: none; }
     </style>
 
     <main>
@@ -94,57 +99,6 @@
         </section>
     </main>
 
-    <!-- register modal start -->
-    <div class="modal registerModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Register Reply</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">content</span>
-                        <input type="text" class="form-control replyContent">
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">nickname</span>
-                        <input type="text" class="form-control replyNickname" th:value="${board.writer}" name="nickname">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary registerBtn">댓글 달기</button>
-                    <button type="button" class="btn btn-outline-dark closeRegisterBtn">창 닫기</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- register modal end -->
-    <!-- modify modal start-->
-    <div class="modal modifyModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title replyHeader"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Reply Text</span>
-                        <input type="text" class="form-control modifyText">
-                    </div>
-                </div>
-                <div class="modal-footer">
-<!--                    <button type="button" class="btn btn-info modifyBtn" th:value="${#authentication.principal.nickname}">수정</button>-->
-<!--                    <button type="button" class="btn btn-danger removeBtn" th:value="${#authentication.principal.nickname}">삭제</button>-->
-                    <button type="button" class="btn btn-outline-dark closeModifyBtn">닫기</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- modify modal end-->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/js/board/board.js"></script>
     <script src="/js/reply.js"></script>
@@ -154,17 +108,33 @@
 <script layout:fragment="script" th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
         const boardNo = [[${board.boardNo}]];
+        const likeList = [[${board.likeList}]];
+        const mno = 2; // 회원 고유번호 테스트
 
-        // 좋아요 추가 이벤트
-        document.getElementById('likeBtn').addEventListener('click', async function (e) {
+        let isLike = false; // 좋아요 유무 확인
+        for (const like of likeList) {
+            isLike = (like.mno === mno);
+        }
+
+        let blNo = 8; // 좋아요 고유번호를 담을 변수
+        document.getElementById('likeBtn').addEventListener('click', async function (e) { // 좋아요 클릭 이벤트
             e.preventDefault();
             e.stopPropagation();
 
-            const boardLikeDTO = { boardNo: boardNo, mno: 2 };
+            const boardLikeDTO = { boardNo: boardNo, mno: 2 }; // 좋아요 정보를 담을 객체
+            console.log(likeList);
 
-            const result = await addLike(boardLikeDTO);
-            console.log(result);
-            e.target.disabled = 'true';
+            if (isLike) { // 좋아요를 한경우
+                const result = await removeLike(blNo);
+                console.log(result);
+                isLike = !result;
+            }
+            else {
+                const result = await addLike(boardLikeDTO);
+                blNo = result.blNo;
+                console.log(blNo);
+                isLike = true;
+            }
         });
 
         function printReplies(page, size, goLast){
@@ -183,36 +153,41 @@
         const commentList = document.querySelector('.comment-list');//댓글 목록 DOM
         const replyPaging = document.querySelector('.reply-paging'); //페이지 목록 DOM
 
-        function printList(dtoList){ //댓글 목록 출력
+        function printList(dtoList) { //댓글 목록 출력
             let str = '';
             let date;
             let dateFomatter;
             if (dtoList && dtoList.length > 0){
                 for(const comment of dtoList){ // 댓글
                     date = comment.addDate; // 댓글 등록 날짜
-                    dateFomatter = `${date[0]}-${date[1]}-${date[2]} ${date[3]}:${date[4]}`; // 날짜 포맷
+                    dateFomatter = `${date[0]}.${date[1].toString().padStart(2, '0')}.${date[2].toString().padStart(2, '0')}
+                        ${date[3]}:${date[4].toString().padStart(2, '0')}`; // 날짜 포맷
                     console.log(date);
-                    str += `<li class ="comment">
-                            <div class="comment-header">
-                                <h6><a href="#">${comment.writer}</a></h6>
-                                <span>${dateFomatter}</span>
-                                <span>
-                                    <button id="modCommentBtn">수정</button>
-                                    <button class="remove-comment-btn" data-rno="${comment.rno}">삭제</button>
-                                </span>
-                            </div>
-                            <hr>
-                            <div class="comment-body">
-                                <p>${comment.content}</p>
-                                <div>
-                                    <button>숨기기 / 더보기</button>
-                                    <button>답글달기</button>
+                    str += `<li class ="comment" id="${comment.rno}">
+                                <div class="comment-header">
+                                    <h6><a href="#">${comment.writer}</a></h6>
+                                    <span>${dateFomatter}</span>
+                                    <span>${!comment.cmEdtNot ? '수정됨' : ''}</span>
+                                    <span class="edit-btn-area">
+                                        <button class="mod-comment-btn">수정</button>
+                                        <button class="remove-comment-btn">삭제</button>
+                                    </span>
                                 </div>
-                            </div>
-                            <ul class="reply-list">`;
+                                <hr>
+                                <div class="comment-body">
+                                    <p>${comment.content}</p>
+                                    <input type="text" name="content" class="form-control mod-input hide" value="${comment.content}">
+                                    <div class="btn-area" data-reply-count="${comment.children.length}">
+                                        <button class="hide-btn btn btn-outline-primary
+                                            ${comment.children.length <= 0 ? 'hide' : ''}">△ 숨기기</button>
+                                        <button class="reg-reply-btn btn btn-outline-primary">답글달기</button>
+                                    </div>
+                                </div>
+                                <ul class="reply-list">`;
                     for (const reply of comment.children) { // 대댓글
                         date = reply.addDate; // 대댓글 등록 날짜
-                        dateFomatter = `${date[0]}-${date[1]}-${date[2]} ${date[3]}:${date[4]}`; // 날짜 포맷
+                        dateFomatter = `${date[0]}.${date[1].toString().padStart(2, '0')}.${date[2].toString().padStart(2, '0')}
+                            ${date[3]}:${date[4].toString().padStart(2, '0')}`; // 날짜 포맷
                         str += `<li class="reply">
                                 <div>
                                     <span>${reply.writer}</span>
@@ -222,10 +197,123 @@
                                 <p>${reply.content}</p>
                              </li>`;
                     }
-                    str += `</ul></li>`;
+                    str += `</ul>
+                            <input type="text" name="content" class="form-control reply-input hide" placeholder="답변을 작성해보세요">
+                        </li>`;
                 }
             }
             commentList.innerHTML = str;
+
+            // 댓글 수정 클릭 이벤트
+            document.querySelectorAll('.mod-comment-btn').forEach(modButton => {
+                modButton.addEventListener('click', function (e) {
+                    // 부모 엘리먼트(.comment)에서 input 엘리먼트 찾기
+                    const inputElement = this.closest('.comment').querySelector('.comment-body .mod-input');
+                    const pElement = inputElement.previousElementSibling;
+                    const modButton = e.target;
+                    console.log(pElement);
+
+                    inputElement.classList.toggle('hide');
+                    pElement.classList.toggle('hide');
+
+                    // input 엘리먼트에 class hide가 존재하지 않는 경우
+                    if (!inputElement.classList.contains('hide')) {
+                        console.log(inputElement.value);
+                        modButton.textContent = '취소';
+                        inputElement.focus();
+                        inputElement.addEventListener('keyup', modifyComment); // 키업 이벤트 등록
+                    }
+                    else {
+                        modButton.textContent = '수정';
+                        inputElement.removeEventListener('keyup', modifyComment); // 키업 이벤트 삭제
+                    }
+                });
+            });
+
+            // 댓글 수정 함수
+            async function modifyComment(e){
+                console.log(e.key);
+                const rno = this.closest('.comment').id; // 댓글 고유 번호
+                const content = e.target; // 댓글 입력창
+                if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
+
+                if (e.key === 'Enter') {
+                    console.log('엔터키 누름');
+                    console.log('댓글작성 내용: ', content.value);
+
+                    // 매개변수로 전달할 객체
+                    const replyObj = {
+                        rno: rno,
+                        content: content.value,
+                    };
+
+                    await modifyReply(replyObj)
+                        .then(result => {
+                            content.value = '';
+                            alert(result.rno + '댓글이 수정되었습니다!');
+                            printReplies(page, size);
+                        })
+                        .catch(e => {
+                            console.log(e);
+                            alert('댓글 수정이 불가능합니다.');
+                        });
+                }
+            }
+
+            // 댓글 삭제 버튼 전체 목록
+            document.querySelectorAll('.remove-comment-btn').forEach(removeBtn => {
+               removeBtn.addEventListener('click', function (e) { // 댓글 삭제 클릭 이벤트
+                   const rno = this.closest('.comment').id; // 삭제할 댓글의 rno를 가져옴
+                   console.log(rno);
+
+                   removeReply(rno).then(result => {
+                       alert(result.rno + '댓글이 삭제되었습니다.');
+                       page = 1; // 해당 댓글이 삭제시 1페이지로 이동
+                       printReplies(page, size);
+                   }).catch(e => {
+                       console.log(e);
+                   });
+               });
+            });
+
+            // 대댓글 숨김 버튼 전체 목록
+            document.querySelectorAll('.hide-btn').forEach(hideButton => {
+                hideButton.addEventListener('click', function (e) {
+                    const replyList = this.closest('.comment').querySelector('.reply-list'); // 대댓글 목록
+                    const replyCount = this.closest('.btn-area').dataset.replyCount;
+                    console.log(replyList);
+                    console.log(replyCount);
+
+                    replyList.classList.toggle('hide');
+
+                    if (!replyList.classList.contains('hide')) {
+                        e.target.textContent = '△ 숨기기';
+                    }
+                    else {
+                        e.target.textContent = `▽ ${replyCount}개 답글`;
+                    }
+                });
+            });
+
+            // 대댓글 등록 버튼 전체 목록
+            document.querySelectorAll('.reg-reply-btn').forEach(registerButton => {
+                registerButton.addEventListener('click', function (e) {
+                    const inputElement = this.closest('.comment').querySelector('.reply-input'); // 대댓글 입력창
+
+                    inputElement.classList.toggle('hide');
+
+                    if (!inputElement.classList.contains('hide')) { // 입력창이 클래스에 hide가 없는 경우
+                        e.target.textContent = '취소하기';
+                        inputElement.focus();
+                        inputElement.addEventListener('keyup', registerReply); // 키업 이벤트 등록
+                    }
+                    else {
+                        e.target.textContent = '답글달기';
+                        inputElement.value = '';
+                        inputElement.removeEventListener('keyup', registerReply); // 키업 이벤트 등록
+                    }
+                });
+            });
         }
 
         function printPages(data){ //페이지 목록 출력
@@ -244,13 +332,15 @@
             replyPaging.innerHTML = pageStr;
         }
 
-        const registerModal = new bootstrap.Modal(document.querySelector('.registerModal'));
         const commentInput = document.getElementById('comment-input'); // 댓글 등록 입력창
+        commentInput.addEventListener('keyup', registerReply); // 키업 이벤트 등록
 
-        // 댓글등록
-        commentInput.addEventListener('keyup', async function (e){
+        // 댓글 등록 함수
+        async function registerReply(e) {
             console.log(e.key);
             const content = e.target; // 댓글 작성 내용
+            const comment = content.closest('.comment'); // 댓글 가져오기
+
             if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
 
             if (e.key === 'Enter') {
@@ -259,10 +349,15 @@
 
                 // 매개변수로 전달할 객체
                 const replyObj = {
+                    mno: 1, // 임시 회원 번호
                     boardNo: boardNo,
                     content: content.value,
                     writer: 'testNick' // 임시 닉네임
                 };
+
+                if (comment != null) { // 댓글이 존재하는 경우
+                    replyObj.parentNo = comment.id;
+                }
 
                 await addReply(replyObj).then(result => { //등록이 된 후 결과처리
                     alert(result.data.rno);
@@ -272,9 +367,9 @@
                     alert('exception');
                 });
             }
-        });
+        }
 
-        // 3. 페이징 클릭
+        // 페이징 클릭
         let page = 1;
         let size = 10;
         replyPaging.addEventListener('click', function (e){
@@ -291,70 +386,6 @@
             printReplies(page, size);
         }, false);
 
-        // 4. 댓글 수정 관련
-        const modifyModal = new bootstrap.Modal(document.querySelector('.modifyModal'));
-        const replyHeader = document.querySelector('.replyHeader');
-        const modifyText = document.querySelector('.modifyText');
-        const modCommentBtn = document.querySelector('.modCommentBtn');
-        const removeCommentBtn = document.querySelector('.removeCommentBtn');
-        const closeModifyBtn = document.querySelector('.closeModifyBtn');
-
-        // 댓글 내용을 클릭했을 때 수정 모달창 띄우기!
-        // replyList.addEventListener('click', function (e){
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //
-        //     const target = e.target;
-        //     if(!target || target.tagName != 'SPAN'){
-        //         return;
-        //     }
-        //     const rno = target.getAttribute("data-rno");
-        //     if (!rno){
-        //         return;
-        //     }
-        //
-        //     getReply(rno).then(reply => {
-        //         console.log(reply);
-        //         replyHeader.innerHTML = reply.rno;
-        //         modifyText.value = reply.content;
-        //         modifyModal.show();
-        //     }).catch(e => alert('error'));
-        // });
-
-        //댓글 모달창 수정
-        // modCommentBtn.addEventListener('click', function (e) {
-        //     console.log('modifyBtn...click');
-        //     const replyObj = { boardNo: boardNo, rno: replyHeader.innerHTML, content: modifyText.value };
-        //     modifyReply(replyObj)
-        //         .then(result => {
-        //             alert(result.rno + '댓글이 수정되었습니다!');
-        //             modifyText.value = '';
-        //             modifyModal.hide();
-        //             printReplies(page, size);
-        //         })
-        //         .catch(e => {
-        //             console.log(e);
-        //             alert('댓글 수정이 불가능합니다.');
-        //             return;
-        //         });
-        // });
-
-        //5. 댓글 삭제 관련
-        commentList.addEventListener('click', function (e) {
-
-            if (e.target.classList.contains('remove-comment-btn')) { // 삭제 버튼이 클릭된 경우
-                const rno = e.target.dataset.rno; // 삭제할 댓글의 ID를 가져옴
-                console.log(rno);
-
-                removeReply(rno).then(result => {
-                    alert(result.rno + '댓글이 삭제되었습니다.');
-                    page = 1; // 해당 댓글이 삭제시 1페이지로 이동
-                    printReplies(page, size);
-                }).catch(e => {
-                    console.log(e);
-                });
-            }
-        });
     });
 </script>
 </html>

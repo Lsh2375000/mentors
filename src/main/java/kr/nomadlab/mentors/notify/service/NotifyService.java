@@ -12,4 +12,6 @@ public interface NotifyService {
     void readNotify(Long mno);
 
     List<NotifyDto> getNotReadNotify(Long mno);
+
+    void passNotify(String types, Long receiverMno, String nickName);
 }

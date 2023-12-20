@@ -424,9 +424,13 @@
         console.log("response");
         return response.data;
     }
+
     // 모달창
     function modalBtn(mbNo){
+        let modalDataMno = null;
+
         getBoard(mbNo).then(data => {
+            modalDataMno = data.mno;
             console.log(data);
             modalNickName.innerHTML = `${data.nickName}`;
             modalTitle.innerHTML = `${data.title}`;
@@ -447,7 +451,25 @@
                 }
             }
         })
+
         contentModal.show();
+
+        //등록버튼 클릭시 알림 보내기
+        enrollBtnDiv.addEventListener('click', function() {
+            let messageObj ={
+                receiverMno : modalDataMno,
+                types : "mentoring",
+            }
+            passMessage(messageObj).then(data => {
+                alert(data)
+            })
+        })
+    }
+
+    //상대방에게 알림 전달
+    async function passMessage(messageObj) {
+        const result = await axios.post(`/notify/repository`,messageObj);
+        return result.data;
     }
 
     // 리셋 버튼
@@ -457,6 +479,7 @@
     })
 
     // 페이징, 검색
+    const searchFrm = document.querySelector('form[name=searchFrm]'); // 검색 폼
     const pageNums = document.querySelectorAll('.pageNum'); // 페이지번호
     const keyword = document.querySelector('.inputKeyword'); // 키워드
     const select = document.querySelector('.select'); // 셀렉트폼

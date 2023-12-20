@@ -8,10 +8,11 @@
     <resultMap id="commentList" type="kr.nomadlab.mentors.boardReply.domain.ReplyVO">
         <id property="rno" column="rno"/>
         <result property="parentNo" column="parentNo"/>
+        <result property="mno" column="mno"/>
+        <result property="boardNo" column="boardNo"/>
         <result property="content" column="content"/>
         <result property="writer" column="writer"/>
         <result property="addDate" column="addDate"/>
-        <result property="boardNo" column="boardNo"/>
 
         <!-- children에 대한 resultMap 설정 -->
         <collection property="children" column="rno" ofType="kr.nomadlab.mentors.boardReply.domain.ReplyVO"
@@ -23,7 +24,7 @@
         select *
         from `boardReply`
         where `parentNo` = #{rno} and `parentNo` != `rno`
-        order by `rno` desc
+        order by `rno`
     </select>
 
     <!-- 댓글 목록 조회 -->
@@ -35,10 +36,11 @@
     </select>
 
     <insert id="insertReply" parameterType="kr.nomadlab.mentors.boardReply.domain.ReplyVO" useGeneratedKeys="true" keyProperty="rno">
-        insert into `boardReply`(`rno`, `parentNo`, `content`, `writer`, `addDate`, `boardNo`)
-        values (#{rno}, #{parentNo}, #{content}, #{writer}, NOW(), #{boardNo})
+        insert into `boardReply`(`rno`, `parentNo`, `mno`, `boardNo`, `content`, `writer`, `addDate`, cmEdtNot)
+        values (#{rno}, #{parentNo}, #{mno}, #{boardNo}, #{content}, #{writer}, NOW(), #{cmEdtNot})
     </insert>
 
+    <!-- 부모 댓글 번호 업데이트 -->
     <update id="updateParentNo">
         update `boardReply` set `parentNo` = #{rno} where `rno` = #{rno}
     </update>
@@ -48,7 +50,7 @@
     </select>
 
     <update id="updateReply">
-        update `boardReply` set `content` = #{content} where `rno` = #{rno}
+        update `boardReply` set `content` = #{content}, `addDate` = NOW(), `cmEdtNot` = #{cmEdtNot} where `rno` = #{rno}
     </update>
 
     <delete id="deleteReply">

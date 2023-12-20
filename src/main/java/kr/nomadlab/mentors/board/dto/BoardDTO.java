@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.board.dto;
 
+import kr.nomadlab.mentors.board.domain.HashTagVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +27,8 @@ public class BoardDTO {
     private Long replyCount; // 게시글 댓글 수
     private Long likeCount; // 좋아요 수
 
-    List<BoardLikeDTO> likeList = new ArrayList<>(); // 게시글 좋아요 목록
+    private List<BoardLikeDTO> likeList = new ArrayList<>(); // 게시글 좋아요 목록
+    private List<HashTagDTO> tagList = new ArrayList<>(); // 게시글 해쉬태그 목록
 
     // 몇 시간 전에 작성되었는지 계산
     public String getElapsedTime() {

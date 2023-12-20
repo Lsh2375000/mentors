@@ -7,12 +7,10 @@ import kr.nomadlab.mentors.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +33,21 @@ public class BoardRestController {
         }
 
         Map<String, Long> resultMap = new HashMap<>();
-        boardService.addLike(boardLikeDTO);
-        resultMap.put("mno", boardLikeDTO.getMno());
+        Long blNo = boardService.addLike(boardLikeDTO);
+        log.info(blNo);
+        resultMap.put("blNo", blNo);
+
+        return resultMap;
+    }
+
+    @Operation(summary = "like DELETE", description = "DELETE 방식으로 좋아요 삭제")
+    @DeleteMapping(value = "/like/{blNo}")
+    public Map<String, Boolean> removeLike(@PathVariable(name = "blNo") Long blNo) {
+        log.info("/board/like/" + blNo + "(DELETE)...");
+
+        Map<String, Boolean> resultMap = new HashMap<>();
+        Boolean result = boardService.removeLike(blNo);
+        resultMap.put("result", result);
 
         return resultMap;
     }
