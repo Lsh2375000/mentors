@@ -20,4 +20,6 @@ public interface MentorMapper {
     void delete(String memberId); // 멘토 회원 삭제
 
     void updatePw(String passwd ,String memberId); // 비밀번호 수정
+
+
 }

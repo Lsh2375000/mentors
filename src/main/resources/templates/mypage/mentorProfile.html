@@ -13,7 +13,22 @@
 </style>
 <div layout:fragment="content">
     <div class="row mt-3">
-
+        <div class="col">
+            <div class="card" style="width: 1000px; height: 250px; margin-bottom: 30px">
+                <div class="card-header">
+                    나의 소개
+                </div>
+                <div class="card-body">
+                </div>
+            </div>
+            <div class="card" style="width: 1000px; height: 250px;">
+                <div class="card-header">
+                    내가 쓴 글
+                </div>
+                <div class="card-body">
+                </div>
+            </div>
+        </div>
     </div>
     <!--회원 탈퇴 모달창 form 태그-->
     <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">
@@ -94,7 +109,9 @@
                 // console.log(frmQuitPw);
                 frmQuitPw.submit();
             }
+
         }
+
     });
 
 </script>

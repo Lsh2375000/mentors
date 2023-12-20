@@ -13,6 +13,7 @@
             <result property="nickname" column="nickname"></result>
             <result property="memberName" column="memberName"></result>
             <result property="coin" column="coin"></result>
+            <result property="region" column="region"></result>
             <collection property="roleSet" javaType="java.util.HashSet" ofType="int">
                 <result property="role_set" column="role_set"></result>
             </collection>
@@ -22,8 +23,8 @@
 
 
     <insert id="addMember">
-        insert into `member` (`memberId`, `passwd`, `regdate`, `moddate`, `del`, `social`, `nickname`, `memberName`, `coin`)
-        VALUES (#{memberId}, #{passwd}, now(), now(), 0, #{social}, #{nickname}, #{memberName}, #{coin})
+        insert into `member` (`memberId`, `passwd`, `regdate`, `moddate`, `del`, `social`, `nickname`, `memberName`, `coin`, `region`)
+        VALUES (#{memberId}, #{passwd}, now(), now(), 0, #{social}, #{nickname}, #{memberName}, #{coin}, #{region})
     </insert>
 
     <insert id="addMemberRole">
@@ -39,6 +40,10 @@
                 on `m`.`memberId` = `mrs`.`memberId`
         where `m`.`memberId` = #{memberId}
 
+    </select>
+
+    <select id="getOne" resultType="kr.nomadlab.mentors.member.domain.MemberVO">
+        select * from `member` where `memberId` = #{memberid}
     </select>
 
     <update id="updateMember">
@@ -58,6 +63,21 @@
     </delete>
 
     <update id="updateCoin">
-        update `member` set coin = coin+#{coin} where mno=#{mno}
+        update `member` set `coin` = `coin` + #{coin} where `mno` = #{mno}
     </update>
+
+    <update id="updateIsDel">
+        update `member` set `del` = true where `memberId` = #{memberId}
+    </update>
+
+    <update id="updateMemberRole">
+        update `member_role_set` set `role_set` = 0 where `memberId` = #{memberId}
+    </update>
+
+    <insert id="addMentorApply">
+        insert into `mentorApply` (mno, devLanguage, fileNames)
+        values (#{mno}, #{devLanguage}, #{fileNames})
+    </insert>
+
+
 </mapper>

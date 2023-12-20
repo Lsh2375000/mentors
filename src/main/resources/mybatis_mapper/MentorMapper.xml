@@ -18,8 +18,7 @@
 
     <update id="update">
         UPDATE `mentor`
-        SET `region` = #{region},
-            `nickname` = #{nickname}, `devLanguage` = #{devLanguage},
+        SET `nickname` = #{nickname}, `devLanguage` = #{devLanguage},
             `fileNames` = #{fileNames}, `intro` = #{intro}
         WHERE `memberId` = #{memberId}
     </update>

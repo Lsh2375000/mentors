@@ -17,7 +17,8 @@ public class MemberDTO {
     private boolean del; // 공통 회원 탈퇴여부(당장 사용하진 않음)
     private boolean social; // 회원 소셜 로그인 여부
     private String nickname; // 회원 닉네임
-    private String memberName;
-    private int coin;
+    private String memberName; // 회원 이름
+    private int coin; // 회원 보유 코인
+    private String region; // 회원 사는 곳
 
 }

@@ -16,6 +16,5 @@ public interface MenteeService {
 
     void remove(String memberId); // 멘티 회원탈퇴
 
-    void modifyPw(String passwd, String memberId);
 
 }

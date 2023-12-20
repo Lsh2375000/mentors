@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
@@ -75,10 +76,10 @@
         <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}"><!-- 회원 로그인 -->
           <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/logout">로그아웃</a></li>
           <th:block sec:authorize="hasRole('ROLE_MENTOR')"> <!--멘토 로그인시-->
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage/mentor">마이페이지</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
           </th:block>
           <th:block sec:authorize="hasRole('ROLE_MENTEE')"> <!--멘티 로그인시-->
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/mypage/mentee">마이페이지</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
           </th:block>
           <li class="nav-item mx-0 mx-lg-1" style="position: relative;">
             <div class="notify" >

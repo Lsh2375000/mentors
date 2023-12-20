@@ -17,7 +17,6 @@ public interface MentorService {
 
     void remove(String memberId); // 멘토 회원 탈퇴
 
-    void modifyPw(String passwd, String memberId);
 
 
 }
