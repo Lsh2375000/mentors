@@ -84,6 +84,12 @@
     #removeBtn:hover{
         background-color: #a60000;
     }
+    .page_wrap{
+        width: 62.5%;
+    }
+    .pageNum{
+        cursor: pointer;
+    }
 </style>
 <body>
 <div layout:fragment="content">
@@ -121,6 +127,25 @@
             </div>
         </div>
     </div>
+    <!--    페이징-->
+    <div class="page_wrap paging d-flex justify-content-end  mt-3 mb-5">
+        <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
+            <li class="page-item" th:if="${mainList.prev}">
+                <a class="page-link pageNum" th:data-num="${mainList.start - 1}" style="color: black;">이전</a>
+            </li>
+            <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
+                <th:block th:if="${i != 0}">
+                    <li th:class="${mainList.page == i} ? 'page-item-active' : 'page-item'" >
+                        <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'color:red; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
+                    </li>
+                </th:block>
+            </th:block>
+            <li class="page-item" th:if="${mainList.next}">
+                <a class="page-link pageNum" th:data-num="${mainList.end + 1}" style="color: black;">다음</a>
+            </li>
+        </ul>
+    </div>
+    <!--페이징 끝-->
 </div>
 <script layout:fragment="script" th:inline="javascript">
     // 멘토링 글 삭제
@@ -137,6 +162,14 @@
         })
     })
 
+    const pageNums = document.querySelectorAll('.pageNum');
+    // 페이지번호 클릭
+    pageNums.forEach(pageNum => {
+        pageNum.addEventListener('click', function (){
+            const page = pageNum.getAttribute('data-num');
+            location.href =`/mypage/mainList?page=${page}&size=12`;
+        })
+    })
 </script>
 </body>
 </html>

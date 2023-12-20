@@ -143,4 +143,8 @@
     <select id="myPageList" resultType="kr.nomadlab.mentors.main.domain.MainVO">
         select * from main where mno = #{mno} order by mbNo desc limit #{skip}, #{size}
     </select>
+<!--    마이페이지 갯수 새기-->
+    <select id="myPageCount" resultType="int">
+        select count(mbNo) from main
+    </select>
 </mapper>

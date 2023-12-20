@@ -25,4 +25,5 @@ public interface MainMapper {
     int isMentoring(Long mno); // 멘토 본인이 작성한 글이 있는지
 
     List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 마이페이지 멘토링 목록 리스트 출력
+    int myPageCount(PageRequestDTO pageRequestDTO); // 마이페이지 총 갯수
 }

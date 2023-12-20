@@ -74,7 +74,7 @@ public class MyPageController {
     public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
-
+        log.info("end는 ?"+mainList.getEnd());
         model.addAttribute("mainList", mainList);
     }
 

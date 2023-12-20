@@ -322,7 +322,7 @@
         <div class="page_wrap paging d-flex justify-content-end w-75 mt-3 mb-5">
             <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
                 <li class="page-item" th:if="${mainList.prev}">
-                    <a class="page-link pageNum" th:data-num="${mainList.start - 1}">이전</a>
+                    <a class="page-link pageNum" th:data-num="${mainList.start - 1}" style="color: black;">이전</a>
                 </li>
                 <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
                     <th:block th:if="${i != 0}">
@@ -332,7 +332,7 @@
                     </th:block>
                 </th:block>
                 <li class="page-item" th:if="${mainList.next}">
-                    <a class="page-link pageNum" th:data-num="${mainList.end + 1}">다음</a>
+                    <a class="page-link pageNum" th:data-num="${mainList.end + 1}" style="color: black;">다음</a>
                 </li>
             </ul>
         </div>
