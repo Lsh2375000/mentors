@@ -32,6 +32,7 @@ public class BoardController {
     public void list(PageRequestDTO pageRequestDTO, Model model){ // 게시글 전체 목록 페이지
         log.info("/board/list(GET)...");
         log.info("keyword: " + pageRequestDTO.getKeyword());
+        log.info("hashTag: " + pageRequestDTO.getHashTag());
         PageResponseDTO<BoardDTO> pageResponseDTO = boardService.getBoardList(pageRequestDTO);
         model.addAttribute("responseDTO", pageResponseDTO);
     }

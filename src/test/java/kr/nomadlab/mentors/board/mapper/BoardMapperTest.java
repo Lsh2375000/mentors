@@ -19,9 +19,12 @@ class BoardMapperTest {
 
     @Test
     void selectBoardListTest() {
-        String order = "new";
+        String sort = "reply";
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .order(order)
+                .type("twc")
+                .keyword("등록")
+                .sort(sort)
+                .hashTag("Tag,등록")
                 .build();
         List<BoardVO> boardVOList = boardMapper.selectBoardList(pageRequestDTO);
         boardVOList.forEach(log::info);
@@ -49,8 +52,8 @@ class BoardMapperTest {
 
     @Test
     void insertTagTest() {
-        Long boardNo = 18L;
-        String tagName = "JAVASCRIPT";
+        Long boardNo = 17L;
+        String tagName = "Tag";
         HashTagVO hashTagVO = HashTagVO.builder()
                 .boardNo(boardNo)
                 .tagName(tagName)
@@ -62,5 +65,11 @@ class BoardMapperTest {
     void removeTagTest() {
         Long htNo = 2L;
         boardMapper.deleteTag(htNo);
+    }
+
+    @Test
+    void getCountTest() {
+        int count = boardMapper.getCount(PageRequestDTO.builder().build());
+        log.info(count);
     }
 }
