@@ -46,9 +46,14 @@ public class MyPageController {
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
 
-        MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
-        log.info("mentorDTO : " + mentorDTO);
-        model.addAttribute("mentorDTO", mentorDTO);
+        if (memberSecurityDTO != null) {
+            if (memberSecurityDTO.getNickname().equals(nickname)) {
+                MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+                log.info("mentorDTO : " + mentorDTO);
+                model.addAttribute("mentorDTO", mentorDTO);
+            }
+        }
+
 
     }
     /*멘토 프로필 끝*/
@@ -61,9 +66,13 @@ public class MyPageController {
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
 
-//        MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
-//        log.info("menteeDTO : " + menteeDTO);
-//        model.addAttribute("menteeDTO", menteeDTO);
+        if(memberSecurityDTO != null) {
+            if (memberSecurityDTO.getNickname().equals(nickname)) {
+                MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+                log.info("menteeDTO : " + menteeDTO);
+                model.addAttribute("menteeDTO", menteeDTO);
+            }
+        }
 
     }
 

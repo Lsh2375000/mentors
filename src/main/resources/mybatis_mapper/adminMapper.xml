@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.admin.mapper.AdminUserMapper">
+
+    <resultMap id="getAdmin" type="kr.nomadlab.mentors.admin.domain.AdminVO">
+        <id property="ano" column="ano"></id>
+        <result property="adminId" column="AdminId"></result>
+        <result property="passwd" column="passwd"></result>
+        <collection property="roleSet" javaType="java.util.HashSet" ofType="int">
+            <result property="role_set" column="role_set"></result>
+        </collection>
+    </resultMap>
+
+    <insert id="addAdmin">
+        insert into `adminAccount` (`adminId`, `passwd`)
+        VALUES (#{adminId}, #{passwd})
+    </insert>
+
+    <insert id="addMemberRole">
+        insert into `admin_role_set` (`adminId`, `role_set`)
+        VALUES (#{adminId}, #{role_set})
+    </insert>
+
+    <select id="getAdminId" resultMap="getAdmin" parameterType="String">
+
+        select `a`.*, `ars`.`role_set`
+        from `adminAccount` `a`
+                 left join `admin_role_set` `ars`
+                           on `a`.`adminId` = `ars`.`adminId`
+        where `a`.`adminId` = #{adminId}
+
+    </select>
+
+
+</mapper>
