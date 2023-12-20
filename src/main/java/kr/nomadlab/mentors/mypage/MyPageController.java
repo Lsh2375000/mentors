@@ -125,5 +125,10 @@ public class MyPageController {
         return "/mypage/mainModify";
     }
 
-
+    @PostMapping("/mainList/modify")
+    public String modifyMain(MainDTO mainDTO){
+        log.info("수정 DTO ? " + mainDTO);
+        mainService.modifyBoard(mainDTO);
+        return "redirect:/mypage/mainList";
+    }
 }

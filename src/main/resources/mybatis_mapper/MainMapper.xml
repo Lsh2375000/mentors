@@ -127,7 +127,7 @@
     </select>
 <!--    게시물 수정-->
     <update id="updateOne">
-        update main set title = #{title}, position = #{position}, career = #{career}, content = #{content}, price = #{price} where mbNo = #{mbNo}
+        update main set nickName = #{nickName}, paidFree = #{paidFree}, devLanguage = #{devLanguage}, title = #{title}, position = #{position}, career = #{career}, content = #{content}, startDate = #{startDate}, endDate = #{endDate}, price = #{price}, maxPeople = #{maxPeople} where mbNo = #{mbNo}
     </update>
 <!--    게시물 삭제-->
     <delete id="deleteOne">

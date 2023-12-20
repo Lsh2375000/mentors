@@ -15,9 +15,9 @@
 </head>
 <style layout:fragment="style">
     .content{
-        width: 50%;
+        width: 70%;
         margin: 0 auto;
-        margin-top: 100px;
+        margin-top: 50px;
     }
     .header{
         border-bottom: 1px solid rgb(0, 196, 113);
@@ -49,6 +49,12 @@
         resize: none;
         font-size: 20pt;
         overflow-y: hidden;
+    }
+    .position label{
+        line-height: 24.8px;
+    }
+    .career label{
+        line-height: 24.8px;
     }
     #toast {
         display: none;
@@ -97,7 +103,7 @@
         justify-content: end;
         gap: 20px;
     }
-    .button{
+    .buttonWrap{
         width: 100px;
         height: 35px;
         border-radius: 5px;
@@ -123,21 +129,21 @@
 </style>
 <body>
 <div layout:fragment="content" class="content">
-    <p class="header">멘토링 글 수정</p>
+    <p class="header pb-2 mb-2">멘토링 글 수정</p>
     <form action="/mypage/mainList/modify" name="writeFrm" method="post" enctype="multipart/form-data">
         <!--        로그인한 사람 정보를 value로-->
-        <input type="hidden" name="mno" th:value="${#authentication.principal.getMno()}">
         <input type="hidden" name="nickName" th:value="${#authentication.principal.getNickname()}">
+        <input type="hidden" name="mbNo" th:value="${mainDTO.mbNo}">
         <!--                <input type="hidden" name="score">-->
         <!--        끝-->
         <div class="paidFree">
             <div>
                 <th:block th:if="${mentoringCnt >= 5}">
-                    <input type="radio" name="paidFree" value="paid">유료강의
+                    <input type="radio" name="paidFree" value="paid" th:checked="${mainDTO.paidFree == 'paid'}">유료강의
                 </th:block>
             </div>
             <div>
-                <input type="radio" name="paidFree" value="free" checked>무료강의
+                <input type="radio" name="paidFree" value="free" th:checked="${mainDTO.paidFree == 'free'}">무료강의
             </div>
         </div>
         <div class="language mt-3">
@@ -145,104 +151,102 @@
             <div class="d-flex justify-content-between mt-3">
                 <div>
                     <div>
-                        <input type="checkbox" name="devLanguage" value="Java">자바
+                        <input type="checkbox" name="devLanguage" value="Java" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.equals('Java')}">자바
                     </div>
                     <div>
-                        <input type="checkbox" name="devLanguage" value="Python">파이썬
+                        <input type="checkbox" name="devLanguage" value="Python" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('Python')}">파이썬
                     </div>
                     <div>
-                        <input type="checkbox" name="devLanguage" value="C">C언어
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <input type="checkbox" name="devLanguage" value="C++">C++
-                    </div>
-                    <div>
-                        <input type="checkbox" name="devLanguage" value="JavaScript">JavaScript
-                    </div>
-                    <div>
-                        <input type="checkbox" name="devLanguage" value="PHP">PHP
+                        <input type="checkbox" name="devLanguage" value="C" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('C')}">C언어
                     </div>
                 </div>
                 <div>
                     <div>
-                        <input type="checkbox" name="devLanguage" value="Swift">Swift
+                        <input type="checkbox" name="devLanguage" value="C++" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('C++')}">C++
                     </div>
                     <div>
-                        <input type="checkbox" name="devLanguage" value="Kotlin">Kotlin
+                        <input type="checkbox" name="devLanguage" value="JavaScript" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('JavaScript')}">JavaScript
                     </div>
                     <div>
-                        <input type="checkbox" name="devLanguage" value="TypeScript">TypeScript
+                        <input type="checkbox" name="devLanguage" value="PHP" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('PHP')}">PHP
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <input type="checkbox" name="devLanguage" value="Swift" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('Swift')}">Swift
+                    </div>
+                    <div>
+                        <input type="checkbox" name="devLanguage" value="Kotlin" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('Kotlin')}">Kotlin
+                    </div>
+                    <div>
+                        <input type="checkbox" name="devLanguage" value="TypeScript" th:checked="${mainDTO.devLanguage != null and mainDTO.devLanguage.contains('TypeScript')}">TypeScript
                     </div>
                 </div>
             </div>
         </div>
         <div class="title mt-3">
-            <textarea type="text" id="title" name="title" placeholder="제목에 핵심 내용을 요약해보세요." maxlength="150" oninput="check(this)"required></textarea>
+            <textarea type="text" id="title" name="title" placeholder="제목에 핵심 내용을 요약해보세요." maxlength="150" oninput="check(this)" required>[[${mainDTO.title}]]</textarea>
         </div>
         <div class="d-flex justify-content-center gap-5">
             <div class="position mt-3 d-flex gap-2">
                 <label for="position">직무</label>
                 <select id="position" name="position">
-                    <option value="백엔드/서버 개발자">백엔드/서버 개발자</option>
-                    <option value="프론트엔드/웹 퍼블리셔">프론트엔드/웹 퍼블리셔</option>
-                    <option value="SW 엔지니어">SW 엔지니어</option>
-                    <option value="머신러닝 엔지니어">머신러닝 엔지니어</option>
-                    <option value="그래픽 디자이너">그래픽 디자이너</option>
-                    <option value="데이터 사이언티스트">데이터 사이언티스트</option>
-                    <option value="게임 클라이언트 개발자">게임 클라이언트 개발자</option>
-                    <option value="크로스플랫폼 앱 개발자">크로스플랫폼 앱 개발자</option>
-                    <option value="임베디드 엔지니어">임베디드 엔지니어</option>
+                    <option value="백엔드/서버 개발자" th:selected="${mainDTO.position == '백엔드/서버 개발자'}">백엔드/서버 개발자</option>
+                    <option value="프론트엔드/웹 퍼블리셔" th:selected="${mainDTO.position == '프론트엔드/웹 퍼블리셔'}">프론트엔드/웹 퍼블리셔</option>
+                    <option value="SW 엔지니어" th:selected="${mainDTO.position == 'SW 엔지니어'}">SW 엔지니어</option>
+                    <option value="머신러닝 엔지니어" th:selected="${mainDTO.position == '머신러닝 엔지니어'}">머신러닝 엔지니어</option>
+                    <option value="그래픽 디자이너" th:selected="${mainDTO.position == '그래픽 디자이너'}">그래픽 디자이너</option>
+                    <option value="데이터 사이언티스트" th:selected="${mainDTO.position == '데이터 사이언티스트'}">데이터 사이언티스트</option>
+                    <option value="게임 클라이언트 개발자" th:selected="${mainDTO.position == '게임 클라이언트 개발자'}">게임 클라이언트 개발자</option>
+                    <option value="크로스플랫폼 앱 개발자" th:selected="${mainDTO.position == '크로스플랫폼 앱 개발자'}">크로스플랫폼 앱 개발자</option>
+                    <option value="임베디드 엔지니어" th:selected="${mainDTO.position == '임베디드 엔지니어'}">임베디드 엔지니어</option>
                 </select>
             </div>
             <div class="career mt-3 d-flex gap-2">
                 <label for="career">경력</label>
                 <select id="career" name="career">
-                    <option value="주니어 (1~3년)">주니어 (1~3년)</option>
-                    <option value="미들 (4~8년)">미들 (4~8년)</option>
-                    <option value="시니어 (9년이상)">시니어 (9년이상)</option>
-                    <option value="Lead 레벨">Lead 레벨</option>
+                    <option value="주니어 (1~3년)" th:selected="${mainDTO.career == '주니어 (1~3년)'}">주니어 (1~3년)</option>
+                    <option value="미들 (4~8년)" th:selected="${mainDTO.career == '미들 (4~8년)'}">미들 (4~8년)</option>
+                    <option value="시니어 (9년이상)" th:selected="${mainDTO.career == '시니어 (9년이상)'}">시니어 (9년이상)</option>
+                    <option value="Lead 레벨" th:selected="${mainDTO.career == 'Lead 레벨'}">Lead 레벨</option>
                 </select>
             </div>
             <div class="maxPeople mt-3 d-flex gap-2">
                 <label for="maxPeople">최대 인원수</label>
-                <input id="maxPeople" type="number" min="1" max="8" value="1">명
+                <input id="maxPeople" type="number" min="1" max="8" th:value="${mainDTO.maxPeople}">명
             </div>
         </div>
         <div class="introduce mt-3">
             <p>본인 소개 및 강의 내용을 설명해 주세요</p>
             <textarea id="content" name="content" cols="40" rows="5" class="form-control" placeholder="본인 소개 및 강의 내용을 설명해 주세요"
-                      style="width: 100%; height: 600px;"></textarea>
+                      style="width: 100%; height: 600px;">[[${mainDTO.content}]]</textarea>
         </div>
         <div class="date mt-3 d-flex justify-content-center gap-5">
             <div class="d-flex gap-2">
                 <label for="startDate">수업 시작일</label>
-                <input type="date" id="startDate" name="startDate" min="${currentDate}" required>
+                <input type="date" id="startDate" name="startDate" min="${currentDate}" th:value="${mainDTO.startDate}" required>
             </div>
             <div class="d-flex gap-2">
                 <label for="endDate">수업 종료일</label>
-                <input type="date" id="endDate" name="endDate" required>
+                <input type="date" id="endDate" name="endDate" th:value="${mainDTO.endDate}" required>
             </div>
         </div>
         <!--                유료 강의 일때만 보임 -->
         <div class="price mt-3">
             <img src="/img/basic/비타민.png" width="40" height="40">
-            <input type="number" name="price" min="0" max="1000" value="0">개
+            <input type="number" name="price" min="0" max="1000" th:value="${mainDTO.price}">개
         </div>
 
         <div class="btnWrap">
-            <button type="submit" class="button" id="writeBtn">등록</button>
-            <button type="button" class="button" id="cancelBtn">취소</button>
+            <button type="submit" class="buttonWrap" id="writeBtn">수정</button>
+            <button type="button" class="buttonWrap" id="cancelBtn">취소</button>
         </div>
     </form>
     <div id="toast">
 
     </div>
-</div>
-<script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
-<script layout:fragment="script" th:inline="javascript">
-
+    <script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
+    <script layout:fragment="script" th:inline="javascript">
     // 네이버 에디터
     let oEditors = [];
     let editorValue;
@@ -335,7 +339,7 @@
     // 등록버튼
     const submitBtn = document.getElementById('writeBtn');
     submitBtn.addEventListener('click', function (){
-        if(confirm("등록하시겠습니까 ? ")){
+        if(confirm("수정하시겠습니까 ? ")){
             check()
             validateForm()
             writeFrm.submit();
@@ -347,7 +351,7 @@
     const cancelBtn = document.getElementById('cancelBtn');
     cancelBtn.addEventListener('click', function (){
         if(confirm("작업한 내용이 저장 되지 않습니다\n정말 취소하시겠습니까?")){
-            location.href = `/main`;
+            location.href = `/mypage/mainList`;
         }else{
 
         }
@@ -384,5 +388,6 @@
     }
 
 </script>
+</div>
 </body>
 </html>

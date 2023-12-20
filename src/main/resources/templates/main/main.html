@@ -127,9 +127,13 @@
         transform: translate(-5px, -5px);
     }
     .card_job{
-        width: 200px;
+        width: 210px;
     }
     .card_job span{
+        background-color: rgba(10,190,148,0.5);
+        height: 25px;
+    }
+    .card_study span{
         background-color: rgba(10,190,148,0.5);
         height: 25px;
     }
@@ -303,7 +307,7 @@
                         </div>
                         <div class="card-bottom d-flex justify-content-between">
                             <div class="card_nickName">
-                                <a href="#">[[${mainList.nickName}]]</a>
+                                <a th:href="@{/mypage/mentorProfile(nickname=${mainList.nickName})}">[[${mainList.nickName}]]</a>
                             </div>
                             <div class="card_score">
                                 <a href="#"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mainList.score}]]</a>
@@ -343,8 +347,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="modal-body-content">
-                            <div>
-                                <a href="#" class="modalNickName"></a>
+                            <div class="modalNickName">
                             </div>
                             <h2 class="mt-2 modalTitle"></h2>
                             <div class="d-flex justify-content-between" style="border-bottom: 1px solid black">
@@ -363,10 +366,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="w-40">
                                     <span class="mt-2 mentorInfo">수업 정보</span>
                                     <div class="mt-3">
-                                        <div class="card_job">
+                                        <div class="card_study">
                                             <div class="d-flex gap-2">
                                                 <span>강의 언어</span>
                                                 <p class="modalLanguage"></p>
@@ -432,7 +435,7 @@
         getBoard(mbNo).then(data => {
             modalDataMno = data.mno;
             console.log(data);
-            modalNickName.innerHTML = `${data.nickName}`;
+            modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
             modalTitle.innerHTML = `${data.title}`;
             modalPosition.innerHTML = `${data.position}`;
             modalCareer.innerHTML = `${data.career}`;
