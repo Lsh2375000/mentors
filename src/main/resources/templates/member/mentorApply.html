@@ -1,0 +1,126 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/inc.html}">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@600&family=Do+Hyeon&family=IBM+Plex+Sans+KR&family=Orbit&family=Poor+Story&display=swap" rel="stylesheet">
+</head>
+<style layout:fragment="style">
+    #out_div {
+        margin-top: 100px;
+        font-family: 'IBM Plex Sans KR', sans-serif;
+        border-radius: 5px;
+        border: 1px solid #c5c5c5;
+        padding: 20px;
+        width: 1000px;
+    }
+    .row{
+        margin-bottom: 30px;
+    }
+
+    .btn{
+        border-radius: 0;
+        background-color: #282828;
+        border: 1px solid black;
+        cursor: pointer;
+        color: white;
+    }
+
+    .btn:hover{
+        background-color:#002ead;
+        color: white;
+        transition: 0.4s;
+    }
+
+
+    .input_value:focus ~ .input_name, .input_value:valid ~ .input_name {
+        font-size: 16px;
+        bottom: 40px;
+        color: #666;
+        font-weight: bold;
+    }
+
+    .input_value:focus ~ .input_span, .input_value:valid ~ .input_span {
+        width: 100%;
+    }
+</style>
+<div layout:fragment="content" id="out_div">
+    <form name="frmApply" id="frmApply" action="/member/mentorApply" method="post" class="form-horizontal" enctype="multipart/form-data">
+
+        <!-- 포트 폴리오 시작-->
+        <div class="form-group row">
+            <label class="col-sm-2 control-label">포트폴리오</label>
+            <div class="col-sm-5">
+                <input name="files" id="files" type="file" class="form-control" accept=".pdf" placeholder="portfolio" multiple="multiple">
+            </div>
+        </div>
+        <!-- 포트폴리오 끝-->
+
+        <!--프로그래밍 언어 시작-->
+        <div class="form-group row">
+            <label class="col-sm-2 control-label">프로그래밍 언어 스택</label>
+            <div class="col-sm-5">
+                Java<input type="checkbox" name="devLanguage" value="Java" class="form-check-input devLanguage">
+                Python<input type="checkbox" name="devLanguage" value="Phython" class="form-check-input devLanguage">
+                C<input type="checkbox" name="devLanguage" value="C" class="form-check-input devLanguage">
+                C++<input type="checkbox" name="devLanguage" value="C++" class="form-check-input devLanguage">
+                JS<input type="checkbox" name="devLanguage" value="JavaScript" class="form-check-input devLanguage">
+                PHP<input type="checkbox" name="devLanguage" value="PHP" class="form-check-input devLanguage">
+                Swift<input type="checkbox" name="devLanguage" value="Swift" class="form-check-input devLanguage">
+                Kotlin<input type="checkbox" name="devLanguage" value="Kotlin" class="form-check-input devLanguage">
+                TypeScript<input type="checkbox" name="devLanguage" value="TypeScript" class="form-check-input devLanguage">
+            </div>
+        </div>
+        <!--프로그래밍 언어 끝-->
+
+        <div class="form-group row">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-submit" id="btnSubmit">멘토 신청</button>
+                <button type="button" onclick="moveHome();" class="btn btnReset" id="btnReset">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+    <script src="/js/checkAxios.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
+    <script src="/js/valid.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    const frmApply = document.getElementById('frmApply'); // 폼 태그
+
+    function moveHome(){
+        location.href="/";
+    }
+
+
+    btnSubmit.addEventListener('click', async function (e) { // 필수 요소 유효성 검사
+
+        const files = document.getElementById('files').value; // 포트폴리오
+        const devLanguage = document.querySelector('.devLanguage').value;
+
+        // 멘토 신청 유효성 검사
+        if (files === ''.trim()) { // 포트폴리오가 비어 있으면
+             alert('포트폴리오를 등록해 주세요');
+             e.preventDefault();
+             e.stopPropagation();
+             return;
+
+         } else if (devLanguage === ''.trim()) { // 회원가입전에 이메일 값이 변경되면
+             alert('언어 스택 지정해 주세요.');
+             e.stopPropagation();
+             e.preventDefault();
+             return;
+         }
+
+        frmApply.submit();
+
+    });
+
+</script>
+
+
+
+
