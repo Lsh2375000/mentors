@@ -102,4 +102,9 @@ public class MyPageController {
         mainService.modifyBoard(mainDTO);
         return "redirect:/mypage/mainList";
     }
+
+    @GetMapping("/paymentsHistory")
+    public String paymentHistory(){
+        return "/mypage/paymentsHistory";
+    }
 }
