@@ -9,10 +9,103 @@
 </head>
 <body>
 <div layout:fragment="content">
+  <div class="paymentHistory-body">
+    <ul class="paymentHistory-body">
+      <!-- 댓글 start -->
+      <!-- 댓글 리스트 출력 -->
+      <li class="paymentHistory-List">
 
+      </li>
+      <!-- /댓글 end -->
+    </ul>
+    <div class="row mt-3">
+      <div class="col">
+        <ul class="paymentHistoryList-paging">
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 <script layout:fragment="script" th:inline="javascript">
+  const auth = [[${#authentication.principal}]];
+  const mno = auth.mno;
+  function printPaymentsHistory(page, size, goLast){
+    getList({mno, page, size, goLast})
+            .then(data =>{
+              printList(data.dtoList);
+              printPages(data);
+            }).catch(e => console.error());
+  }
+  printPaymentsHistory(1,12);
 
+  const paymentHistoryList = document.querySelector('.paymentHistory-List');
+
+  function printList(dtoList){
+    let str = '';
+    if(dtoList && dtoList.length > 0) {
+      for(const dto of dtoList){
+        str += `<span>
+<div>${dto.orderName}</div>
+<div>${dto.amount}</div>
+<div>${dto.approveAt}</div>
+</span>`
+      }
+    }
+    paymentHistoryList.innerHTML =str;
+  }
+
+  const paymentPaging = document.querySelector('.paymentHistoryList-paging');
+  function printPages(data) { // 페이지 목록 출력
+    // pagination
+    let pageStr = '';
+    if (data.prev) {
+      pageStr += `<li class="page-item">
+                        <a class="page-link" data-page="${data.start - 1}">PREV</a>
+                    </li>`;
+    }
+    for (let i = data.start; i <= data.end; i++) {
+      pageStr += `<li class="page-item ${i === data.page ? "active" : ""}">
+                        <a class="page-link" data-page="${i}">${i}</a>
+                    </li>`;
+    }
+    if (data.next) {
+      pageStr += `<li class="page-item">
+                        <a class="page-link" data-page="${data.end + 1}">NEXT</a>
+                    </li>`;
+    }
+    console.log(pageStr);
+    paymentPaging.innerHTML = pageStr;
+  }
+
+  paymentPaging.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+
+    const target = e.target;
+
+    if (!target || target.tagName != 'A') {
+      return;
+    }
+
+    page = target.getAttribute('data-page');
+    printPaymentsHistory(page, 12);
+  });
+
+
+
+
+  //리스트 불러오기
+  async function getList({mno, page, size, goLast}) {
+    const result = await axios.get(`/mypage/paymentsHistory/${mno}?page=${page}&size=${size}`);
+    if (goLast) {
+      const total = result.data.total;
+      const lastPage = parseInt(Math.ceil(total / size));
+
+      return getList({mno: mno, page: page, size: size});
+    }
+    return result.data;
+  }
 </script>
 </html>

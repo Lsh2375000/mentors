@@ -16,4 +16,10 @@
             approveAt=now(), failReason = #{failReason}
         WHERE orderId=#{orderId}
     </update>
+    <select id="getCount" resultType="int">
+        select count(*) from `payment` where mno=#{mno}
+    </select>
+    <select id="selectList" resultType="kr.nomadlab.mentors.payment.vo.PaymentVO">
+        SELECT * FROM payment WHERE mno=#{mno} and paySuccessYN = 1 ORDER BY approveAt desc LIMIT #{skip}, #{size}
+    </select>
 </mapper>
