@@ -431,9 +431,10 @@
     // 모달창
     function modalBtn(mbNo){
         let modalDataMno = null;
-
+        let price = null;
         getBoard(mbNo).then(data => {
             modalDataMno = data.mno;
+            price = data.price;
             console.log(data);
             modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
             modalTitle.innerHTML = `${data.title}`;
@@ -447,7 +448,7 @@
             if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
                 console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
                 // 만석이면 disabled 적용
-                if(data.curPeople === data.maxPeople){
+                if(data.curPeople >= data.maxPeople){
                     enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn" style="background-color: #555555; border: none;" disabled><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
                 }else{
                     enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
@@ -459,6 +460,24 @@
 
         //등록버튼 클릭시 알림 보내기
         enrollBtnDiv.addEventListener('click', function() {
+            if(auth === 'anonymousUser'){
+                alert('로그인 해주세요.');
+                return;
+            }
+            if(auth.coin < price){
+                alert("비타민을 먼저 충전해주세요.");
+                window.location.href = '/payments';
+                return;
+            }
+
+            let payInfoObj = {
+                mbNo : mbNo,
+                mentorMno : modalDataMno,
+                price : price,
+                menteeMno : auth.mno
+            }
+            payInfoSave(payInfoObj);
+
             let messageObj ={
                 receiverMno : modalDataMno,
                 types : "mentoring",
@@ -470,6 +489,11 @@
         })
     }
 
+    //비타민 사용내역 저장
+    async function payInfoSave(payInfoObj){
+        const result = await axios.put(`/payInfo/save`, payInfoObj);
+        return result.data;
+    }
     //상대방에게 알림 전달
     async function passMessage(messageObj) {
         const result = await axios.post(`/notify/repository`,messageObj);
