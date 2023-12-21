@@ -36,13 +36,14 @@
         FROM `board` AS `b`
         LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
         LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
+        LEFT JOIN `hashTag` AS `ht` ON `b`.`boardNo` = `ht`.`boardNo`
         <include refid="search"/>
         GROUP BY `b`.`boardNo`
         ORDER BY
         <!-- 정렬 조건 -->
         <choose>
-            <when test="order == 'reply'">replyCount</when>
-            <when test="order == 'like'">likeCount</when>
+            <when test="sort == 'reply'">replyCount</when>
+            <when test="sort == 'like'">likeCount</when>
             <!-- 추가적인 컬럼이 있으면 위와 같이 추가 -->
             <otherwise>b.boardNo</otherwise>
         </choose>
@@ -63,6 +64,12 @@
                     <if test="type == 'c'.toString()">
                         `b`.`content` like concat('%', #{keyword}, '%')
                     </if>
+                </foreach>
+            </if>
+
+            <if test="hashTags != null and hashTags.length > 0">
+                <foreach collection="hashTags" item="hashTag" open=" AND (" close=")" separator=" OR ">
+                    `ht`.`tagName` = #{hashTag}
                 </foreach>
             </if>
         </where>
@@ -124,7 +131,9 @@
 
     <!--게시물 갯수-->
     <select id="getCount" resultType="int">
-        select count(*) from `board` as `b`
+        SELECT COUNT(DISTINCT `b`.`boardNo`)
+        FROM `board` AS `b`
+        LEFT JOIN `hashTag` AS `ht` ON `b`.`boardNo` = `ht`.`boardNo`
         <include refid="search" />
     </select>
 
