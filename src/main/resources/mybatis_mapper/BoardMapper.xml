@@ -86,6 +86,7 @@
         INSERT INTO `hashTag` (`boardNo`, `tagName`) VALUES (#{boardNo}, #{tagName})
     </insert>
 
+    <!-- 태그 삭제 -->
     <delete id="deleteTag">
         DELETE FROM `hashTag` WHERE `htNo` = #{htNo}
     </delete>
@@ -107,11 +108,10 @@
     </delete>
 
     <!-- 게시글 조회 -->
-    <select id="selectBoard">
-        SELECT b.*, COUNT(br.boardNo) AS replyCount
-        FROM board AS b
-        LEFT JOIN boardReply AS br ON b.boardNo = br.boardNo
-        WHERE b.boardNo = #{boardNo}
+    <select id="selectBoard" resultMap="boardResultMap">
+        SELECT *
+        FROM `board`
+        WHERE `boardNo` = #{boardNo}
     </select>
 
     <!-- 게시글 좋아요 추가 -->

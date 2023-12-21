@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.chat.mapper.ChatRoomMapper">
+
+    <!-- 채팅방 생성 -->
+    <insert id="insertChatRoom">
+        insert into chatRoom (roomId, name, mno, maxMembers) values (#{roomId}, #{name}, #{mno}, #{maxMembers})
+    </insert>
+
+    <!-- 채팅목록 추가 -->
+    <insert id="insertChatList">
+        insert into chatList (mno, roomId, role) values (#{mno}, #{roomId}, #{role})
+    </insert>
+
+    <!-- 채팅방 목록 조회 -->
+    <select id="selectRoomList" resultType="kr.nomadlab.mentors.chat.dto.ChatRoomDTO">
+        SELECT cr.*, (COUNT(cl.clNo) - 1) AS currentMembers
+        FROM chatRoom AS cr
+        LEFT JOIN chatList AS cl ON cr.roomId = cl.roomId
+        WHERE cr.roomId IN (SELECT roomId FROM chatList WHERE mno = #{mno})
+        GROUP BY cr.roomId
+    </select>
+
+    <!-- 채팅방 조회 -->
+    <select id="selectRoomById" resultType="kr.nomadlab.mentors.chat.dto.ChatRoomDTO">
+        SELECT cr.*, (COUNT(cl.clNo) - 1) AS currentMembers
+        FROM chatRoom AS cr
+        LEFT JOIN chatList AS cl ON cr.roomId = cl.roomId
+        WHERE cr.roomId = #{roomId}
+    </select>
+
+</mapper>

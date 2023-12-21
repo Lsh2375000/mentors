@@ -18,3 +18,11 @@ async function removeLike(blNo) {
 
     return response.data;
 }
+
+// 해쉬태그 수정 요청
+async function modifyTag(boardNo, tagList) {
+    console.log(boardNo);
+    const response = await axios.put(`/board/tag/${boardNo}`, tagList);
+
+    return response.data;
+}

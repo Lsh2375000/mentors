@@ -54,15 +54,18 @@ public class BoardServiceImpl implements BoardService {
 
         BoardVO boardVO = boardMapper.selectBoard(boardNo);
         List<BoardLikeDTO> likeList = new ArrayList<>();
+        List<HashTagDTO> tagList = new ArrayList<>();
 
         if (mode.equals("view")) { // mode가 view일때만
             boardMapper.updateHit(boardNo); // 조회수 업데이트
             List<BoardLikeVO> likeVOList = boardMapper.selectLikeList(boardNo); // 게시글 좋아요 조회
             likeVOList.forEach(boardLikeVO -> likeList.add(modelMapper.map(boardLikeVO, BoardLikeDTO.class)));
         }
+        boardVO.getTagVOList().forEach(hashTagVO -> tagList.add(modelMapper.map(hashTagVO, HashTagDTO.class)));
 
         BoardDTO boardDTO = modelMapper.map(boardVO, BoardDTO.class);
         boardDTO.setLikeList(likeList);
+        boardDTO.setTagList(tagList);
 
         return boardDTO;
     }
@@ -116,6 +119,25 @@ public class BoardServiceImpl implements BoardService {
     public void addHashTag(HashTagDTO hashTagDTO) { // 해쉬태그 추가
         HashTagVO hashTagVO = modelMapper.map(hashTagDTO, HashTagVO.class);
         boardMapper.insertTag(hashTagVO);
+    }
+
+    @Override
+    public void modifyHashTag(Long boardNo, List<HashTagDTO> tagList) {
+
+        List<HashTagDTO> originalList = new ArrayList<>();
+        List<HashTagVO> tagVOList = boardMapper.selectTagList(boardNo);
+        tagVOList.forEach(hashTagVO -> originalList.add(
+                modelMapper.map(hashTagVO, HashTagDTO.class)));
+
+        tagList.forEach(hashTagDTO -> {
+            if (hashTagDTO.getHtNo() == null) { // 새로 추가할 태그
+                addHashTag(hashTagDTO);
+            }
+            else if (!originalList.contains(hashTagDTO)) { // DB에 저장된 태그와 비교
+                removeHashTag(hashTagDTO.getHtNo());
+            }
+
+        });
     }
 
     @Override

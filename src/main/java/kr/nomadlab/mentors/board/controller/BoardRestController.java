@@ -3,6 +3,7 @@ package kr.nomadlab.mentors.board.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import kr.nomadlab.mentors.board.dto.BoardLikeDTO;
+import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -50,5 +52,14 @@ public class BoardRestController {
         resultMap.put("result", result);
 
         return resultMap;
+    }
+
+    @Operation(summary = "tag PUT", description = "PUT 방식으로 태그 수정")
+    @PutMapping(value = "/tag/{boardNo}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Long> modifyTag(@PathVariable Long boardNo, @RequestBody List<HashTagDTO> tagList) {
+        log.info("/board/tag/" + boardNo + "(PUT)...");
+
+        boardService.modifyHashTag(boardNo, tagList);
+        return null;
     }
 }

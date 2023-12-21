@@ -22,14 +22,14 @@
         .search-container .search-item:last-child { margin-top: 10px; }
         .search-container .search-item .search-input { width: 100%; border: 1px solid #d3d4d5; border-radius: 0.3rem; padding: 0 5px; }
         .search-container .search-item .tag-wrap { display: flex; flex-wrap: wrap; align-items: center; }
-        .remove-btn { margin-left: 5px; cursor: pointer; }
+        .remove-btn { margin-left: 5px; }
         .focus { border: 1px solid #0abe94 !important; }
         .search-container .form-control { border: none; outline: none; height: 50px; }
         .search-container .form-control:focus { border: none;  box-shadow: none; }
         .search-container button { font-weight: 700; width: 100px; height: 50px; border-radius: 0.3rem; margin-left: 15px; }
         .board-list-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; }
         .board-list-header ul { display: inline-flex; }
-        .board-list-header ul li { margin: 0 1rem; list-style-type: disc; }
+        .board-list-header ul li { margin: 0 1rem; list-style-type: disc; cursor: pointer; }
         .board-list-header ul li:hover { font-weight: 600; }
         .board-list-header ul li:hover::marker { color: #0abe94; }
         .active { font-weight: 600; }
@@ -39,8 +39,10 @@
         .board-container { border-bottom: 1px solid #dee2e6; padding: 18px; box-sizing: border-box; }
         .board-container:hover { background-color: #f8f9fa; }
         .board-title { font-size: 21px; }
+        .board-content { color: #495057; }
         .tag-list { display: flex; }
-        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 5px 5px 5px 0; }
+        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 5px 5px 5px 0;
+            font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
         .board-footer { display: flex; justify-content: space-between; color: #868e96; }
         .board-footer span, dt, dd { font-size: 14px; }
         .footer-right { display: flex; }
@@ -114,7 +116,7 @@
             <!-- 게시글 목록 -->
             <ul class="board-list" th:with="link = ${pageRequestDTO.getLink()}">
                 <li class="board-container" th:each="dto, status:${responseDTO.dtoList}">
-                    <a th:href="|@{/board/view(boardNo =${dto.boardNo})}&${link}|" class="view-link">
+                    <a th:href="|@{/board/view(boardNo=${dto.boardNo})}&${link}|" class="view-link">
                         <div class="board">
                             <h3 class="board-title">
                                 [[${dto.title}]]
@@ -152,7 +154,7 @@
                 <div class="float-end">
                     <ul class="pagination flex-wrap">
                         <li class="page-item" th:if="${responseDTO.prev}">
-                            <a class="page-link" th:data-num="${responseDTO.start - 1}">Previous</a>
+                            <a class="page-link" th:data-num="${responseDTO.start - 1}">이전</a>
                         </li>
                         <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
                             <li th:if="${i != 0}" th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
@@ -160,7 +162,7 @@
                             </li>
                         </th:block>
                         <li class="page-item" th:if="${responseDTO.next}">
-                            <a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+                            <a class="page-link" th:data-num="${responseDTO.end + 1}">다음</a>
                         </li>
                     </ul>
                 </div>
@@ -192,10 +194,6 @@
             const sort = target.dataset.sort; // 정렬 기준
             document.querySelector('input[name=sort]').value = sort;
 
-            if (searchInput.value.trim() !== '') { // 검색어가 존재하는 경우
-                formObj.innerHTML += `<input type="hidden" name="type" value="twc">`;
-            }
-
             formObj.submit();
         });
 
@@ -208,10 +206,6 @@
 
             if(target.tagName !== 'A'){
                 return;
-            }
-
-            if (searchInput.value.trim() !== '') { // 검색어가 존재하는 경우
-                formObj.innerHTML += `<input type="hidden" name="type" value="twc">`;
             }
 
             const num = target.getAttribute("data-num");
@@ -233,23 +227,6 @@
             });
         });
 
-        // 검색버튼 클릭시 이벤트
-        document.querySelector('.searchBtn').addEventListener('click', function (e) {
-            e.preventDefault();
-
-            if (searchInput.value.trim() !== '') {
-                // 검색 시 type 추가
-                const typeInput = document.createElement('input');
-                typeInput.type = 'hidden';
-                typeInput.name = 'type';
-                typeInput.value = "twc";
-
-                formObj.appendChild(typeInput);
-            }
-
-            formObj.submit();
-        });
-
         // 초기화 버튼 클릭 이벤트
         document.querySelector(".clearBtn").addEventListener("click", function (e){
             e.preventDefault();
@@ -258,13 +235,6 @@
         }, false)
 
         let hashTags = pageRequest.hashTags; // 태그 임시저장 배열
-
-        document.getElementById('tag-input').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-            }
-        });
-
         const hashTagInput = document.querySelector('input[name=hashTag]'); // 태그를 담을 input
 
         // 해쉬 태그 입력 이벤트

@@ -32,6 +32,8 @@ public interface BoardMapper {
 
     List<BoardLikeVO> selectLikeList(Long boardNo); // 해당 게시글 좋아요 조회
     
+    List<HashTagVO> selectTagList(Long boardNo); // 태그 목록 조회
+    
     void insertTag(HashTagVO hashTagVO); // 태그 추가
 
     void deleteTag(Long htNo); // 태그 삭제

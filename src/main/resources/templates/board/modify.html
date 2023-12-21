@@ -14,15 +14,29 @@
         a { text-decoration: none; }
 
         .post-container { background-color: #FFFFFF; padding: 100px 0; }
-        .post-container .form-control {border: none; outline: none; font-size: 26px; }
+        .post-container .form-control { border: none; outline: none; font-size: 26px; }
+        .post-container .tag-wrap { display: flex; flex-wrap: wrap; align-items: center; }
+        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 0 10px 10px 0;
+            font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
+        .remove-btn { margin-left: 5px; }
+        .post-container input[name=hashTag] { font-size: 18px; }
         .post-container .form-control:focus { border: none;  box-shadow: none; }
         .post-body { min-height: 600px; }
+        .post-footer { display: flex; justify-content: flex-end; }
+        .post-footer a { margin-right: 10px; }
     </style>
 
     <div class="post-container">
         <form action="/board/modify" method="post" name="frmModify" enctype="multipart/form-data">
             <input type="hidden" name="boardNo" th:value="${board.boardNo}">
             <h1><input type="text" class="form-control" name="title" th:value="${board.title}"></h1>
+            <div class="tag-wrap">
+                <div class="tag-style" th:each="tag:${board.tagList}">
+                    <span>[[${tag.tagName}]]</span>
+                    <span>✕</span>
+                </div>
+                <input type="text" name="hashTag" class="form-control" placeholder="태그를 설정하세요 (최대 10개)">
+            </div>
             <div class="post-header">
                 <input type="hidden" name="writer" th:value="${writer}"> <!-- 시큐리티로 로그인된 사용자 정보 전달 -->
             </div>
@@ -31,11 +45,11 @@
                 <textarea name="content" id="content" cols="50" rows="5" class="form-control" placeholder="content"
                           style="width: 100%; height: 600px;">[[${board.content}]]</textarea>
             </div>
-            <div>
-                <button type="button" id="submitBtn" class="btn btn-primary">등록</button>
+            <div class="post-footer">
                 <a th:href="@{/board/view(boardNo=${board.boardNo})}">
-                    <button type="button" id="prevBtn" class="btn btn-secondary">이전</button>
+                    <button type="button" class="btn btn-secondary">취소</button>
                 </a>
+                <button type="submit" id="submitBtn" class="btn btn-primary">등록</button>
             </div>
         </form>
         <script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
@@ -59,6 +73,13 @@
         const btnSubmit = document.getElementById('submitBtn');
         const frmModify = document.querySelector('form[name=frmModify]');
 
+        // 엔터키 submit 방지
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        }, true);
+
         // 등록 버튼 클릭시 이벤트
         btnSubmit.addEventListener('click', function (e) {
             e.preventDefault();
@@ -70,8 +91,65 @@
                 return;
             }
 
+            // 해쉬태그를 담은 input을 동적으로 추가
+            hashTags.forEach(tag => {
+                const inputTag = document.createElement('input');
+                inputTag.type = 'hidden';
+                inputTag.name = 'hashTags';
+                inputTag.value = tag;
+                frmModify.appendChild(inputTag);
+            });
+
             frmModify.submit();
         });
+
+        const tagWrap = document.querySelector('.tag-wrap'); // 태그를 넣을 영역
+        const boardNo = [[${board.boardNo}]];
+        let tagList = [[${board.tagList}]]; // 태그 임시저장 목록
+        console.log(tagList);
+
+        // 해쉬 태그 입력 이벤트
+        document.querySelector('input[name=hashTag]').addEventListener('keyup', function (e) {
+            console.log(e.key);
+
+            const hashTag = e.target;
+
+            if (hashTag.value.trim() !== '' && e.key === 'Enter') { // 내용 존재, Enter키 입력시 태그 추가
+
+                if (tagList.length >= 10) { // 해시태그가 10개 이상이면
+                    hashTag.value = '';
+                    alert('해시태그는 최대 10개까지 입력할 수 있습니다.');
+                }
+                else {
+                    const tagName = hashTag.value.trim(); // 입력한 태그 명
+
+                    // 해쉬 태그 생성
+                    const divElement = document.createElement('div');
+                    divElement.innerHTML = `<span>${tagName}</span>
+                                            <span class="remove-btn">✕</span>`;
+                    divElement.classList.add('tag-style');
+                    divElement.addEventListener('click', removeTag); // 삭제 이벤트 등록
+                    tagWrap.insertBefore(divElement, hashTag); // 태그 삽입
+
+                    const tagObj = { boardNo: boardNo, tagName: tagName };
+                    tagList.push(tagName); // 배열에 태그 추가
+                    console.log(tagList);
+
+                    hashTag.value = '';
+                    hashTag.focus();
+                }
+            }
+        });
+
+        function removeTag(e) { // 태그 삭제 함수
+            const tagNameNode = this.firstChild; // 첫번째 자식 노드
+
+            // 일치하는 태그 제외하고 새로운 배열 생성
+            tagList = tagList.filter(tag => tag.tagName !== tagNameNode.textContent);
+            console.log('tagArr: ', tagList); // 태그를 담은 배열 확인
+
+            this.remove();
+        }
     });
 
     const errors = [[${errors}]]
