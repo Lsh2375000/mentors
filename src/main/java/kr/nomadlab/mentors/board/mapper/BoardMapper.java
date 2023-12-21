@@ -3,6 +3,7 @@ package kr.nomadlab.mentors.board.mapper;
 import kr.nomadlab.mentors.board.domain.BoardLikeVO;
 import kr.nomadlab.mentors.board.domain.BoardVO;
 import kr.nomadlab.mentors.board.domain.HashTagVO;
+import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -33,9 +34,11 @@ public interface BoardMapper {
     List<BoardLikeVO> selectLikeList(Long boardNo); // 해당 게시글 좋아요 조회
     
     List<HashTagVO> selectTagList(Long boardNo); // 태그 목록 조회
+
+    List<HashTagDTO> selectTopTagList(); // 상위 10개 태그 조회
     
     void insertTag(HashTagVO hashTagVO); // 태그 추가
 
-    void deleteTag(Long htNo); // 태그 삭제
+    void deleteTag(Long boardNo); // 태그 삭제
 
 }

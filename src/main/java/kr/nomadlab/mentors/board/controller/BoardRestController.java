@@ -56,10 +56,11 @@ public class BoardRestController {
 
     @Operation(summary = "tag PUT", description = "PUT 방식으로 태그 수정")
     @PutMapping(value = "/tag/{boardNo}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Long> modifyTag(@PathVariable Long boardNo, @RequestBody List<HashTagDTO> tagList) {
+    public ResponseEntity<String> modifyTag(@RequestBody List<HashTagDTO> tagList, @PathVariable(name = "boardNo") Long boardNo) {
         log.info("/board/tag/" + boardNo + "(PUT)...");
+        log.info(tagList);
 
         boardService.modifyHashTag(boardNo, tagList);
-        return null;
+        return ResponseEntity.ok("Success");
     }
 }

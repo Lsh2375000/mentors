@@ -41,7 +41,10 @@ public class BoardController {
         }
 
         PageResponseDTO<BoardDTO> pageResponseDTO = boardService.getBoardList(pageRequestDTO);
+        List<HashTagDTO> topTagList = boardService.getTopTagList();
+
         model.addAttribute("responseDTO", pageResponseDTO);
+        model.addAttribute("topTagList", topTagList);
     }
 
 //    @PreAuthorize("isAuthenticated()") //로그인한 시용자만

@@ -55,6 +55,7 @@
         <script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
     </div>
 
+    <script src="/js/board/board.js"></script>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
@@ -91,14 +92,9 @@
                 return;
             }
 
-            // 해쉬태그를 담은 input을 동적으로 추가
-            hashTags.forEach(tag => {
-                const inputTag = document.createElement('input');
-                inputTag.type = 'hidden';
-                inputTag.name = 'hashTags';
-                inputTag.value = tag;
-                frmModify.appendChild(inputTag);
-            });
+            // 해쉬태그 수정 요청
+            const result = modifyTag(boardNo, tagList);
+            console.log(result);
 
             frmModify.submit();
         });
@@ -107,6 +103,11 @@
         const boardNo = [[${board.boardNo}]];
         let tagList = [[${board.tagList}]]; // 태그 임시저장 목록
         console.log(tagList);
+
+        // 태그 삭제 이벤트 등록
+        document.querySelectorAll('.tag-style').forEach(tag => {
+            tag.addEventListener('click', removeTag);
+        });
 
         // 해쉬 태그 입력 이벤트
         document.querySelector('input[name=hashTag]').addEventListener('keyup', function (e) {
@@ -132,7 +133,7 @@
                     tagWrap.insertBefore(divElement, hashTag); // 태그 삽입
 
                     const tagObj = { boardNo: boardNo, tagName: tagName };
-                    tagList.push(tagName); // 배열에 태그 추가
+                    tagList.push(tagObj); // 배열에 태그 추가
                     console.log(tagList);
 
                     hashTag.value = '';
@@ -142,7 +143,8 @@
         });
 
         function removeTag(e) { // 태그 삭제 함수
-            const tagNameNode = this.firstChild; // 첫번째 자식 노드
+            const tagNameNode = this.firstElementChild; // 첫번째 자식 노드
+            console.log(tagNameNode.textContent);
 
             // 일치하는 태그 제외하고 새로운 배열 생성
             tagList = tagList.filter(tag => tag.tagName !== tagNameNode.textContent);

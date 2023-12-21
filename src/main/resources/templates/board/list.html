@@ -17,22 +17,27 @@
         main { padding-top: 50px; display: flex; }
         main section { width: 100%; }
         main ul { padding-left: 0 !important; }
-        .left-side-menu li { width: 200px; line-height: 60px; text-align: center; }
+        .left-side-menu { margin-top: 44px; margin-right: 40px; width: 168px; }
+        .menu { min-width: 160px; }
+        .menu li { padding: 0.5em 0.75em; }
+        .menu a { display: block; font-size: 16px; color: #343a40; font-weight: 400; line-height: 1.5; }
+        .left-side-menu .selected { color: #1abc9c; font-weight: 600; }
+        .right-side-menu { margin-left: 40px; width: 180px; height: fit-content;
+            border: 1px solid #dee2e6; border-radius: 4px; padding: 12px; }
         .search-container .search-item { display: flex;  width: 100%; }
         .search-container .search-item:last-child { margin-top: 10px; }
         .search-container .search-item .search-input { width: 100%; border: 1px solid #d3d4d5; border-radius: 0.3rem; padding: 0 5px; }
-        .search-container .search-item .tag-wrap { display: flex; flex-wrap: wrap; align-items: center; }
+        .tag-wrap { display: flex; flex-wrap: wrap; align-items: center; }
         .remove-btn { margin-left: 5px; }
         .focus { border: 1px solid #0abe94 !important; }
         .search-container .form-control { border: none; outline: none; height: 50px; }
         .search-container .form-control:focus { border: none;  box-shadow: none; }
-        .search-container button { font-weight: 700; width: 100px; height: 50px; border-radius: 0.3rem; margin-left: 15px; }
+        .search-container .btn { font-weight: 700; width: 100px; height: 50px; border-radius: 0.3rem; margin-left: 15px; }
         .board-list-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; }
         .board-list-header ul { display: inline-flex; }
-        .board-list-header ul li { margin: 0 1rem; list-style-type: disc; cursor: pointer; }
+        .board-list-header ul li { margin: 0 1rem; list-style-type: disc; cursor: pointer; font-weight: 400; color: #868e96; }
         .board-list-header ul li:hover { font-weight: 600; }
-        .board-list-header ul li:hover::marker { color: #0abe94; }
-        .active { font-weight: 600; }
+        .active { font-weight: 700 !important; color: #1b1c1d !important;}
         .active::marker { color: #0abe94; }
         .board-list-header a { color: #000000; }
         .board-list { border-top: 1px solid #dee2e6; padding-left: 0 !important; }
@@ -52,15 +57,13 @@
 
     <!-- 메인 -->
     <main>
-        <!-- 사이드 메뉴 -->
-        <aside class="left-side-menu">
-            <nav>
-                <ul>
-                    <li><a href="/board/list">팀프로젝트소개</a></li>
-                    <li><a href="#">팀프로젝트모집</a></li>
-                </ul>
-            </nav>
-        </aside>
+        <!-- 왼쪽 사이드 메뉴 -->
+        <nav class="left-side-menu">
+            <ul class="menu">
+                <li><a href="/board/list" class="selected">팀프로젝트소개</a></li>
+                <li><a href="#">팀프로젝트모집</a></li>
+            </ul>
+        </nav>
 
         <section>
             <!-- 검색 입력 창 -->
@@ -81,9 +84,7 @@
                                     <span class="remove-btn">✕</span>
                                 </div>
                                 <input id="tag-input" type="text" class="form-control" placeholder="태그를 입력하세요">
-                                <th:block th:if="${pageRequestDTO.hashTag}">
-                                    <input type="hidden" name="hashTag" class="form-control" th:value="${pageRequestDTO.hashTag}">
-                                </th:block>
+                                <input type="hidden" name="hashTag" class="form-control" th:value="${pageRequestDTO.hashTag}">
                             </div>
                             <button class="btn btn-light clearBtn" type="button">초기화</button>
                         </div>
@@ -170,13 +171,22 @@
             <!--/* 페이징 end */-->
         </section>
 
+        <!-- 오른쪽 사이드 메뉴 -->
+        <nav class="right-side-menu">
+            <h6>인기 태그</h6>
+            <ul class="menu tag-wrap">
+                <li class="tag-style top" th:each="tag:${topTagList}">
+                    [[${tag.tagName}]]
+                </li>
+            </ul>
+        </nav>
+
     </main>
 </div>
 </body>
 <script layout:fragment="script" th:inline="javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
-        const pageRequest = [[${pageRequestDTO}]]; // 검색 및 페이지 정보를 담는 객체
         const formObj = document.querySelector("form[name=frmSearch]");
         const searchInput = document.getElementById('keyword'); // 검색창
 
@@ -234,8 +244,16 @@
             self.location='/board/list';
         }, false)
 
-        let hashTags = pageRequest.hashTags; // 태그 임시저장 배열
+        let hashTags = []; // 태그 임시저장 배열
         const hashTagInput = document.querySelector('input[name=hashTag]'); // 태그를 담을 input
+        const pageRequest = [[${pageRequestDTO}]];
+
+        if (pageRequest.hashTags !== null) { // 파리미터에 태그가 존재할 경우
+            hashTags = pageRequest.hashTags;
+        }
+        if (hashTagInput.value.trim() === '') { // 태그를 담은 input에 값이 없는경우
+            hashTagInput.disabled = true; // 비활성화
+        }
 
         // 해쉬 태그 입력 이벤트
         document.getElementById('tag-input').addEventListener('keyup', function (e) {
@@ -246,15 +264,11 @@
 
             if (hashTag.value.trim() !== '' && e.key === 'Enter') { // 내용 존재, Enter키 입력시 태그 추가
                 const tagName = hashTag.value.trim(); // 입력한 태그 명
+                console.log(tagName);
 
-                if (hashTagInput == null) { // 해쉬태그를 담는 input이 존재하지 않는경우
-                    const inputElement = document.createElement('input');
-                    inputElement.type = 'hidden';
-                    inputElement.name = 'hashTag';
-                    inputElement.value = `${tagName},`;
-                    formObj.appendChild(inputElement);
-                }
-                else {
+                hashTagInput.disabled = false; // 해쉬태그 담을 input 활성화
+
+                if (hashTags.indexOf(tagName) === -1) { // 중복 태그 방지
                     hashTagInput.value += `${tagName},`;
                 }
 
@@ -262,27 +276,42 @@
             }
         });
 
-        // 태그 삭제 이벤트
-        document.querySelector('.tag-wrap').addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // 태그 삭제 이벤트 등록
+        document.querySelectorAll('.search-input .tag-style').forEach(tag => {
+            tag.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-            const target = e.target;
+                const tagNameNode = this.firstElementChild; // 첫번째 자식 엘리먼트
+                console.log(tagNameNode);
+                console.log(tagNameNode.textContent);
 
-            if(target.tagName !== 'SPAN'){
-                return;
-            }
+                // 일치하는 태그 제외하고 새로운 배열 생성
+                hashTags = hashTags.filter(tag => tag !== tagNameNode.textContent);
+                console.log('tagArr: ', hashTags); // 태그를 담은 배열 확인
 
-            hashTagInput.value = ''; // input 초기화
+                hashTagInput.value = ''; // 해쉬태그를 담을 인풋 초기화
+                hashTags.forEach(tag => { // 해쉬 태그를 input에 저장
+                    hashTagInput.value += `${tag},`;
+                });
 
-            const targetName = target.previousElementSibling; // 삭제할 태그 명
-            console.log(targetName);
-            hashTags = hashTags.filter(tag => tag !== targetName.textContent); // 삭제할 태그 제외하고 새로운 배열 생성
-            hashTags.forEach(tag => { // 해쉬 태그를 input에 저장
-                hashTagInput.value += `${tag},`;
+                formObj.submit();
             });
+        });
 
-            formObj.submit();
+        // 인기 태그 클릭 이벤트
+        document.querySelectorAll('.top').forEach(topTag => {
+            topTag.addEventListener('click', function () {
+                const tagName = this.textContent.trim(); // 태그 명
+
+                hashTagInput.disabled = false; // 해쉬태그 담을 input 활성화
+
+                if (hashTags.indexOf(tagName) === -1) { // 중복 태그 방지
+                    hashTagInput.value += `${tagName},`;
+                }
+
+                formObj.submit();
+            });
         });
     });
 

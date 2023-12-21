@@ -25,10 +25,10 @@ public interface BoardService {
     
     Boolean removeLike(Long blNo); // 게시글 좋아요 삭제
     
+    List<HashTagDTO> getTopTagList(); // 상위 10개 태그 조회
+    
     void addHashTag(HashTagDTO hashTagDTO); // 해쉬태그 추가
 
     void modifyHashTag(Long boardNo, List<HashTagDTO> tagList); // 해쉬태그 수정
-    
-    void removeHashTag(Long htNo); // 해쉬태그 삭제
 
 }

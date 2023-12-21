@@ -101,6 +101,8 @@ public class BoardServiceImpl implements BoardService {
                 .pageRequestDTO(pageRequestDTO).build();
     }
 
+
+
     @Override
     public Long addLike(BoardLikeDTO boardLikeDTO) { // 게시글 좋아요 추가
         BoardLikeVO boardLikeVO = modelMapper.map(boardLikeDTO, BoardLikeVO.class);
@@ -116,33 +118,25 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public List<HashTagDTO> getTopTagList() {
+        List<HashTagDTO> topTagList = boardMapper.selectTopTagList();
+        return topTagList;
+    }
+
+    @Override
     public void addHashTag(HashTagDTO hashTagDTO) { // 해쉬태그 추가
         HashTagVO hashTagVO = modelMapper.map(hashTagDTO, HashTagVO.class);
         boardMapper.insertTag(hashTagVO);
     }
 
     @Override
-    public void modifyHashTag(Long boardNo, List<HashTagDTO> tagList) {
+    public void modifyHashTag(Long boardNo, List<HashTagDTO> tagList) { // 해쉬 태그 추가 및 삭제
 
-        List<HashTagDTO> originalList = new ArrayList<>();
-        List<HashTagVO> tagVOList = boardMapper.selectTagList(boardNo);
-        tagVOList.forEach(hashTagVO -> originalList.add(
-                modelMapper.map(hashTagVO, HashTagDTO.class)));
-
-        tagList.forEach(hashTagDTO -> {
-            if (hashTagDTO.getHtNo() == null) { // 새로 추가할 태그
-                addHashTag(hashTagDTO);
-            }
-            else if (!originalList.contains(hashTagDTO)) { // DB에 저장된 태그와 비교
-                removeHashTag(hashTagDTO.getHtNo());
-            }
-
-        });
-    }
-
-    @Override
-    public void removeHashTag(Long htNo) { // 해쉬태그 삭제
-        boardMapper.deleteTag(htNo);
+        boardMapper.deleteTag(boardNo); // 해당 게시글의 태그 모두 삭제
+        
+        if (tagList.size() > 0) { // 태그 목록이 존재하는 경우
+            tagList.forEach(this::addHashTag); // 수정한 태그 목록 DB에 추가
+        }
     }
 
 }

@@ -81,6 +81,15 @@
         VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
     </insert>
 
+    <!-- 상위 10개 태그 조회 -->
+    <select id="selectTopTagList" resultType="kr.nomadlab.mentors.board.dto.HashTagDTO">
+        SELECT tagName, COUNT(tagName) AS tagCount
+        FROM hashTag
+        GROUP BY tagName
+        ORDER BY tagCount DESC
+        LIMIT 10;
+    </select>
+
     <!-- 태그 등록 -->
     <insert id="insertTag">
         INSERT INTO `hashTag` (`boardNo`, `tagName`) VALUES (#{boardNo}, #{tagName})
@@ -88,7 +97,7 @@
 
     <!-- 태그 삭제 -->
     <delete id="deleteTag">
-        DELETE FROM `hashTag` WHERE `htNo` = #{htNo}
+        DELETE FROM `hashTag` WHERE `boardNo` = #{boardNo}
     </delete>
 
     <!-- 게시글 수정 -->
