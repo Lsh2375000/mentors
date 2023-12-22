@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box;}
+        ul, li { list-style: none; }
+        img { display: inline; border: none;}
+
+        .chatWrap {
+            width: 400px;
+            background-color: pink;
+            margin: 0 auto;
+            border: 1px solid #999;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .chatTitle {
+            height: 40px;
+            padding: 10px;
+            color: #000000;
+        }
+
+        #msgArea {
+            width: 100%;
+            height: 500px;
+            background-color: pink;
+            padding: 10px;
+            overflow-y: scroll;
+            overscroll-behavior-y: contain;
+
+            -ms-overflow-style: none;
+        }
+        #msgArea::-webkit-scrollbar {
+            display: none;
+        }
+
+        .content {
+            display: flex;
+            align-items: end;
+        }
+
+        .content .me {
+            background-color: #fff3cd;
+        }
+
+        .profileImg {
+            width: 35px;
+            height: 35px;
+            border-radius: 35%;
+            background-color: #fffdef;
+        }
+
+        .info {
+            display: flex;
+            align-items: center;
+        }
+
+        .info h6 {
+            margin-left: 10px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .message {
+            max-width: 70%;
+            background-color: #fff;
+            border-radius: 10px;
+            font-size: 14px;
+            padding: 8px;
+            word-break: break-all;
+        }
+
+        .time {
+            margin-left: 5px;
+            font-size: 11px;
+        }
+
+        textarea {
+            width: 100%;
+            max-height: 200px;
+            padding: 15px;
+            border: none;
+            outline: none;
+            display: block;
+            resize: none;
+            overflow-y: hidden;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <main class="chatWrap">
+        <h5 class="chatTitle">[[${room.name}]]</h5>
+        <div id="msgArea">
+            <div class="mb-2" th:each="messageDTO : ${messages}" th:switch="${messageDTO.sender}">
+                <div class="content justify-content-end" th:case="${#authentication.principal.memberId}">
+                    <span class="time me-sm-1">[[${#temporals.format(messageDTO.sendTime,'a hh:mm')}]]</span>
+                    <span class="message me">
+                        [[${messageDTO.message}]]
+                    </span>
+                </div>
+                <div th:case="*">
+                    <div class="info">
+<!--                        <img th:src="|/upload/profileView/${messageDTO.dateString}/s_${messageDTO.profileImg}|" class="profileImg">-->
+                        <h6>[[${messageDTO.writer}]]</h6>
+                    </div>
+                    <p class="content">
+                        <span class="message ms-5">
+                            [[${messageDTO.message}]]
+                        </span>
+                        <span class="time ms-1">[[${#temporals.format(messageDTO.sendTime,'a hh:mm')}]]</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <textarea id="msg" cols="20" rows="1"></textarea>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var messages = [[${messages}]];
+        console.log(messages);
+        var roomName = [[${room.name}]];
+        var roomId = [[${room.roomId}]];
+        var auth = [[${#authentication.principal}]];
+        var mno = auth.mno;
+        // var profileImg = auth.profileImg + "/" + auth.dateString;
+        var username = auth.memberId;
+
+        console.log(roomName + ", " + roomId + ", " + username);
+
+        var sockJs = new SockJS("/stomp/chat");
+        // 1. SockJS를 내부에 들고있는 stomp를 내어줌
+        var stomp = Stomp.over(sockJs);
+
+        // 2. connection이 맺어지면 실행
+        stomp.connect({}, function () {
+            console.log("STOMP Connection");
+            scrollBottom();
+
+            // 4. subscribe(path, callback)으로 메세지를 받을 수 있음
+            stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+                var msgArea = document.getElementById('msgArea');
+                var content = JSON.parse(chat.body);
+
+                var sender = content.sender;
+                var message = content.message;
+                // var profileImg = content.profileImg;
+                // var dateString = content.dateString;
+                var sendTime = new Date(content.sendTime);
+                var options = { hour: "numeric", minute: "numeric" };
+                var str = '';
+
+                if (sender === username) {
+                    var divWrap = document.createElement('div');
+                    divWrap.setAttribute('class', 'mb-2');
+                    divWrap.innerHTML = `<div class="content justify-content-end">
+                                            <span class="time me-sm-1">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                                            <span class="message me">${message}</span>
+                                         </div>`;
+                    msgArea.appendChild(divWrap);
+                }
+                else {
+                    var divWrap = document.createElement('div');
+                    divWrap.setAttribute('class', 'mb-2');
+                    divWrap.innerHTML = `<div>
+                                            <div class="info">
+                                                // <img src="/upload/profileView/${dateString}/s_${profileImg}"
+                                                //      class="profileImg">
+                                                <h6>${sender}</h6>
+                                            </div>
+                                            <p class="content">
+                                                <span class="message ms-5">${message}</span>
+                                                <span class="time ms-1">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                                            </p>
+                                         </div>`;
+                    msgArea.appendChild(divWrap);
+                }
+
+                scrollBottom();
+            });
+
+            //3. send(path, header, message)로 메세지를 보낼 수 있음
+            stomp.send('/pub/chat/enter', {}, JSON.stringify({roomId: roomId, sender: username}));
+        });
+
+
+        document.getElementById('msg').addEventListener('keyup', function (e) {
+            console.log(e.key);
+            if (e.isComposing || e.target.value.trim() === '') return;
+            if (e.key === 'Enter') {
+                var msg = e.target;
+
+                console.log('엔터키 누름');
+                console.log(username + ":" + msg.value);
+                stomp.send('/pub/chat/message', {}, JSON.stringify({roomId: roomId, mno: mno, message: msg.value.trim(), sender: username}));
+                msg.value = '';
+            }
+        });
+
+        // 스크롤을 젤 밑으로 내리는 함수
+        function scrollBottom() {
+            var msgArea = document.getElementById('msgArea');
+            msgArea.scrollTop = msgArea.scrollHeight;
+        }
+    });
+</script>
+</body>
+</html>

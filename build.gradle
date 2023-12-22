@@ -60,6 +60,14 @@ dependencies {
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+
+    // websocket 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // stomp 라이브러리
+    // https://mvnrepository.com/artifact/org.webjars/stomp-websocket
+    implementation 'org.webjars:stomp-websocket:2.3.3'
+
 }
 
 tasks.named('test') {
