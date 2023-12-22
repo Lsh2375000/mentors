@@ -94,6 +94,14 @@ public class MyPageController {
         PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
         log.info("end는 ?"+mainList.getEnd());
         model.addAttribute("mainList", mainList);
+
+        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+        log.info("mentorDTO : " + mentorDTO);
+        model.addAttribute("mentorDTO", mentorDTO);
     }
 
     @GetMapping("/mainList/remove") // 내가 작성한 멘토링 삭제
