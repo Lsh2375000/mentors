@@ -5,6 +5,7 @@ package kr.nomadlab.mentors.mypage;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.dto.MainDTO;
+import kr.nomadlab.mentors.main.dto.MentorReviewDTO;
 import kr.nomadlab.mentors.main.service.MainService;
 import kr.nomadlab.mentors.main.service.MentorReviewService;
 import kr.nomadlab.mentors.member.dto.MemberDTO;
@@ -107,7 +108,7 @@ public class MyPageController {
     /*멘티 프로필 끝*/
 
     /* 멘토 메인 영역*/
-    @GetMapping("/mainList")// 내가 작성한 멘토링 목록 보기
+    @GetMapping("/mainListTor")// 내가 작성한 멘토링 목록 보기
     public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
@@ -152,9 +153,27 @@ public class MyPageController {
 
     /* 멘티 메인 영역*/
 
+    @GetMapping("/mainListTee") // 멘토링 목록
+    public void mainListTee(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
+        pageRequestDTO.setSize(12);
+        PageResponseDTO<MainDTO> mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
+        log.info("서비스 sort ?"+pageRequestDTO.getSort());
+        model.addAttribute("mainList", mainListTee);
+        model.addAttribute("sort", pageRequestDTO.getSort());
 
+        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
+        model.addAttribute("memberDTO", memberDTO);
+        MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+        model.addAttribute("menteeDTO", menteeDTO);
+    }
 
-
+    @PostMapping("/review/write")
+    public String write(MentorReviewDTO mentorReviewDTO, PageRequestDTO pageRequestDTO){
+        mentorReviewService.register(mentorReviewDTO);
+        int page = pageRequestDTO.getPage();
+        String sort = pageRequestDTO.getSort();
+        return "redirect:/mypage/mainListTee?page="+page+"&size=12&sort="+sort;
+    }
     /* 멘티 메인 영역 끝*/
     @GetMapping("/paymentsHistory")
     public String paymentHistory(){

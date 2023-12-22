@@ -202,13 +202,13 @@
                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-family: 'Orbit', sans-serif;">개인정보</a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <th:block sec:authorize="hasRole('ROLE_MENTOR')">
-                      <a class="dropdown-item" th:href="|/member/mentorModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
-                      <a class="dropdown-item" th:href="|/mypage/mainListTor|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
+                      <a class="dropdown-item" th:href="|@{/member/mentorModify}|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                      <a class="dropdown-item" th:href="|@{/mypage/mainListTor}|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
                     </th:block>
                     <th:block sec:authorize="hasRole('ROLE_MENTEE')">
-                      <a class="dropdown-item" th:href="|/member/menteeModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
-                      <a class="dropdown-item" th:href="|/member/mentorApply|" style="font-family: 'Orbit', Sans-serif;">멘토 신청하기</a>
-                      <a class="dropdown-item" th:href="|/mypage/mainListTee|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
+                      <a class="dropdown-item" th:href="|@{/member/menteeModify}|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                      <a class="dropdown-item" th:href="|@{/member/mentorApply}|" style="font-family: 'Orbit', Sans-serif;">멘토 신청하기</a>
+                      <a class="dropdown-item" th:href="|@{/mypage/mainListTee}|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
                     </th:block>
                     <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>
                     <div class="dropdown-divider"></div>
