@@ -75,8 +75,8 @@
     </update>
 
     <insert id="addMentorApply">
-        insert into `mentorApply` (mno, devLanguage, fileNames)
-        values (#{mno}, #{devLanguage}, #{fileNames})
+        insert into `mentorApply` (mno, devLanguage, fileNames, univName, major)
+        values (#{mno}, #{devLanguage}, #{fileNames}, #{univName}, #{major})
     </insert>
 
 
