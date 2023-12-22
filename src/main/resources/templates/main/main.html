@@ -441,11 +441,13 @@
         let price = null;
         let roomId;
         let mno = auth.mno
+        let endDate = null;
 
             getBoard(mbNo).then(data => {
                 mbNo = data.mbNo;
                 modalDataMno = data.mno;
                 price = data.price;
+                endDate = data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2];
                 roomId = data.roomId;
                 console.log("겟 보드 함 ");
                 console.log("참가 여부 ? ", data.applied);
@@ -456,8 +458,8 @@
                 modalIntroduce.innerHTML = `${data.content}`;
                 modalPrice.innerHTML = `${data.price}`;
                 modalLanguage.innerHTML = `${data.devLanguage}`;
-                modalStartDate.innerHTML = `${data.startDate}`;
-                modalEndDate.innerHTML = `${data.endDate}`;
+                modalStartDate.innerHTML = `${data.startDate[0]+'-'+data.startDate[1]+'-'+ data.startDate[2]}`;
+                modalEndDate.innerHTML = `${data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2]}`;
                 if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
                     console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
                     // 만석이면 disabled 적용
@@ -479,6 +481,8 @@
                 alert('로그인 해주세요.');
                 return;
             }
+
+            console.log(auth.coin);
             if(auth.coin < price){
                 alert("비타민을 먼저 충전해주세요.");
                 window.location.href = '/payments';
@@ -489,7 +493,8 @@
                 mbNo : mbNo,
                 mentorMno : modalDataMno,
                 price : price,
-                menteeMno : auth.mno
+                menteeMno : auth.mno,
+                completeDate : endDate
             }
             payInfoSave(payInfoObj).then(result =>{
                 let messageObj ={
@@ -553,7 +558,9 @@
     }
     //비타민 사용내역 저장
     async function payInfoSave(payInfoObj){
+        console.log(payInfoObj);
         const result = await axios.put(`/payInfo/save`, payInfoObj);
+
         return result.data;
     }
     //상대방에게 알림 전달
