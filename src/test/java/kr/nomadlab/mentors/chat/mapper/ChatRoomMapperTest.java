@@ -49,4 +49,13 @@ class ChatRoomMapperTest {
         ChatRoomDTO chatRoomDTO = chatRoomMapper.selectRoomById(roomId);
         log.info(chatRoomDTO);
     }
+
+    @Test
+    void findMemberInRoomTest() {
+        Long mno = 12L;
+        String roomId = "c75f1316-89d9-4749-b92a-e1ccc936d402";
+
+        boolean isApplied = chatRoomMapper.findMemberInRoom(roomId, mno);
+        log.info("isApplied: " + isApplied);
+    }
 }

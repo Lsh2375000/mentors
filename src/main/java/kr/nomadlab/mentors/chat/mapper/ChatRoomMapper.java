@@ -3,6 +3,7 @@ package kr.nomadlab.mentors.chat.mapper;
 import kr.nomadlab.mentors.chat.dto.ChatListDTO;
 import kr.nomadlab.mentors.chat.dto.ChatRoomDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,5 +17,7 @@ public interface ChatRoomMapper {
     public List<ChatRoomDTO> selectRoomList(Long mno); // 해당 회원의 채팅목록 조회
 
     public ChatRoomDTO selectRoomById(String roomId); // 채팅방 조회
+    
+    public Boolean findMemberInRoom(@Param("roomId") String roomId, @Param("mno") Long mno); // 채팅방에 해당 회원 존재 여부
 
 }

@@ -39,12 +39,12 @@ public class MemberController {
 
     // 로그인
     @GetMapping("/login")
-    public void login(String error, String logout) {
+    public void login() { // String logout String logout
         log.info("login get....");
-        log.info(error);
-        if (logout != null) {
-            log.info("user logout....");
-        }
+//        log.info(error);
+//        if (logout != null) {
+//            log.info("user logout....");
+//        }
     }
 
     // 에러페이지

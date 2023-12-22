@@ -32,4 +32,9 @@
         WHERE cr.roomId = #{roomId}
     </select>
 
+    <!-- 채팅방에 해당 회원 조회 -->
+    <select id="findMemberInRoom" resultType="Boolean">
+        SELECT COUNT(*) FROM chatList WHERE roomId = #{roomId} AND mno = #{mno}
+    </select>
+
 </mapper>

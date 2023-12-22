@@ -32,6 +32,6 @@ public class MainDTO {
     private double score; // 수강평점수
     private String roomId; // 채팅방 ID
 
-
     private int isMentoring; // 멘토가 작성한 수업이 있는지 없는지
+    private boolean isApplied; // 멘토링 신청여부 확인
 }

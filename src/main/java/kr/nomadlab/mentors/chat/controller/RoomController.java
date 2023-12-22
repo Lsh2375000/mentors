@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,7 +36,9 @@ public class RoomController {
 
     // 채팅방 개설
     @PostMapping("/room")
-    public String create(String name, int maxMembers, @AuthenticationPrincipal MemberSecurityDTO member, RedirectAttributes redirectAttributes) {
+    public String create(@RequestParam("name") String name,
+                         @RequestParam("maxMembers") int maxMembers,
+                         @AuthenticationPrincipal MemberSecurityDTO member, RedirectAttributes redirectAttributes) {
         log.info("# Create Chat Room...");
 
         Long mno = member.getMno();
@@ -45,12 +48,12 @@ public class RoomController {
 
         redirectAttributes.addAttribute("roomId", chatRoomDTO.getRoomId());
 
-        return "redirect:/chat/room";
+        return "redirect:/chat/rooms";
     }
     
     // 채팅방 조회
     @GetMapping("/room")
-    public void getRoom(String roomId, Model model) {
+    public void getRoom(@RequestParam("roomId") String roomId, Model model) {
         log.info("# get Chat Room, roomID : " + roomId);
         model.addAttribute("messages", chatService.getMessages(roomId));
         model.addAttribute("room", chatService.getRoom(roomId));
