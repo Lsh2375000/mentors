@@ -137,6 +137,10 @@
     <select id="isMentoring" resultType="int">
         select count(*) from main where mno = #{mno};
     </select>
+<!--    채팅방 현재 인원 업데이트-->
+    <update id="updateCurPeople">
+        update main set curPeople = (select count(*) from chatList where role = 'MEMBER' and roomId = #{roomId}) where roomId = #{roomId}
+    </update>
 
 
 <!--    마이페이지 메인 목록-->

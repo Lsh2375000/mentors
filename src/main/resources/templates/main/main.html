@@ -421,45 +421,49 @@
 
     const auth = [[${#authentication.principal}]];
     console.log("현재 사용자는 ? " , auth )
-    // 게시물 정보 가져오기
-    async function getBoard(mbNo){
-        const response = await axios.get(`/main/${mbNo}`);
-        console.log("response");
-        return response.data;
-    }
+
+
 
     // 모달창
     function modalBtn(mbNo){
         let modalDataMno = null;
         let price = null;
-        getBoard(mbNo).then(data => {
-            modalDataMno = data.mno;
-            price = data.price;
-            console.log(data);
-            modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
-            modalTitle.innerHTML = `${data.title}`;
-            modalPosition.innerHTML = `${data.position}`;
-            modalCareer.innerHTML = `${data.career}`;
-            modalIntroduce.innerHTML = `${data.content}`;
-            modalPrice.innerHTML = `${data.price}`;
-            modalLanguage.innerHTML = `${data.devLanguage}`;
-            modalStartDate.innerHTML = `${data.startDate}`;
-            modalEndDate.innerHTML = `${data.endDate}`;
-            if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
-                console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
-                // 만석이면 disabled 적용
-                if(data.curPeople >= data.maxPeople){
-                    enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn" style="background-color: #555555; border: none;" disabled><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
-                }else{
-                    enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+        let roomId;
+        let mno = auth.mno
+
+            getBoard(mbNo).then(data => {
+                mbNo = data.mbNo;
+                modalDataMno = data.mno;
+                price = data.price;
+                roomId = data.roomId;
+                console.log("겟 보드 함 ");
+                console.log("참가 여부 ? ", data.applied);
+                modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
+                modalTitle.innerHTML = `${data.title}`;
+                modalPosition.innerHTML = `${data.position}`;
+                modalCareer.innerHTML = `${data.career}`;
+                modalIntroduce.innerHTML = `${data.content}`;
+                modalPrice.innerHTML = `${data.price}`;
+                modalLanguage.innerHTML = `${data.devLanguage}`;
+                modalStartDate.innerHTML = `${data.startDate}`;
+                modalEndDate.innerHTML = `${data.endDate}`;
+                if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
+                    console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
+                    // 만석이면 disabled 적용
+                    if(data.curPeople >= data.maxPeople || data.applied === true){
+                        enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn" style="background-color: #555555; border: none;" disabled><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                    }else{
+                        enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                    }
                 }
-            }
-        })
+
+            })
+
 
         contentModal.show();
 
         //등록버튼 클릭시 알림 보내기
-        enrollBtnDiv.addEventListener('click', function() {
+        enrollBtnDiv.addEventListener('click', async function() {
             if(auth === 'anonymousUser'){
                 alert('로그인 해주세요.');
                 return;
@@ -482,16 +486,60 @@
                     types : "mentoring",
                     typesNo : mbNo
                 }
-                //여기에 채팅방
                 passMessage(messageObj).then(data => {
-                    alert('메세지 보냄');
-                    getBoard(mbNo);
-                    alert('보드 초기화');
+                    alert('신청완료되었습니다.\n 마이페이지에서 확인하세요');
                 })
             })
+            //여기에 채팅방
+            let chatObj = {
+                mno : mno,
+                roomId : roomId
+            }
+            console.log("mno ? ",mno);
+            console.log("roomId ? ", roomId);
+           await enterChat(chatObj)
+            console.log("채팅방 입장")
+           await getBoard(mbNo).then(data => {
+                mbNo = data.mbNo;
+                modalDataMno = data.mno;
+                price = data.price;
+                roomId = data.roomId;
+                console.log("겟 보드 함 ");
+                console.log("현재인원 ?",`${data.curPeople}`);
+                console.log("참가 여부 ? ", data.applied);
+                modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
+                modalTitle.innerHTML = `${data.title}`;
+                modalPosition.innerHTML = `${data.position}`;
+                modalCareer.innerHTML = `${data.career}`;
+                modalIntroduce.innerHTML = `${data.content}`;
+                modalPrice.innerHTML = `${data.price}`;
+                modalLanguage.innerHTML = `${data.devLanguage}`;
+                modalStartDate.innerHTML = `${data.startDate}`;
+                modalEndDate.innerHTML = `${data.endDate}`;
+                if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
+                    console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
+                    // 만석이면 disabled 적용
+                    if(data.curPeople >= data.maxPeople || data.applied === true){
+                        enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn" style="background-color: #555555; border: none;" disabled><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                    }else{
+                        enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
+                    }
+                }
+
+            })
+
         })
     }
+    // 채팅방 입장
+    async function enterChat(chatObj){
+        await axios.post(`/main/chat`,chatObj);
+    }
+    // 게시물 정보 가져오기
+    async function getBoard(mbNo){
+        const response = await axios.get(`/main/${mbNo}`);
 
+        return response.data;
+    }
     //비타민 사용내역 저장
     async function payInfoSave(payInfoObj){
         const result = await axios.put(`/payInfo/save`, payInfoObj);

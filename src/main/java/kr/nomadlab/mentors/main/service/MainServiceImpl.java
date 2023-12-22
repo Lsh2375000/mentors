@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.main.service;
 
+import kr.nomadlab.mentors.chat.mapper.ChatRoomMapper;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.domain.MainVO;
@@ -20,6 +21,7 @@ public class MainServiceImpl implements MainService{
 
     private final ModelMapper modelMapper;
     private final MainMapper mainMapper;
+    private final ChatRoomMapper chatRoomMapper;
 
 
     @Override
@@ -62,8 +64,8 @@ public class MainServiceImpl implements MainService{
     @Override
     public MainDTO getBoard(Long mbNo) { // 상세뷰
         MainVO mainVO = mainMapper.getOne(mbNo);
-
         MainDTO mainDTO = modelMapper.map(mainVO, MainDTO.class);
+
         return mainDTO;
     }
 
@@ -88,6 +90,12 @@ public class MainServiceImpl implements MainService{
             isMentoring = true;
         }
         return isMentoring;
+    }
+
+    @Override
+    public void updateCurPeople(String roomId) {
+        mainMapper.updateCurPeople(roomId);
+        log.info("현재인원 업데이트 서비스");
     }
 
     @Override

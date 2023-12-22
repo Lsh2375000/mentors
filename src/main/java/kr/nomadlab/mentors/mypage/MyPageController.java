@@ -113,8 +113,9 @@ public class MyPageController {
 
     @GetMapping("/mainList/modify") // 내가 작성한 멘토링 수정페이지
     public String modifyMain(Model model, Long mbNo, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
-        MainDTO mainDTO = mainService.getBoard(mbNo);
         Long mno = memberSecurityDTO.getMno();
+        MainDTO mainDTO = mainService.getBoard(mbNo);
+
         int mentoringCnt = mainService.mentoringCnt(mno);
 
         model.addAttribute("mentoringCnt", mentoringCnt);

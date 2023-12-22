@@ -123,7 +123,6 @@
             <div class="d-flex justify-content-center gap-3 mt-3 mb-5">
 <!--                수업 끝나면 수정안됌-->
                 <a th:href="@{/mypage/mainList/modify(mbNo=${mainList.mbNo})}" class="myPageBtn" id="modifyBtn" th:if="${#temporals.format(mainList.endDate, 'yyyy-MM-dd') gt #dates.format(#dates.createNow(), 'yyyy-MM-dd')}">수정</a>
-                <button type="button" class="myPageBtn removeBtn" id="removeBtn" th:attr="data-mbNo=${mainList.mbNo}">삭제</button>
             </div>
         </div>
     </div>
@@ -148,19 +147,7 @@
     <!--페이징 끝-->
 </div>
 <script layout:fragment="script" th:inline="javascript">
-    // 멘토링 글 삭제
-    const removeBtns = document.querySelectorAll('.removeBtn');
 
-    removeBtns.forEach(removeBtn => {
-        removeBtn.addEventListener('click', function (){
-            if (confirm("정말 삭제하시겠습니까 ? ")){
-                const mbNo = this.getAttribute('data-mbNo');
-                // 페이지 이동
-                window.location.href = '/mypage/mainList/remove?mbNo=' + mbNo;
-            }else{
-            }
-        })
-    })
 
     const pageNums = document.querySelectorAll('.pageNum');
     // 페이지번호 클릭
