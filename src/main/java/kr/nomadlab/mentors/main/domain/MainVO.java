@@ -23,8 +23,9 @@ public class MainVO {
     private LocalDate startDate; // 수업 시작일
     private LocalDate endDate; // 수업 종료일
     private LocalDateTime addDate; // 등록일
-    private double score; // 수강평점수
     private int price; // 가격
-    private int maxPeople; // 최대인원수
     private int curPeople; // 현재 인원수
+    private int maxPeople; // 최대인원수
+    private double score; // 수강평점수
+    private String roomId; // 채팅방 ID
 }

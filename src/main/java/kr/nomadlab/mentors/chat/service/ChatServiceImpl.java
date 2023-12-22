@@ -65,6 +65,7 @@ public class ChatServiceImpl implements ChatService{
 
     // 채팅방 아이디와 일치하는 채팅방 조회
     public ChatRoomDTO getRoom(String roomId) {
+
         return chatRoomMapper.selectRoomById(roomId);
     }
 }

@@ -4,17 +4,25 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.main.mapper.MentorReviewMapper">
 
+    <!--수강평 작성-->
     <insert id="insert">
         insert into `mentorReview` (`mno`, `nickname`, `score`, `review`)
         values (#{mno}, #{nickname}, #{score}, #{review})
     </insert>
 
+    <!--해당멘티가 작성한 수강평 목록-->
     <select id="menteeReviewList" resultType="kr.nomadlab.mentors.main.domain.MentorReviewVO">
         select * from `mentorReview` where `nickname` = #{nickname}
     </select>
 
+    <!--해당 멘토에게 달린 수강평 목록 -->
     <select id="mentorReviewList" resultType="kr.nomadlab.mentors.main.domain.MentorReviewVO">
         select * from `mentorReview` where `mno` = #{mno}
+    </select>
+
+    <!--멘토에게 달린 수강평 수-->
+    <select id="mentorReviewCount" resultType="int">
+        select count(`review`) from `mentorReview` where `mno` = #{mno}
     </select>
 
 </mapper>

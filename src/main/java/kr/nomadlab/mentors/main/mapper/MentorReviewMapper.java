@@ -14,6 +14,6 @@ public interface MentorReviewMapper {
 
     List<MentorReviewVO> mentorReviewList(int mno); // 멘토 기준 작성된 리뷰 리스트 가져오기
 
-
+    int mentorReviewCount(Long mno);
 
 }

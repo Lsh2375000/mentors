@@ -476,15 +476,18 @@
                 price : price,
                 menteeMno : auth.mno
             }
-            payInfoSave(payInfoObj);
-
-            let messageObj ={
-                receiverMno : modalDataMno,
-                types : "mentoring",
-                typesNo : mbNo
-            }
-            passMessage(messageObj).then(data => {
-                alert(data)
+            payInfoSave(payInfoObj).then(result =>{
+                let messageObj ={
+                    receiverMno : modalDataMno,
+                    types : "mentoring",
+                    typesNo : mbNo
+                }
+                //여기에 채팅방
+                passMessage(messageObj).then(data => {
+                    alert('메세지 보냄');
+                    getBoard(mbNo);
+                    alert('보드 초기화');
+                })
             })
         })
     }
