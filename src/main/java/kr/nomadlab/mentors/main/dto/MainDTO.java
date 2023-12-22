@@ -26,10 +26,12 @@ public class MainDTO {
     private LocalDate startDate; // 수업 시작일
     private LocalDate endDate; // 수업 종료일
     private LocalDateTime addDate; // 등록일
-    private double score; // 수강평점수
     private int price; // 가격
-    private int maxPeople; // 최대인원수
     private int curPeople; // 현재 인원수
+    private int maxPeople; // 최대인원수
+    private double score; // 수강평점수
+    private String roomId; // 채팅방 ID
+
 
     private int isMentoring; // 멘토가 작성한 수업이 있는지 없는지
 }

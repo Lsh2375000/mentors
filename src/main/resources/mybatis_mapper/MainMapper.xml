@@ -95,8 +95,8 @@
 
     <!--    게시물 등록-->
     <insert id="insert">
-        insert into `main` (mno, paidFree, nickName, devLanguage, title, position, career, content, startDate, endDate, addDate, price, maxPeople)
-        values (#{mno}, #{paidFree}, #{nickName}, #{devLanguage}, #{title}, #{position}, #{career}, #{content}, #{startDate}, #{endDate}, now(), #{price}, #{maxPeople})
+        insert into `main` (mno, paidFree, nickName, devLanguage, title, position, career, content, startDate, endDate, addDate, price, maxPeople, roomId)
+        values (#{mno}, #{paidFree}, #{nickName}, #{devLanguage}, #{title}, #{position}, #{career}, #{content}, #{startDate}, #{endDate}, now(), #{price}, #{maxPeople}, #{roomId})
     </insert>
 <!--    총 게시물 수-->
     <select id="getCount" resultType="int">
@@ -145,6 +145,6 @@
     </select>
 <!--    마이페이지 갯수 새기-->
     <select id="myPageCount" resultType="int">
-        select count(mbNo) from main
+        select count(mbNo) from main where mno = #{mno}
     </select>
 </mapper>

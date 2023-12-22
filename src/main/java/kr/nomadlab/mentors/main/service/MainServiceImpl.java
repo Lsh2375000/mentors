@@ -102,7 +102,7 @@ public class MainServiceImpl implements MainService{
             dtoList.add(mainDTO);
         });
 
-        int total = mainMapper.myPageCount(pageRequestDTO);
+        int total = mainMapper.myPageCount(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), mno);
 
         PageResponseDTO<MainDTO> responseDTO = PageResponseDTO.<MainDTO>withAll()
                 .dtoList(dtoList)
