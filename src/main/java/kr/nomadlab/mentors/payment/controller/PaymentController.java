@@ -1,11 +1,13 @@
 package kr.nomadlab.mentors.payment.controller;
 
 import kr.nomadlab.mentors.exception.CustomLogicException;
+import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.payment.dto.PaymentFailDto;
 import kr.nomadlab.mentors.payment.dto.PaymentSuccessDto;
 import kr.nomadlab.mentors.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +31,13 @@ public class PaymentController {
             @RequestParam String paymentKey,
             @RequestParam String orderId,
             @RequestParam Long amount,
-            Model model
-    ) throws Exception {
+            Model model,
+            @AuthenticationPrincipal MemberSecurityDTO member
+            ) throws Exception {
         log.info("/successssssssssss");
         try {
             PaymentSuccessDto paymentSuccessDto = paymentService.tossPaymentSuccess(paymentKey, orderId, amount);
-
+            member.setCoin((int) (member.getCoin()+(amount/1000)));
             log.info(paymentSuccessDto);
             model.addAttribute("payments", paymentSuccessDto);
 

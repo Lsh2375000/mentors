@@ -4,7 +4,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.payInfo.mapper.PayInfoMapper">
     <insert id="insertPayInfo">
-        INSERT INTO `payInfo` (`mbNo`, `mentorMno`, `menteeMno`, `price`, `isComplete`, `addDate`)
-        values (#{mbNo}, #{mentorMno}, #{menteeMno}, #{price}, false, now())
+        INSERT INTO `payInfo` (`mbNo`, `mentorMno`, `menteeMno`, `price`, `isComplete`, `completeDate`, `addDate`)
+        values (#{mbNo}, #{mentorMno}, #{menteeMno}, #{price}, false, #{completeDate} ,now())
     </insert>
+    <select id="checkDate" resultType="kr.nomadlab.mentors.payInfo.vo.PayInfoVO">
+            SELECT mbNo, mentorMno, sum(price) as price FROM payInfo WHERE DATE(completeDate) = CURDATE() - INTERVAL 1 DAY GROUP BY mbNo, MentorMno;
+    </select>
+    <update id="updateIsComplete">
+        update `payInfo` set isComplete=true where mbNo=#{mbNo}
+    </update>
 </mapper>

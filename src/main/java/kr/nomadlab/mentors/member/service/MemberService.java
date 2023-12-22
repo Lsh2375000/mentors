@@ -28,4 +28,6 @@ public interface MemberService {
 
     MemberDTO getProfileNickname(String nickname);
 
+    void payCoin(Long mno, int price); //코인 결제
+
 }

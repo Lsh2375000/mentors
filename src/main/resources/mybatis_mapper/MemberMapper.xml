@@ -78,6 +78,8 @@
         insert into `mentorApply` (mno, devLanguage, fileNames, univName, major)
         values (#{mno}, #{devLanguage}, #{fileNames}, #{univName}, #{major})
     </insert>
-
+    <insert id="insertMentorCoin">
+        update `member` set coin = +#{price} where mno=#{mentorMno}
+    </insert>
 
 </mapper>

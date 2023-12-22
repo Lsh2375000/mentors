@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.member.mapper;
 
 import kr.nomadlab.mentors.member.domain.MemberVO;
 import kr.nomadlab.mentors.member.domain.MentorApplyVO;
+import kr.nomadlab.mentors.payInfo.vo.PayInfoVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface MemberMapper {
     void updateMemberRole(String memberId); // 회원 멤버롤 변경
 
     void addMentorApply(MentorApplyVO mentorApplyVO);
+
+    void insertMentorCoin(PayInfoVO payInfoVO);
 }

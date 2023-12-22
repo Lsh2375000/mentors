@@ -123,6 +123,11 @@ public class MemberServiceImpl implements MemberService {
 
         return memberDTO;
     }
+
+    @Override
+    public void payCoin(Long mno, int price) {
+        memberMapper.updateCoin(mno, price);
+    }
     // --------------------------------------------------------------------------------
     //
 
