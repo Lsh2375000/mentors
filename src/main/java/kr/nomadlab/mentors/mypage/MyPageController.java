@@ -48,17 +48,24 @@ public class MyPageController {
         MemberDTO memberDTO = memberService.getProfileNickname(nickname);
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
+
         int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
         model.addAttribute("reviewCnt", reviewCnt);
 
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
 
-        if (memberSecurityDTO != null) {
-            if (memberSecurityDTO.getNickname().equals(nickname)) {
+
+        if (memberSecurityDTO != null) { // 로그인시 가져올 값
+            if (memberSecurityDTO.getNickname().equals(nickname)) { // 로그인하고 해당 프로필의 닉네임이 같으면
                 MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
                 log.info("mentorDTO : " + mentorDTO);
                 model.addAttribute("mentorDTO", mentorDTO);
+            } else { // 로그인하고 해당 프로필의 닉네임이 다르면
+                MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
+                model.addAttribute("mentorDTO", mentorDTO);
             }
-        } else if (memberSecurityDTO == null) {
+        } else if (memberSecurityDTO == null) { // 비로그인시 가져올 값
           MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
           model.addAttribute("mentorDTO", mentorDTO);
         }
@@ -75,12 +82,24 @@ public class MyPageController {
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
 
+        int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+
         if(memberSecurityDTO != null) {
             if (memberSecurityDTO.getNickname().equals(nickname)) {
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
+            } else {
+                MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+                model.addAttribute("menteeDTO", menteeDTO);
             }
+        } else if (memberSecurityDTO == null) {
+            MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+            model.addAttribute("menteeDTO", menteeDTO);
         }
 
     }

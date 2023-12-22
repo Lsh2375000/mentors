@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface MemberMapper {
 
-    void addMember(MemberVO memberVO); // 회원 추가
+    Long addMember(MemberVO memberVO); // 회원 추가
     void addMemberRole(String memberId, Integer role_set); // 회원 롤 입력
 
     MemberVO getOne(String memberId);
@@ -30,4 +30,8 @@ public interface MemberMapper {
     void updateMemberRole(String memberId); // 회원 멤버롤 변경
 
     void addMentorApply(MentorApplyVO mentorApplyVO);
+
+    int getMemberRole(String memberId);
+
+
 }

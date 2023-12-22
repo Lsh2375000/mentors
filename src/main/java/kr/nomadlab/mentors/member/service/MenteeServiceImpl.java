@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.member.service;
 
 
 import kr.nomadlab.mentors.member.domain.MenteeVO;
+import kr.nomadlab.mentors.member.dto.MemberDTO;
 import kr.nomadlab.mentors.member.dto.MenteeDTO;
 import kr.nomadlab.mentors.member.mapper.MemberMapper;
 import kr.nomadlab.mentors.member.mapper.MenteeMapper;
