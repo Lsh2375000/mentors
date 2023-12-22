@@ -150,8 +150,6 @@
 <body>
 <div class="d-flex" id="wrapper">
   <!-- Sidebar-->
-
-
   <div id="page-content-wrapper">
     <!-- Top navigation-->
     <nav class="navbar navbar-expand-lg" style="background-color: #0766AD;">
@@ -165,8 +163,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/main">멘토링 목록</a></li>
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">게시판</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">팀 프로젝트</a></li>
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/qboard/list">Q&A 게시판</a></li>
             <th:block th:if="${#authentication.principal == 'anonymousUser' || #authentication.principal.getPasswd() == '1111'}"> <!-- 비회원 -->
               <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/member/login">로그인</a></li>
@@ -192,9 +189,7 @@
                 </div>
               </li>
             </th:block>
-            <li class="nav-item active">
-              <a class="nav-link" href="/main" style="color: white; font-family: 'Orbit', sans-serif;">HOME</a>
-            </li>
+
             <th:block th:unless="${#authentication.principal == 'anonymousUser'}">
                 <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
                 <li class="nav-item dropdown">
@@ -202,13 +197,12 @@
                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-family: 'Orbit', sans-serif;">개인정보</a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <th:block sec:authorize="hasRole('ROLE_MENTOR')">
-                      <a class="dropdown-item" th:href="|@{/member/mentorModify}|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
-                      <a class="dropdown-item" th:href="|@{/mypage/mainListTor}|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
+                      <a class="dropdown-item" th:href="@{/member/mentorModify}" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
                     </th:block>
                     <th:block sec:authorize="hasRole('ROLE_MENTEE')">
-                      <a class="dropdown-item" th:href="|@{/member/menteeModify}|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
-                      <a class="dropdown-item" th:href="|@{/member/mentorApply}|" style="font-family: 'Orbit', Sans-serif;">멘토 신청하기</a>
-                      <a class="dropdown-item" th:href="|@{/mypage/mainListTee}|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
+                      <a class="dropdown-item" th:href="@{/member/menteeModify}" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                      <a class="dropdown-item" th:href="@{/member/mentorApply}" style="font-family: 'Orbit', Sans-serif;">멘토 신청하기</a>
+                      <a class="dropdown-item" th:href="@{/mypage/mainListTee}" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
                     </th:block>
                     <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>
                     <div class="dropdown-divider"></div>
@@ -249,7 +243,7 @@
               </div>
             </th:block>
           </div>
-          <div class="list-group list-group-flush" style="margin-top: -30px">
+          <div class="list-group list-group-  flush" style="margin-top: -30px">
             <th:block th:if="${memberRole == 0}">
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
             </th:block>
@@ -283,6 +277,7 @@
             <div class="list-group list-group-flush">
               <th:block th:if="${memberRole == 0}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록</a>
               </th:block>
               <th:block th:if="${memberRole == 1}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈</a>
@@ -309,6 +304,7 @@
 
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈</a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록</a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개</a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글</a>
               </div> <!--End List Group Flush-->
