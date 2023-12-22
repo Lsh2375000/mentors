@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.main.controller;
 
+import kr.nomadlab.mentors.chat.service.ChatService;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.dto.MainDTO;
@@ -23,6 +24,7 @@ import java.util.List;
 public class MainController {
 
     private final MainService mainService;
+    private final ChatService chatService;
 
     @GetMapping("")
     public String main(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO) {
@@ -72,7 +74,9 @@ public class MainController {
     }
 
     @PostMapping("/write")
-    public String write(MainDTO mainDTO){ // 글등록
+    public String write(MainDTO mainDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){ // 글등록
+        String roomId = chatService.createChatRoom(memberSecurityDTO.getMno(), mainDTO.getTitle(), mainDTO.getMaxPeople()).getRoomId();
+        mainDTO.setRoomId(roomId);
         mainService.register(mainDTO);
 
         return "redirect:/main";

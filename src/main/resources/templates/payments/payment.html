@@ -145,7 +145,7 @@
                   amount: price,
                   orderId: reqOrderId,
                   orderName: product,
-                  customerName: '주문자1',
+                  customerName: auth.memberName,
                   successUrl: window.location.origin + '/payments/success',
                   failUrl: window.location.origin + '/payments/fail',
                 })
