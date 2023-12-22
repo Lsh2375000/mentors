@@ -11,4 +11,6 @@ public class MentorApplyVO {
     private Long mno;
     private String devLanguage;
     private String fileNames;
+    private String univName;
+    private String major;
 }

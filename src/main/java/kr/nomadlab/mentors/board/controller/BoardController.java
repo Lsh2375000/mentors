@@ -33,8 +33,18 @@ public class BoardController {
         log.info("/board/list(GET)...");
         log.info("keyword: " + pageRequestDTO.getKeyword());
         log.info("hashTag: " + pageRequestDTO.getHashTag());
+
+        // 키워드가 존재하면
+        String keyword = pageRequestDTO.getKeyword();
+        if (keyword != null && !keyword.isEmpty()) {
+            pageRequestDTO.setType("twc");
+        }
+
         PageResponseDTO<BoardDTO> pageResponseDTO = boardService.getBoardList(pageRequestDTO);
+        List<HashTagDTO> topTagList = boardService.getTopTagList();
+
         model.addAttribute("responseDTO", pageResponseDTO);
+        model.addAttribute("topTagList", topTagList);
     }
 
 //    @PreAuthorize("isAuthenticated()") //로그인한 시용자만

@@ -6,6 +6,7 @@ import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.dto.MainDTO;
 import kr.nomadlab.mentors.main.service.MainService;
+import kr.nomadlab.mentors.main.service.MentorReviewService;
 import kr.nomadlab.mentors.member.dto.MemberDTO;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.member.dto.MenteeDTO;
@@ -35,6 +36,8 @@ public class MyPageController {
     private final MemberService memberService;
     private final MentorService mentorService;
     private final MenteeService menteeService;
+
+    private final MentorReviewService mentorReviewService;
     private final MainService mainService;
 
     /*멘토 프로필 시작*/
@@ -45,6 +48,9 @@ public class MyPageController {
         MemberDTO memberDTO = memberService.getProfileNickname(nickname);
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
+        int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
 
         if (memberSecurityDTO != null) {
             if (memberSecurityDTO.getNickname().equals(nickname)) {
@@ -52,6 +58,9 @@ public class MyPageController {
                 log.info("mentorDTO : " + mentorDTO);
                 model.addAttribute("mentorDTO", mentorDTO);
             }
+        } else if (memberSecurityDTO == null) {
+          MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
+          model.addAttribute("mentorDTO", mentorDTO);
         }
 
 
@@ -85,6 +94,14 @@ public class MyPageController {
         PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
         log.info("end는 ?"+mainList.getEnd());
         model.addAttribute("mainList", mainList);
+
+        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+        log.info("mentorDTO : " + mentorDTO);
+        model.addAttribute("mentorDTO", mentorDTO);
     }
 
     @GetMapping("/mainList/remove") // 내가 작성한 멘토링 삭제

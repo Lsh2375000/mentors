@@ -52,15 +52,14 @@ public class PageRequestDTO {
             stringBuilder.append("page=").append(this.page);
             stringBuilder.append("&size=").append(this.size);
 
-            if(type!=null && type.length()>0) {
-                stringBuilder.append("&type=").append(this.type);
-            }
             if(keyword!=null) {
                 stringBuilder.append("&keyword=").append(URLEncoder.encode(this.keyword, StandardCharsets.UTF_8));
             }
             if(hashTag != null) {
                 stringBuilder.append("&hashTag=").append(URLEncoder.encode(this.hashTag, StandardCharsets.UTF_8));
             }
+            stringBuilder.append("&sort=").append(this.sort);
+
             link=stringBuilder.toString();
         }
         return link;

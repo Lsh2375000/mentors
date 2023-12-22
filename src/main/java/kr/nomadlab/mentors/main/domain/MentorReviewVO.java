@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class MentorReviewVO {
     private Long mrNo;
-    private int mno;
+    private Long mno;
     private String nickname;
     private Double score;
     private String review;

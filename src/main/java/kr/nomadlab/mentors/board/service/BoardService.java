@@ -6,6 +6,8 @@ import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 
+import java.util.List;
+
 
 public interface BoardService {
     
@@ -23,8 +25,10 @@ public interface BoardService {
     
     Boolean removeLike(Long blNo); // 게시글 좋아요 삭제
     
-    void addHashTag(HashTagDTO hashTagDTO); // 해쉬태그 추가
+    List<HashTagDTO> getTopTagList(); // 상위 10개 태그 조회
     
-    void removeHashTag(Long htNo); // 해쉬태그 삭제
+    void addHashTag(HashTagDTO hashTagDTO); // 해쉬태그 추가
+
+    void modifyHashTag(Long boardNo, List<HashTagDTO> tagList); // 해쉬태그 수정
 
 }

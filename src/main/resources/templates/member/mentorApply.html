@@ -5,8 +5,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@600&family=Do+Hyeon&family=IBM+Plex+Sans+KR&family=Orbit&family=Poor+Story&display=swap" rel="stylesheet">
 </head>
 <style layout:fragment="style">
+    ul#univList, #majorList{
+        margin-top: 10px;
+        padding: 5px 5px 5px 5px;
+        text-decoration: none;
+        list-style: none;
+        border: none;
+        border-radius: 5px;
+        background-color: #e0e0e0;
+    }
+
+    li{
+        margin-bottom: 10px;
+    }
+
+    .univ_name{
+        cursor: pointer;
+        margin-right: 5px;
+        color: #2828ff;
+    }
+
     #out_div {
-        margin-top: 100px;
+        margin-bottom: 100px;
         font-family: 'IBM Plex Sans KR', sans-serif;
         border-radius: 5px;
         border: 1px solid #c5c5c5;
@@ -18,7 +38,7 @@
     }
 
     .btn{
-        border-radius: 0;
+        border-radius: 5px;
         background-color: #282828;
         border: 1px solid black;
         cursor: pointer;
@@ -42,7 +62,20 @@
     .input_value:focus ~ .input_span, .input_value:valid ~ .input_span {
         width: 100%;
     }
+
+    #word2{
+        width: 300px;
+        margin-right: 20px;
+    }
+    .devLanguage{
+        margin-right: 10px;
+        margin-left: 3px;
+    }
 </style>
+
+<div layout:fragment="banner">
+    <h1 style="text-align: center; margin-top: 100px">멘토 신청하기</h1>
+</div>
 <div layout:fragment="content" id="out_div">
     <form name="frmApply" id="frmApply" action="/member/mentorApply" method="post" class="form-horizontal" enctype="multipart/form-data">
 
@@ -58,7 +91,7 @@
         <!--프로그래밍 언어 시작-->
         <div class="form-group row">
             <label class="col-sm-2 control-label">프로그래밍 언어 스택</label>
-            <div class="col-sm-5">
+            <div class="col-sm-7">
                 Java<input type="checkbox" name="devLanguage" value="Java" class="form-check-input devLanguage">
                 Python<input type="checkbox" name="devLanguage" value="Phython" class="form-check-input devLanguage">
                 C<input type="checkbox" name="devLanguage" value="C" class="form-check-input devLanguage">
@@ -71,6 +104,54 @@
             </div>
         </div>
         <!--프로그래밍 언어 끝-->
+        <!--학교 및 전공 검색-->
+        <div class="form-group row">
+            <label class="col-sm-2 control-label">학교 및 전공</label>
+            <div class="col-sm-3">
+                <input type="text" id="univName" class="form-control" name="univName" readonly>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-primary" id="univSrhBtn">대학교 검색</button>
+            </div>
+            <div class="col-sm-3">
+                <input type="text" id="majorName" class="form-control" name="major" readonly>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-primary" id="majorSrhBtn">전공 검색</button>
+            </div>
+        </div>
+
+        <div class="modal" id="univSrhModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">대학교 검색</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input class="form-control" type="text" id="word" placeholder="학교를 입력하세요." onkeyup="search(this);">
+                        <ul id="univList" style="max-height: calc(100vh - 200px); overflow-x: hidden; overflow-y: auto;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div><!--End Modal-->
+        <div class="modal" id="majorSrhModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">전공 검색</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModal2" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: flex;">
+                            <input class="form-control" type="text" id="word2" placeholder="전공학과를 입력하세요">
+                            <span class="btn btn-primary" id="srchBtn">검색</span>
+                        </div>
+                        <ul id="majorList" style="max-height: calc(70vh - 200px); overflow-x: hidden; overflow-y: auto;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div><!--End Modal-->
 
         <div class="form-group row">
             <div class="col-sm-offset-2 col-sm-10">
@@ -89,36 +170,191 @@
 
 </div>
 <script layout:fragment="script" th:inline="javascript">
-    const frmApply = document.getElementById('frmApply'); // 폼 태그
 
     function moveHome(){
         location.href="/";
     }
+    const univSrhModal = new bootstrap.Modal(document.getElementById('univSrhModal')); // 모달창 출력 이벤트
+    const closeModal = document.getElementById('closeModal'); // 모달창 닫기 버튼
+    const univSrhBtn = document.getElementById('univSrhBtn'); // 검색 모달창 버튼
+    const word = document.getElementById('word');
 
-
-    btnSubmit.addEventListener('click', async function (e) { // 필수 요소 유효성 검사
-
-        const files = document.getElementById('files').value; // 포트폴리오
-        const devLanguage = document.querySelector('.devLanguage').value;
-
-        // 멘토 신청 유효성 검사
-        if (files === ''.trim()) { // 포트폴리오가 비어 있으면
-             alert('포트폴리오를 등록해 주세요');
-             e.preventDefault();
-             e.stopPropagation();
-             return;
-
-         } else if (devLanguage === ''.trim()) { // 회원가입전에 이메일 값이 변경되면
-             alert('언어 스택 지정해 주세요.');
-             e.stopPropagation();
-             e.preventDefault();
-             return;
-         }
-
-        frmApply.submit();
-
+    univSrhBtn.addEventListener('click', function (e) { // 모달창 켜기 이벤트
+        univSrhModal.show();
     });
 
+    closeModal.addEventListener('click', function (e) { // 모달창 닫기 이벤트
+        word.value = null;
+    });
+
+
+
+
+
+    const univList = document.getElementById('univList');
+    //학교정보 api
+    function search(target) {
+        let word = target.value;
+        const univName = document.getElementById('univName');
+        console.log(word);
+
+        axios.get('http://www.career.go.kr/cnet/openapi/getOpenApi', {
+            params: {
+                apiKey: 'f36c8f366dd9eccf65b6a7deb149d558',
+                svcType: 'api',
+                svcCode: 'SCHOOL',
+                contentType: 'json',
+                gubun: 'univ_list',
+                searchSchulNm: word
+            }
+        })
+            .then(response => {
+                // 성공적으로 데이터를 받아온 경우의 처리
+                console.log('이거 : ' + response.data);
+                univList.innerHTML = '';
+                let word = document.getElementById("word").value; // 검색어 입력값
+                console.log('검색된 학교수 : ' + response.data.dataSearch.content.length);
+
+                if (word.length > 0 && response.data.dataSearch.content.length > 0) {
+                    for (let i = 0; i < response.data.dataSearch.content.length; i++) {
+                        let li = document.createElement("li"); // li 태그 생성
+                        li.className = 'univList'; // li에 클래스 부여
+                        li.value = response.data.dataSearch.content[i].schoolName; // li태그 value에 검색된 학교 이름 입력
+
+                        li.setAttribute('data-input', response.data.dataSearch.content[i].schoolName); // li태그에 데이터셋 입력
+
+                        let span = document.createElement("span"); // 학교 이름 들어갈 span태그 생성
+                        let adresSpan = document.createElement("span"); // 캠퍼스별 지역 들어갈 span태그 생성
+                        span.className = "univ_name"; // 학교 span에 클래스 부여
+
+                        span.innerHTML = response.data.dataSearch.content[i].schoolName + ' (' + response.data.dataSearch.content[i].campusName + ')' + '<br>'; // 생성된 학교이름 span을 출력
+                        adresSpan.innerHTML = '캠퍼스 위치 : ' + response.data.dataSearch.content[i].adres + '<hr>'; // 캠퍼스 지역 span 출력
+
+                        li.appendChild(span); // li태그의 자식 요소로 출력
+                        li.appendChild(adresSpan); // li태그 자식 요소로 출력
+
+                        univList.appendChild(li); // 학교 목록 ul태그에 자식요소로 출력
+
+                        span.addEventListener('click', function () { // 학교 이름 클릭하면 본문 학교 input태그에 추가
+                            univName.value = response.data.dataSearch.content[i].schoolName;
+                            word = '';
+                            univSrhModal.hide(true);
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                // 오류가 발생한 경우의 처리
+                console.error('실행중 오류가 발생하였습니다.', error);
+            });
+    }
+
+
+
+    const majorSrhModal = new bootstrap.Modal(document.getElementById('majorSrhModal')); // 모달창 출력 이벤트
+    const closeModal2 = document.getElementById('closeModal2'); // 모달창 닫기 버튼
+    const majorSrhBtn = document.getElementById('majorSrhBtn'); // 검색 모달창 버튼
+    const word2 = document.getElementById('word2');
+
+    majorSrhBtn.addEventListener('click', function (e) { // 모달창 켜기 이벤트
+        majorSrhModal.show();
+    });
+
+    closeModal2.addEventListener('click', function (e) { // 모달창 닫기 이벤트
+        word2.value = null;
+    });
+
+
+    const majorList = document.getElementById('majorList');
+    //학교정보 api
+    function search2(target) {
+        let word2 = target;
+        const majorName = document.getElementById('majorName');
+        console.log(word2);
+
+        axios.get('http://www.career.go.kr/cnet/openapi/getOpenApi', {
+            params: {
+                apiKey: 'f36c8f366dd9eccf65b6a7deb149d558',
+                svcType: 'api',
+                svcCode: 'MAJOR',
+                contentType: 'json',
+                gubun: 'univ_list',
+                searchTitle: word2
+            }
+        })
+            .then(response => {
+                // 성공적으로 데이터를 받아온 경우의 처리
+                console.log('이거 : ' + response.data);
+                majorList.innerHTML = '';
+                let word2 = document.getElementById("word2").value; // 검색어 입력값
+                console.log('검색된 학과 : ' + response.data.dataSearch.content.length);
+
+                if (word2.length > 0 && response.data.dataSearch.content.length > 0) {
+                    for (let i = 0; i < response.data.dataSearch.content.length; i++) {
+                        let li = document.createElement("li"); // li 태그 생성
+                        li.className = 'majorList'; // li에 클래스 부여
+                        li.value = response.data.dataSearch.content[i].mClass; // li태그 value에 검색된 학교 이름 입력
+
+                        li.setAttribute('data-input', response.data.dataSearch.content[i].mClass); // li태그에 데이터셋 입력
+
+                        let span = document.createElement("span"); // 학교 이름 들어갈 span태그 생성
+                        // let adresSpan = document.createElement("span"); // 캠퍼스별 지역 들어갈 span태그 생성
+                        span.className = "univ_name"; // 학교 span에 클래스 부여
+
+                        span.innerHTML = response.data.dataSearch.content[i].mClass + '<br>'; // 생성된 학교이름 span을 출력
+                        // adresSpan.innerHTML = '캠퍼스 위치 : ' + response.data.dataSearch.content[i].adres + '<hr>'; // 캠퍼스 지역 span 출력
+
+                        li.appendChild(span); // li태그의 자식 요소로 출력
+                        // li.appendChild(adresSpan); // li태그 자식 요소로 출력
+
+                        majorList.appendChild(li); // 학교 목록 ul태그에 자식요소로 출력
+
+                        span.addEventListener('click', function () { // 학교 이름 클릭하면 본문 학교 input태그에 추가
+                            majorName.value = response.data.dataSearch.content[i].mClass;
+                            word2 = '';
+                            majorSrhModal.hide();
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                // 오류가 발생한 경우의 처리
+                console.error('실행중 오류가 발생하였습니다.', error);
+            });
+    }
+
+    const srchBtn = document.getElementById('srchBtn');
+    srchBtn.addEventListener('click', function () {
+        const word2 = document.getElementById('word2').value;
+        search2(word2);
+    });
+
+
+
+
+
+
+
+    const frmApply = document.getElementById('frmApply'); // 폼 태그
+    const btnSubmit = document.getElementById('btnSubmit'); // 멘토 신청 버튼
+    btnSubmit.addEventListener('click', function (e) { // 필수 요소 유효성 검사
+        const files = document.getElementById('files').value; // 포트폴리오
+        const devLanguage = document.querySelector('.devLanguage').value;
+        // 멘토 신청 유효성 검사
+        if (files === ''.trim()) { // 포트폴리오가 비어 있으면
+            alert('포트폴리오를 등록해 주세요');
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+
+        } else if (devLanguage === ''.trim()) { // 회원가입전에 이메일 값이 변경되면
+            alert('언어 스택 지정해 주세요.');
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        }
+        frmApply.submit();
+    });
 </script>
 
 

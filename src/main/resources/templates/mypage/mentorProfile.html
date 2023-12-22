@@ -10,15 +10,32 @@
     .col {
         font-family: 'Orbit', sans-serif;
     }
+    .card {
+        width: 1000px;
+        height: 250px;
+        margin-bottom: 30px;
+    }
+
+    .card-body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .emptyContent {
+        font-weight: bold;
+        font-size: 30px;
+    }
 </style>
 <div layout:fragment="content">
     <div class="row mt-3">
         <div class="col">
-            <div class="card" style="width: 1000px; height: 250px; margin-bottom: 30px">
+            <div class="card">
                 <div class="card-header">
-                    나의 소개
+                    소개
                 </div>
                 <div class="card-body">
+                    <span class="introText" th:if="${mentorDTO.intro != null}">[[${mentorDTO.intro}]]</span>
+                    <span class="emptyContent" th:if="${mentorDTO.intro == null}">소개글이 비어있어요.</span>
                 </div>
             </div>
             <div class="card" style="width: 1000px; height: 250px;">
@@ -26,6 +43,8 @@
                     내가 쓴 글
                 </div>
                 <div class="card-body">
+                    <span></span>
+                    <span class="emptyContent">작성한 게시글이 없어요.</span>
                 </div>
             </div>
         </div>

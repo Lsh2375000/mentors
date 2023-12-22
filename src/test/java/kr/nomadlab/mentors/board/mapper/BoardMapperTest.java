@@ -72,4 +72,18 @@ class BoardMapperTest {
         int count = boardMapper.getCount(PageRequestDTO.builder().build());
         log.info(count);
     }
+
+    @Test
+    void selectBoardTest() {
+        Long boardNo = 10L;
+        BoardVO boardVO = boardMapper.selectBoard(boardNo);
+        log.info(boardVO);
+    }
+
+    @Test
+    void selectTagListTest() {
+        Long boardNo = 27L;
+        List<HashTagVO> tagVOList = boardMapper.selectTagList(boardNo);
+        tagVOList.forEach(log::info);
+    }
 }

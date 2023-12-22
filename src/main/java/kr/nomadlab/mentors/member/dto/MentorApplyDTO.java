@@ -13,4 +13,6 @@ public class MentorApplyDTO {
     private Long mno;
     private String devLanguage;
     private String fileNames;
+    private String univName;
+    private String major;
 }

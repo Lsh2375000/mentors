@@ -11,8 +11,9 @@
         .post-container { background-color: #FFFFFF; padding: 100px 0; }
         .post-container .form-control { border: none; outline: none; font-size: 26px; }
         .post-container .tag-wrap { display: flex; flex-wrap: wrap; align-items: center; }
-        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 0 10px 10px 0; }
-        .remove-btn { margin-left: 5px; cursor: pointer; }
+        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 0 10px 10px 0;
+            font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
+        .remove-btn { margin-left: 5px; }
         .post-container input[name=hashTag] { font-size: 18px; }
         .post-container .form-control:focus { border: none;  box-shadow: none; }
         .post-body { min-height: 600px; }
@@ -35,7 +36,9 @@
                       style="width: 100%; height: 600px;"></textarea>
             </div>
             <div class="post-footer">
-                <a th:href="@{/board/list}"><button type="button" class="btn btn-secondary">취소</button></a>
+                <a th:href="@{/board/list}">
+                    <button type="button" class="btn btn-secondary">취소</button>
+                </a>
                 <button type="submit" class="btn btn-primary">등록</button>
             </div>
         </form>
@@ -99,39 +102,48 @@
                 console.log(hashTags);
 
                 if (hashTag.value.trim() !== '' && e.key === 'Enter') { // 내용 존재, Enter키 입력시 태그 추가
+
                     const tagName = hashTag.value.trim(); // 입력한 태그 명
 
-                    // 해쉬 태그 생성
-                    const divElement = document.createElement('div');
-                    divElement.innerHTML = `<span>${tagName}</span>`;
-                    divElement.classList.add('tag-style');
+                    if (hashTags.indexOf(tagName) !== -1) { // 중복 태그 방지
+                        alert('태그는 중복이 안됩니다.');
 
-                    // 태그 삭제 버튼 생성
-                    const spanElement = document.createElement('span');
-                    spanElement.textContent = '✕';
-                    spanElement.classList.add('remove-btn');
-                    spanElement.addEventListener('click', removeTag); // 삭제 이벤트 등록
+                        hashTag.value = '';
+                        hashTag.focus();
 
-                    divElement.appendChild(spanElement); // 태그에 삭제버튼 추가
-                    tagWrap.insertBefore(divElement, hashTag); // 태그 삽입
+                        return;
+                    }
 
-                    hashTags.push(tagName); // 배열에 태그 추가
-                    console.log(hashTags);
+                    if (hashTags.length >= 10) { // 해시태그가 10개 이상이면
+                        hashTag.value = '';
+                        alert('태그는 최대 10개까지 입력할 수 있습니다.');
+                    }
+                    else {
+                        // 해쉬 태그 생성
+                        const divElement = document.createElement('div');
+                        divElement.innerHTML = `<span>${tagName}</span>
+                                            <span class="remove-btn">✕</span>`;
+                        divElement.classList.add('tag-style');
+                        divElement.addEventListener('click', removeTag); // 삭제 이벤트 등록
+                        tagWrap.insertBefore(divElement, hashTag); // 태그 삽입
 
-                    hashTag.value = '';
-                    hashTag.focus();
+                        hashTags.push(tagName); // 배열에 태그 추가
+                        console.log(hashTags);
+
+                        hashTag.value = '';
+                        hashTag.focus();
+                    }
                 }
             });
 
             function removeTag(e) { // 태그 삭제 함수
-                const tagNameNode = e.target.previousSibling; // 이전 형제 노드
+                const tagNameNode = this.firstChild; // 첫번째 자식 노드
 
                 // 일치하는 태그 제외하고 새로운 배열 생성
                 hashTags = hashTags.filter(tag => tag !== tagNameNode.textContent);
+                console.log('tagArr: ', hashTags); // 태그를 담은 배열 확인
 
-                console.log(hashTags); // 태그를 담은 배열 확인
-
-                e.target.parentNode.remove();
+                this.remove();
             }
         });
     </script>

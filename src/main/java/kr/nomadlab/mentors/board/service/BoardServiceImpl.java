@@ -54,15 +54,18 @@ public class BoardServiceImpl implements BoardService {
 
         BoardVO boardVO = boardMapper.selectBoard(boardNo);
         List<BoardLikeDTO> likeList = new ArrayList<>();
+        List<HashTagDTO> tagList = new ArrayList<>();
 
         if (mode.equals("view")) { // mode가 view일때만
             boardMapper.updateHit(boardNo); // 조회수 업데이트
             List<BoardLikeVO> likeVOList = boardMapper.selectLikeList(boardNo); // 게시글 좋아요 조회
             likeVOList.forEach(boardLikeVO -> likeList.add(modelMapper.map(boardLikeVO, BoardLikeDTO.class)));
         }
+        boardVO.getTagVOList().forEach(hashTagVO -> tagList.add(modelMapper.map(hashTagVO, HashTagDTO.class)));
 
         BoardDTO boardDTO = modelMapper.map(boardVO, BoardDTO.class);
         boardDTO.setLikeList(likeList);
+        boardDTO.setTagList(tagList);
 
         return boardDTO;
     }
@@ -98,6 +101,8 @@ public class BoardServiceImpl implements BoardService {
                 .pageRequestDTO(pageRequestDTO).build();
     }
 
+
+
     @Override
     public Long addLike(BoardLikeDTO boardLikeDTO) { // 게시글 좋아요 추가
         BoardLikeVO boardLikeVO = modelMapper.map(boardLikeDTO, BoardLikeVO.class);
@@ -113,14 +118,25 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public List<HashTagDTO> getTopTagList() {
+        List<HashTagDTO> topTagList = boardMapper.selectTopTagList();
+        return topTagList;
+    }
+
+    @Override
     public void addHashTag(HashTagDTO hashTagDTO) { // 해쉬태그 추가
         HashTagVO hashTagVO = modelMapper.map(hashTagDTO, HashTagVO.class);
         boardMapper.insertTag(hashTagVO);
     }
 
     @Override
-    public void removeHashTag(Long htNo) { // 해쉬태그 삭제
-        boardMapper.deleteTag(htNo);
+    public void modifyHashTag(Long boardNo, List<HashTagDTO> tagList) { // 해쉬 태그 추가 및 삭제
+
+        boardMapper.deleteTag(boardNo); // 해당 게시글의 태그 모두 삭제
+        
+        if (tagList.size() > 0) { // 태그 목록이 존재하는 경우
+            tagList.forEach(this::addHashTag); // 수정한 태그 목록 DB에 추가
+        }
     }
 
 }
