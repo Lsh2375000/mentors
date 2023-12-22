@@ -68,4 +68,10 @@ public class ChatServiceImpl implements ChatService{
 
         return chatRoomMapper.selectRoomById(roomId);
     }
+
+    // 채팅방에 해당 회원 존재 여부 확인
+    @Override
+    public Boolean findMemberInRoom(String roomId, Long mno) {
+        return chatRoomMapper.findMemberInRoom(roomId, mno);
+    }
 }

@@ -181,9 +181,32 @@
             </ul>
         </nav>
 
+        <style>
+            .custom-modal {display: none; position: fixed; top: 40%; right: 50px; width: 400px; height: 400px; background-color: red;}
+            .show-modal { display: block; }
+        </style>
+
+        <div class="custom-modal">
+            <span class="close-button">x</span>
+        </div>
+        <button class="trigger" style="position: fixed; top: 50%; right: 10%; ">모달 보이기</button>
     </main>
+
+    <script>
+        var modal = document.querySelector(".custom-modal");
+        var trigger = document.querySelector('.trigger');
+        var closeButton = document.querySelector('.close-button');
+
+        function toggleModal() {
+            modal.classList.toggle('show-modal');
+        }
+
+        trigger.addEventListener('click', toggleModal);
+        closeButton.addEventListener('click', toggleModal);
+    </script>
 </div>
 </body>
+
 <script layout:fragment="script" th:inline="javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
