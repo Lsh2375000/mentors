@@ -87,7 +87,7 @@ public class MyPageController {
 
     /*멘티 프로필 끝*/
 
-    
+    /* 멘토 메인 영역*/
     @GetMapping("/mainList")// 내가 작성한 멘토링 목록 보기
     public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
         pageRequestDTO.setSize(12);
@@ -123,13 +123,20 @@ public class MyPageController {
         return "/mypage/mainModify";
     }
 
-    @PostMapping("/mainList/modify")
+    @PostMapping("/mainList/modify") // 멘토의 수정하기
     public String modifyMain(MainDTO mainDTO){
         log.info("수정 DTO ? " + mainDTO);
         mainService.modifyBoard(mainDTO);
         return "redirect:/mypage/mainList";
     }
+    /* 멘토 메인 영역 끝 */
 
+    /* 멘티 메인 영역*/
+
+
+
+
+    /* 멘티 메인 영역 끝*/
     @GetMapping("/paymentsHistory")
     public String paymentHistory(){
         return "/mypage/paymentsHistory";
