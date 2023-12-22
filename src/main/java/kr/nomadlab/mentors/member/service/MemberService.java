@@ -30,4 +30,6 @@ public interface MemberService {
 
     int getMemberRole(String memberId);
 
+    void payCoin(Long mno, int price); //코인 결제
+
 }

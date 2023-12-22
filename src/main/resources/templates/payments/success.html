@@ -35,6 +35,7 @@
 </div>
 </body>
 <script layout:fragment="script" th:inline="javascript">
+    countNotify();
     const urlParams = new URLSearchParams(window.location.search);
     const amount = urlParams.get("amount");
 
@@ -42,18 +43,17 @@
 
     confirmSuccessSection.style.display = 'flex';
 
-
     const amountElement = document.getElementById("amount");
     amountElement.textContent = `${amount}원`;
 
-    addMessage("payments").then(data => {
-        console.log(data);
-    });
+    // addMessage("payments").then(data => {
+    //     console.log(data);
+    // });
 
-    async function addMessage(types) {
-        const result = await axios.put(`/notify/repository/${types}`);
-        return result.data;
-    }
+    // async function addMessage(types) {
+    //     const result = await axios.put(`/notify/repository/${types}`);
+    //     return result.data;
+    // }
 
 </script>
 </html>
