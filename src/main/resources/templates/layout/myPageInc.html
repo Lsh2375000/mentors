@@ -112,6 +112,40 @@
   .reviewSpan {
     margin-top: 5px;
   }
+
+  /* 모달 스타일 */
+  .notifyModal {
+    display: none;
+    border: black solid 2px;
+    left: auto;
+    position: absolute;
+    top: 70px;
+    width: 200px;
+    height: 100%;
+    background-color: white;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 10px;
+    /*justify-content: center;*/
+    /*align-items: center;*/
+  }
+  .notifyCnt{
+    position: absolute;
+    font-weight: bold;
+    font-size: 20px;
+    bottom: 0;
+    right: 13px;
+    color: red
+  }
+  /* 닫기 버튼 스타일 */
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
 </style>
 <body>
 <div class="d-flex" id="wrapper">
@@ -158,67 +192,101 @@
                 </div>
               </li>
             </th:block>
-          </ul>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent" style="width: 100px;">
-          <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
             <li class="nav-item active">
               <a class="nav-link" href="/main" style="color: white; font-family: 'Orbit', sans-serif;">HOME</a>
             </li>
             <th:block th:unless="${#authentication.principal == 'anonymousUser'}">
-              <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
+                <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-family: 'Orbit', sans-serif;">개인정보</a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <th:block sec:authorize="hasRole('ROLE_MENTOR')">
                       <a class="dropdown-item" th:href="|/member/mentorModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
-                      <a class="dropdown-item" th:href="|/mypage/mainList|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
+                      <a class="dropdown-item" th:href="|/mypage/mainListTor|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
                     </th:block>
                     <th:block sec:authorize="hasRole('ROLE_MENTEE')">
                       <a class="dropdown-item" th:href="|/member/menteeModify|" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
                       <a class="dropdown-item" th:href="|/member/mentorApply|" style="font-family: 'Orbit', Sans-serif;">멘토 신청하기</a>
+                      <a class="dropdown-item" th:href="|/mypage/mainListTee|" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
                     </th:block>
                     <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>
-    <!--            <div class="dropdown-divider"></div>-->
-    <!--            <a class="dropdown-item" href="#!">Something else here</a>-->
+                    <div class="dropdown-divider"></div>
+                    <span class="dropdown-item"></span>
                   </div>
                 </li> <!--End Nav Dropdown-->
               </th:block>
             </th:block>
           </ul>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" style="width: 100px;">
+          <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+
+          </ul>
         </div> <!--End Collapse-->
+
       </div> <!--End Container-->
     </nav> <!--End Nav-->
     <div style="display: flex;">
       <div class="outerSidebar" id="sidebar-wrapper" style="border: none; width: 300px; margin-left: 100px">
-        <th:block th:if="${#authentication.principal == 'anonymousUser'}"> <!--비로그인시 다른유저 프로필-->
+
+        <!--비로그인시 멘토, 멘티 유저 프로필-->
+        <th:block th:if="${#authentication.principal == 'anonymousUser'}">
           <div class="sidebar-heading border-none">
             <span class="sidebar_header">[[${memberDTO.nickname}]]님의 프로필</span>
           </div> <!--End Sidebar Head-->
           <div class="profileBox"> <!-- 회원의 간단한 정보영역 -->
-            <div class="reviewBox">
-              <span class="reviewSpan">수강평 개수  <span class="num">[[${reviewCnt}]]</span></span>
-              <span class="reviewSpan">평균평점  <span class="num">[[${mentorDTO.score}]]</span></span>
-            </div>
+            <th:block th:if="${memberRole == 0}">
+              <div class="reviewBox">
+                <span class="reviewSpan">수강평 수  <span class="num">[[${reviewCnt}]]</span></span>
+                <span class="reviewSpan">평균평점  <span class="num">[[${mentorDTO.score}]]</span></span>
+              </div>
+            </th:block>
+            <th:block th:if="${memberRole == 1}">
+              <div class="reviewBox">
+                <span class="reviewSpan">작성한 수강평 수 <span class="num">[[${reviewCnt}]]</span></span>
+              </div>
+            </th:block>
           </div>
           <div class="list-group list-group-flush" style="margin-top: -30px">
-            <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
+            <th:block th:if="${memberRole == 0}">
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
+            </th:block>
+            <th:block th:if="${memberRole == 1}">
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈</a>
+            </th:block>
             <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개</a>
             <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글</a>
           </div> <!--End List Group Flush-->
         </th:block>
 
+        <!--로그인시 다른 멘토, 멘티 프로필 시작-->
         <th:block th:unless="${#authentication.principal == 'anonymousUser'}">
-          <th:block th:if="${#authentication.principal.getNickname() != memberDTO.nickname}"> <!--다른유저 프로필-->
+          <th:block th:if="${#authentication.principal.getNickname() != memberDTO.nickname}">
             <div class="sidebar-heading border-none">
               <span class="sidebar_header">[[${memberDTO.nickname}]]의 프로필</span>
             </div> <!--End Sidebar Head-->
-
+            <div class="profileBox"> <!-- 회원의 간단한 정보영역 -->
+              <th:block th:if="${memberRole == 0}">
+                <div class="reviewBox">
+                  <span class="reviewSpan">수강평 수  <span class="num">[[${reviewCnt}]]</span></span>
+                  <span class="reviewSpan">평균평점  <span class="num">[[${mentorDTO.score}]]</span></span>
+                </div>
+              </th:block>
+              <th:block th:if="${memberRole == 1}">
+                <div class="reviewBox">
+                  <span class="reviewSpan">작성한 수강평 수 <span class="num">[[${reviewCnt}]]</span></span>
+                </div>
+              </th:block>
+            </div>
             <div class="list-group list-group-flush">
-              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
-              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개</a>
+              <th:block th:if="${memberRole == 0}">
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
+              </th:block>
+              <th:block th:if="${memberRole == 1}">
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈</a>
+              </th:block>              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개</a>
               <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글</a>
             </div> <!--End List Group Flush-->
           </th:block>
@@ -228,13 +296,17 @@
               <div class="sidebar-heading border-none">
                 <span class="sidebar_header" style="font-size: 40px">마이페이지</span>
               </div> <!--End Sidebar Head-->
-              <div class="profileBox" > <!-- 회원의 간단한 정보영역 -->
+
+              <!-- 회원 간단 정보 시작 -->
+              <div class="profileBox" >
                 <span class="nicknameSpan">[[${memberDTO.nickname}]]님</span>
                 <div class="reviewBox">
                   <span class="reviewSpan">수강평 개수  <span class="num">[[${reviewCnt}]]</span></span>
                   <span class="reviewSpan">평균평점  <span class="num">[[${mentorDTO.score}]]</span></span>
                 </div>
               </div>
+              <!-- 회원 간단 정보 끝-->
+
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈</a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개</a>
@@ -248,7 +320,11 @@
               <div class="sidebar-heading border-none">
                 <span class="sidebar_header" style="font-size: 40px">마이페이지</span>
               </div> <!--End Sidebar Head-->
-
+              <div class="profileBox"> <!-- 회원의 간단한 정보영역 -->
+                <div class="reviewBox">
+                  <span class="reviewSpan">작성한 수강평 수 <span class="num">[[${reviewCnt}]]</span></span>
+                </div>
+              </div>
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">홈</a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개</a>
@@ -265,6 +341,63 @@
   </div> <!--End Wrapper-->
 </div> <!--End D-flex-->
 
+<script th:inline="javascript">
+  const notifyUser = [[${#authentication.principal}]]
+
+  const notifyBtn = document.querySelector('.notify');
+  const notifyCnt = document.querySelector('.notifyCnt');
+  const newNotifyList = document.querySelector('.newNotifyList');
+
+  if(notifyUser!=="anonymousUser"){
+    countNotify().then(data => {
+
+      if(parseInt(data) === 0){
+        notifyCnt.style.display = 'none';
+      }
+      else{
+        notifyCnt.textContent=data;
+      }
+    });
+    //알람 버튼 클릭시 알림 모달
+    notifyBtn.addEventListener('click', function(){
+      document.getElementById('notifyModal').style.display = 'flex';
+      notifyCnt.style.display = 'none';
+      getNotReadNotify().then(data => {
+        let str ='';
+        if(data.length === 0){
+          str = `<div class="notifyContent-inc">새로운 알림이 없습니다.</div>`
+        }
+        else{
+          data.forEach(notify =>{
+            str +=
+                    `<div class="notifyContent-inc">${notify.content}</div>`
+          });
+        }
+        newNotifyList.innerHTML = str;
+        readNotify();
+      });
+    })
+  }
+  //모달 닫기
+  function closeNotifyModal() {
+    document.getElementById('notifyModal').style.display = 'none';
+  }
+
+  //알림수 가져오기
+  async function countNotify(){
+    const result = await axios.get(`/notify/count`);
+    return result.data;
+  }
+  //알림 버튼 클릭시 알림수 초기화
+  async function readNotify(){
+    const result = await axios.put(`/notify/readNotify`)
+  }
+  //읽지 않은 알림 가져오기
+  async function getNotReadNotify(){
+    const result = await axios.get(`/notify/getNewNotify`)
+    return result.data;
+  }
+</script>
 
 <th:block layout:fragment="script">
 

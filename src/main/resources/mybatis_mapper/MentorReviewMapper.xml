@@ -6,8 +6,8 @@
 
     <!--수강평 작성-->
     <insert id="insert">
-        insert into `mentorReview` (`mno`, `nickname`, `score`, `review`)
-        values (#{mno}, #{nickname}, #{score}, #{review})
+        insert into `mentorReview` (`mentorMno`, `menteeMno`, `score`, `review`)
+        values (#{mentorMno}, #{menteeMno}, #{score}, #{review})
     </insert>
 
     <!--해당멘티가 작성한 수강평 목록-->
@@ -22,7 +22,11 @@
 
     <!--멘토에게 달린 수강평 수-->
     <select id="mentorReviewCount" resultType="int">
-        select count(`review`) from `mentorReview` where `mno` = #{mno}
+        select count(`review`) from `mentorReview` where `mentorMno` = #{mentorMno}
+    </select>
+
+    <select id="menteeReviewCount" resultType="int">
+        select count(`review`) from `mentorReview` where `menteeMno` = #{menteeMno}
     </select>
 
 </mapper>

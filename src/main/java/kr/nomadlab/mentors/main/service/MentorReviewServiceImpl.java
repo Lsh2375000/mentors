@@ -14,7 +14,12 @@ public class MentorReviewServiceImpl implements MentorReviewService{
     private final MentorReviewMapper mentorReviewMapper;
 
     @Override
-    public int mentorReviewCount(Long mno) {
-        return mentorReviewMapper.mentorReviewCount(mno);
+    public int mentorReviewCount(Long mentorMno) {
+        return mentorReviewMapper.mentorReviewCount(mentorMno);
+    }
+
+    @Override
+    public int menteeReviewCount(Long menteeMno) {
+        return mentorReviewMapper.menteeReviewCount(menteeMno);
     }
 }

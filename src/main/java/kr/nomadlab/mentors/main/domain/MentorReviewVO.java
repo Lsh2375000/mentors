@@ -9,8 +9,8 @@ import lombok.*;
 @ToString
 public class MentorReviewVO {
     private Long mrNo;
-    private Long mno;
-    private String nickname;
+    private Long mentorMno;
+    private Long menteeMno;
     private Double score;
     private String review;
 }

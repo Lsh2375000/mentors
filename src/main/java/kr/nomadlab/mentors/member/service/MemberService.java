@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MemberService {
 
-    void add(MemberDTO memberDTO); // 회원가입
+    Long add(MemberDTO memberDTO); // 회원가입
 
     MemberVO getMemberId(String memberId); // 회원 정보 조회
 
@@ -27,6 +27,8 @@ public interface MemberService {
     void addMentorApply(MentorApplyDTO mentorApplyDTO, List<MultipartFile> files);
 
     MemberDTO getProfileNickname(String nickname);
+
+    int getMemberRole(String memberId);
 
     void payCoin(Long mno, int price); //코인 결제
 

@@ -75,7 +75,8 @@ public class MemberController {
         String inputNickname = (String) session.getAttribute("inputNickname");
 
         if (referer.equals(teeRegisterURL)) { // URL : /member/menteeRegister
-            memberService.add(memberDTO);
+            Long mno = memberService.add(memberDTO);
+            menteeDTO.setMno(mno);
             menteeService.add(menteeDTO);
         } else {
             return "redirect:/member/errorPage";
