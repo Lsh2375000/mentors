@@ -115,13 +115,7 @@ public class MyPageController {
         log.info("end는 ?"+mainList.getEnd());
         model.addAttribute("mainList", mainList);
 
-        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
-        log.info("memberDTO : " + memberDTO);
-        model.addAttribute("memberDTO", memberDTO);
-
-        MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
-        log.info("mentorDTO : " + mentorDTO);
-        model.addAttribute("mentorDTO", mentorDTO);
+        enterMentorPage(model, memberSecurityDTO);
     }
 
     @GetMapping("/mainList/remove") // 내가 작성한 멘토링 삭제
@@ -137,6 +131,8 @@ public class MyPageController {
         MainDTO mainDTO = mainService.getBoard(mbNo);
 
         int mentoringCnt = mainService.mentoringCnt(mno);
+
+        enterMentorPage(model, memberSecurityDTO);
 
         model.addAttribute("mentoringCnt", mentoringCnt);
         model.addAttribute("mainDTO", mainDTO);
@@ -156,15 +152,14 @@ public class MyPageController {
     @GetMapping("/mainListTee") // 멘토링 목록
     public void mainListTee(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
         pageRequestDTO.setSize(12);
+
         PageResponseDTO<MainDTO> mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
         log.info("서비스 sort ?"+pageRequestDTO.getSort());
+        enterMenteePage(model, memberSecurityDTO);
+
         model.addAttribute("mainList", mainListTee);
         model.addAttribute("sort", pageRequestDTO.getSort());
 
-        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
-        model.addAttribute("memberDTO", memberDTO);
-        MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
-        model.addAttribute("menteeDTO", menteeDTO);
     }
 
     @PostMapping("/review/write")
@@ -178,5 +173,25 @@ public class MyPageController {
     @GetMapping("/paymentsHistory")
     public String paymentHistory(){
         return "/mypage/paymentsHistory";
+    }
+
+    private void enterMentorPage(Model model, MemberSecurityDTO memberSecurityDTO) { // 멘토페이지 GetMapping 입장 조건
+        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
+        log.info("memberDTO: " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+        log.info("mentorDTO: " + mentorDTO);
+        model.addAttribute("mentorDTO", mentorDTO);
+    }
+
+    private void enterMenteePage(Model model, MemberSecurityDTO memberSecurityDTO) { // 멘티페이지 GetMapping 입장 조건
+        MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
+        log.info("memberDTO: " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+        log.info("mentorDTO: " + menteeDTO);
+        model.addAttribute("mentorDTO", menteeDTO);
     }
 }
