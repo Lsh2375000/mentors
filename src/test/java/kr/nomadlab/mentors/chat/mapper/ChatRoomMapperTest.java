@@ -17,11 +17,12 @@ class ChatRoomMapperTest {
 
     @Test
     void insertChatRoomTest() {
-        Long mno = 2L; // 채팅방 생성하는 회원 고유번호
+        Long mno = 3L; // 채팅방 생성하는 회원 고유번호
         String name = "createChatTest"; // 채팅방 이름
         int maxMembers = 8;
         ChatRoomDTO chatRoomDTO = ChatRoomDTO.create(mno, name, maxMembers); // 채팅방 생성
         chatRoomMapper.insertChatRoom(chatRoomDTO);
+        log.info(chatRoomDTO.getRoomId());
     }
 
     @Test

@@ -5,7 +5,8 @@
 <mapper namespace="kr.nomadlab.mentors.chat.mapper.ChatRoomMapper">
 
     <!-- 채팅방 생성 -->
-    <insert id="insertChatRoom">
+    <insert id="insertChatRoom" parameterType="kr.nomadlab.mentors.chat.dto.ChatRoomDTO"
+            useGeneratedKeys="true" keyProperty="roomId">
         insert into chatRoom (roomId, name, mno, maxMembers) values (#{roomId}, #{name}, #{mno}, #{maxMembers})
     </insert>
 
