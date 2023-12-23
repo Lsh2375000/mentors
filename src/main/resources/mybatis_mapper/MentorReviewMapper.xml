@@ -6,9 +6,13 @@
 
     <!--수강평 작성-->
     <insert id="insert">
-        insert into `mentorReview` (`mentorMno`, `menteeMno`, `score`, `review`)
-        values (#{mentorMno}, #{menteeMno}, #{score}, #{review})
+        insert into `mentorReview` (`mentorMno`, `menteeMno`, `score`, `review`, `addDate`)
+        values (#{mentorMno}, #{menteeMno}, #{score}, #{review}, now())
     </insert>
+    <!--멘토의 score 업데이트-->
+    <update id="updateScore">
+        UPDATE mentor SET score = (SELECT ROUND(AVG(score), 1) FROM mentorReview WHERE mno = #{mno}) WHERE mno = #{mno};
+    </update>
 
     <!--해당멘티가 작성한 수강평 목록-->
     <select id="menteeReviewList" resultType="kr.nomadlab.mentors.main.domain.MentorReviewVO">

@@ -30,4 +30,7 @@ public interface MainService {
 
     // 마이페이지 멘토링목록 출력
     PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno);
+
+    // 마이페이지 멘티의 멘토링 참가 목록
+    PageResponseDTO<MainDTO> mainListTee(PageRequestDTO pageRequestDTO, Long mno);
 }

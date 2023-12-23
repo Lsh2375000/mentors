@@ -81,7 +81,7 @@ public class MainServiceImpl implements MainService{
     }
 
     @Override
-    public boolean isMentoring(Long mno) {
+    public boolean isMentoring(Long mno) { // 멘토가 작성한 글이 있는지
         boolean isMentoring;
 
         if(mainMapper.isMentoring(mno) == 0){
@@ -93,13 +93,13 @@ public class MainServiceImpl implements MainService{
     }
 
     @Override
-    public void updateCurPeople(String roomId) {
+    public void updateCurPeople(String roomId) { // 현재 인원 업데이트
         mainMapper.updateCurPeople(roomId);
         log.info("현재인원 업데이트 서비스");
     }
 
     @Override
-    public PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno) {
+    public PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno) { // 마이페이지에서 멘토가 작성한 글 목록보기
 
         List<MainVO> voList = mainMapper.myPageList(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), mno);
 
@@ -120,7 +120,26 @@ public class MainServiceImpl implements MainService{
         return responseDTO;
     }
 
+    @Override
+    public PageResponseDTO<MainDTO> mainListTee(PageRequestDTO pageRequestDTO, Long mno) { // 멘티가 참가중인 멘토링 목록
+        List<MainVO> voList = mainMapper.mainListTee(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), pageRequestDTO.getSort(), mno);
+        log.info("서비스 sort ?"+pageRequestDTO.getSort());
+        List<MainDTO> dtoList = new ArrayList<>();
 
+        voList.forEach(mainVO -> {
+            MainDTO mainDTO = modelMapper.map(mainVO, MainDTO.class);
+            dtoList.add(mainDTO);
+        });
+
+        int total = mainMapper.mainListTeeCnt(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), pageRequestDTO.getSort(), mno);
+
+        PageResponseDTO<MainDTO> responseDTO = PageResponseDTO.<MainDTO>withAll()
+                .dtoList(dtoList)
+                .total(total)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+        return responseDTO;
+    }
 
 
 }
