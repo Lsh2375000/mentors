@@ -1,7 +1,9 @@
 package kr.nomadlab.mentors.payInfo.mapper;
 
+import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.payInfo.vo.PayInfoVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,5 +14,8 @@ public interface PayInfoMapper {
     List<PayInfoVO> checkDate();
 
     void updateIsComplete(Long mbNo);
-    void coinPayMentoring();
+
+    List<PayInfoVO> getPayInfo(@Param("mno")Long mno, @Param("skip") int skip, @Param("size") int size);
+
+    int getCount(Long mno);
 }

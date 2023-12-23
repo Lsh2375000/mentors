@@ -70,43 +70,37 @@
       <tbody>
       <tr>
         <td><img src="/img/basic/coin.png" alt="상품 이미지"></td>
-        <td class="product">쿠키 1개</td>
+        <td class="product">비타민 1개</td>
         <td class="product-price">1000</td>
         <td><button class="payment-button btn-success">구매하기</button></td>
       </tr>
       <tr>
         <td><img src="/img/basic/coin.png" alt="상품 이미지"></td>
-        <td class="product">쿠키 10개</td>
+        <td class="product">비타민 10개</td>
         <td class="product-price">10000</td>
         <td><button class="payment-button btn-success">구매하기</button></td>
       </tr>
       <tr>
         <td><img src="/img/basic/coin.png" alt="상품 이미지"></td>
-        <td class="product">쿠키 30개</td>
+        <td class="product">비타민 30개</td>
         <td class="product-price">30000</td>
         <td><button class="payment-button btn-success">구매하기</button></td>
       </tr>
       <tr>
         <td><img src="/img/basic/coin.png" alt="상품 이미지"></td>
-        <td class="product">쿠키 50개</td>
+        <td class="product">비타민 50개</td>
         <td class="product-price">50000</td>
         <td><button class="payment-button btn-success">구매하기</button></td>
       </tr>
       <tr>
         <td><img src="/img/basic/coin.png" alt="상품 이미지"></td>
-        <td class="product">쿠키 100개</td>
+        <td class="product">비타민 100개</td>
         <td class="product-price">100000</td>
         <td><button class="payment-button btn-success">구매하기</button></td>
       </tr>
       <!-- 추가 상품은 필요에 따라 계속해서 추가할 수 있습니다. -->
       </tbody>
     </table>
-
-    <!-- 학교 api -->
-    <input type = "text" id="word" placeholder="검색어를 입력하세요."
-           onkeyup="search(this);"><button type="button" id="btn_search">Search</button>
-    <ul id="schoolList"></ul>
-    <!-- 학교 api -->
   </div>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="/js/payment.js?1"></script>
@@ -155,58 +149,6 @@
               });
     })
   });
-
-
-
-
-
-
-  const schoolList = document.querySelector('#schoolList');
-  //학교정보 api
-  function search(target){
-    let word = target.value;
-    let encodeWord = encodeURI(word);
-    console.log(word);
-    console.log(encodeWord);
-
-    axios.get('http://www.career.go.kr/cnet/openapi/getOpenApi', {
-      params: {
-        apiKey: 'f36c8f366dd9eccf65b6a7deb149d558',
-        svcType: 'api',
-        svcCode: 'SCHOOL',
-        contentType: 'json',
-        gubun: 'univ_list',
-        searchSchulNm: word
-      }
-    })
-            .then(response => {
-              // 성공적으로 데이터를 받아온 경우의 처리
-              console.log(response.data);
-              schoolList.innerHTML = '';
-              let word = document.getElementById("word").value; // 검색어 입력값
-              console.log(response.data.dataSearch.content.length);
-
-              if (word.length > 0 && response.data.dataSearch.content.length > 0) {
-                for (let i = 0; i < response.data.dataSearch.content.length; i++) {
-                  let li = document.createElement("li");
-                  li.className = 'schoolList';
-                  li.value = response.data.dataSearch.content[i].schoolName;
-                  li.setAttribute('data-input', response.data.dataSearch.content[i].schoolName);
-
-                  var a = document.createElement("a");
-                  a.href = '';
-                  a.innerHTML = response.data.dataSearch.content[i].schoolName;
-
-                  li.appendChild(a);
-                  schoolList.appendChild(li);
-                }
-              }
-            })
-            .catch(error => {
-              // 오류가 발생한 경우의 처리
-              console.error('실행중 오류가 발생하였습니다.', error);
-            });
-  }
 </script>
 </body>
 </html>

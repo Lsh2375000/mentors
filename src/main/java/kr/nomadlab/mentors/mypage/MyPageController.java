@@ -4,6 +4,8 @@ package kr.nomadlab.mentors.mypage;
 
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
+import kr.nomadlab.mentors.exChange.dto.ExchangeDto;
+import kr.nomadlab.mentors.exChange.service.ExchangeService;
 import kr.nomadlab.mentors.main.dto.MainDTO;
 import kr.nomadlab.mentors.main.service.MainService;
 import kr.nomadlab.mentors.main.service.MentorReviewService;
@@ -15,9 +17,14 @@ import kr.nomadlab.mentors.member.dto.MentorDTO;
 import kr.nomadlab.mentors.member.service.MemberService;
 import kr.nomadlab.mentors.member.service.MenteeService;
 import kr.nomadlab.mentors.member.service.MentorService;
+import kr.nomadlab.mentors.payInfo.dto.PayInfoDto;
+import kr.nomadlab.mentors.payInfo.service.PayInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +46,9 @@ public class MyPageController {
 
     private final MentorReviewService mentorReviewService;
     private final MainService mainService;
+
+    private final PayInfoService payInfoService;
+    private final ExchangeService exchangeService;
 
     /*멘토 프로필 시작*/
     @GetMapping("/mentorProfile")
@@ -147,6 +157,37 @@ public class MyPageController {
         log.info("수정 DTO ? " + mainDTO);
         mainService.modifyBoard(mainDTO);
         return "redirect:/mypage/mainList";
+    }
+
+    @GetMapping("/exchange")
+    public String exchangeVitamin(@AuthenticationPrincipal MemberSecurityDTO member, PageRequestDTO pageRequestDTO, Model model){
+        PageResponseDTO<PayInfoDto> payInfoDtoList = payInfoService.getPayInfo(member.getMno(), pageRequestDTO);
+        model.addAttribute("payInfoDtoList", payInfoDtoList);
+        return "/mypage/exchange";
+    }
+
+    @PostMapping("/bankInfo")
+    public String registerBank(@AuthenticationPrincipal MemberSecurityDTO member, ExchangeDto exchangeDto){
+        exchangeDto.setMno(member.getMno());
+        exchangeDto.setCoin(member.getCoin());
+        exchangeDto.setAmount(member.getCoin()*1000);
+        exchangeService.insertExchange(exchangeDto);
+        PayInfoDto payInfoDto = PayInfoDto.builder()
+                .price(member.getCoin())
+                .mentorMno(member.getMno())
+                .mbNo(0L)
+                .build();
+
+        payInfoService.savePayInfo( 0L,payInfoDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Authentication 객체의 Principal이 MemberSecurityDTO인지 확인 후 변경
+        if (authentication != null && authentication.getPrincipal() instanceof MemberSecurityDTO) {
+            MemberSecurityDTO userDetails = (MemberSecurityDTO) authentication.getPrincipal();
+            userDetails.setCoin(0);
+        }
+
+        return "redirect:/mypage/exchange";
     }
     /* 멘토 메인 영역 끝 */
 

@@ -13,4 +13,29 @@
     <update id="updateIsComplete">
         update `payInfo` set isComplete=true where mbNo=#{mbNo}
     </update>
+    <select id="getPayInfo" resultType="kr.nomadlab.mentors.payInfo.vo.PayInfoVO">
+        SELECT
+            mbNo,
+            CASE WHEN mbNo = 0 THEN price ELSE SUM(price) END AS price,
+            isComplete,
+            MAX(completeDate) AS completeDate
+        FROM
+            payInfo
+        WHERE
+            mentorMno = #{mno}
+            AND price != 0
+        GROUP BY
+            CASE WHEN mbNo = 0 THEN payInfoNo ELSE mbNo END, isComplete
+        ORDER BY
+            CASE
+                WHEN completeDate IS NULL THEN addDate
+                ELSE completeDate
+                END DESC
+        LIMIT #{skip}, #{size}
+    </select>
+    <select id="getCount" resultType="int">
+        SELECT COUNT(*)
+        FROM `payInfo`
+        where mentorMno = #{mno} and price != 0
+    </select>
 </mapper>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>환전하기</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    #exchange-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #remainingAmount {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .exchangeBtn {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #historyList {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 80%;
+    }
+
+    #historyList th, #historyList td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    #historyList th {
+      background-color: #4CAF50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div id="exchange-container">
+    <h1 id="remainingAmount">보유 비타민</h1>
+    <div id="getVitamin"><img src="/img/basic/비타민.png" alt="코인이미지" width="50px" height="50px">[[${#authentication.principal.coin}]]개</div>
+    <button class="exchangeBtn">환전 신청</button>
+    <table id="historyList">
+      <tr>
+        <th>제목</th>
+        <th>비타민 수</th>
+        <th>완료일</th>
+        <th>상태</th>
+      </tr>
+      <tr th:each="payInfoDto:${payInfoDtoList.dtoList}">
+        <td>[[${payInfoDto.mbNo == 0 ? '환전 신청' : '멘토링'}]]</td>
+        <td><img src="/img/basic/비타민.png" alt="비타민이미지" width="30px" height="30px">[[${payInfoDto.price}]]개</td>
+        <td>[[${payInfoDto.completeDate}]]</td>
+        <td>[[${payInfoDto.isComplete == false ? '진행 중' : '완료'}]]</td>
+      </tr>
+      <!-- 추가적인 결제내역 항목들을 여기에 추가할 수 있습니다. -->
+    </table>
+    <form action="/mypage/exchange" method="get" name="frmSearch">
+      <div style="padding-top: 50px">
+        <!--/* 페이징 start */-->
+        <div class="float-end">
+          <ul class="pagination flex-wrap">
+            <li class="page-item" th:if="${payInfoDtoList.prev}">
+              <a class="page-link" th:data-num="${payInfoDtoList.start - 1}">이전</a>
+            </li>
+            <th:block th:each="i: ${#numbers.sequence(payInfoDtoList.start, payInfoDtoList.end)}">
+              <li th:if="${i != 0}" th:class="${payInfoDtoList.page == i} ? 'page-item active' : 'page-item'">
+                <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+              </li>
+            </th:block>
+            <li class="page-item" th:if="${payInfoDtoList.next}">
+              <a class="page-link" th:data-num="${payInfoDtoList.end + 1}">다음</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal fade registerModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">환전 신청</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="bankInfoForm" action="/mypage/bankInfo" method="POST">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="memberName" class="form-label">이름</label>
+              <input type="text" class="form-control" id="memberName" name="memberName">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">계좌번호</label>
+              <div class="input-group">
+                <select id="bankSelect" class="form-select bankChoose" name="bank">
+                  <option>직접입력</option>
+                  <option value="국민은행">국민은행</option>
+                  <option value="신한은행">신한은행</option>
+                  <option value="우리은행">우리은행</option>
+                  <!-- 추가 은행 목록-->
+                </select>
+                <input type="text" class="form-control accountNum" id="accountNum" placeholder="-를 포함하여 입력해주세요" name="accountNum">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label><img src="/img/basic/비타민.png" width="20px" height="20px" class="me-2">환전 금액</label>
+              <span class="badge bg-primary">
+                            [[${#authentication.principal.coin}]]
+                        </span>
+              <span class="badge bg-success">
+                            [[${#authentication.principal.coin*1000}]]
+                        </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary registerBtn">신청</button>
+            <button type="button" class="btn btn-outline-dark closeRegisterBtn">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    const formObj = document.querySelector("form[name=frmSearch]");
+
+    // 페이징
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const target = e.target;
+
+      if (target.tagName !== 'A') {
+        return;
+      }
+      const num = target.getAttribute("data-num");
+      formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`;
+
+      formObj.submit();
+    }, false)
+  });
+
+  const exchangeBtn = document.querySelector('.exchangeBtn');
+  const registerModal = new bootstrap.Modal(document.querySelector('.registerModal'));
+  exchangeBtn.addEventListener('click', function() {
+    registerModal.show();
+  })
+
+  document.getElementById('bankSelect').addEventListener('change', function (e) {
+    const bankNameInput = document.querySelector('input[name=bankName]');
+    if(e.target.value ==='직접입력'){
+      bankNameInput.value='';
+    }else {
+      bankNameInput.value = e.target.value;
+    }
+  });
+  const form = document.getElementById('bankInfoForm');
+  document.querySelector('.registerBtn').addEventListener('click', function(){
+    form.submit();
+    registerModal.close();
+  })
+
+</script>
+</html>
