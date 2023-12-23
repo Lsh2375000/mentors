@@ -1,18 +1,111 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
-      layout:decorate="~{layout/inc.html}" xmlns="http://www.w3.org/1999/html">
+      layout:decorate="~{layout/myPageInc.html}" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <title>결제내역 확인</title>
   <link th:href="@{/css/tossstyle.css}" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa; /* 배경색 지정 */
+    }
+
+    .paymentHistory-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .paymentHistory-List {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px; /* 리스트 간격 조정 */
+      width: 70%; /* 리스트 너비 조정 */
+      margin: 0 auto; /* 중앙 정렬 */
+    }
+
+    .paymentHistory-List table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px; /* 테이블 간격 조정 */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+      background-color: #fff; /* 테이블 배경색 */
+    }
+
+    .paymentHistory-List th, .paymentHistory-List td {
+      border: 1px solid #ddd;
+      padding: 15px;
+      text-align: left;
+    }
+
+    .paymentHistory-List th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .paymentHistoryList-table-body tr:nth-child(even) {
+      background-color: #f2f2f2; /* 짝수 행 배경색 지정 */
+    }
+
+    .paymentHistoryList-paging {
+      display: flex;
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px; /* 페이징 간격 조정 */
+    }
+
+    .paymentHistoryList-paging li {
+      margin: 0 5px;
+    }
+
+    .page-link {
+      cursor: pointer;
+      text-decoration: none;
+      padding: 10px;
+      border: 1px solid #ddd;
+      color: #333;
+      background-color: #fff;
+    }
+
+    .page-link.active {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .payment-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .payment-header h1 {
+      color: #007b7f;
+    }
+  </style>
 </head>
 <body>
 <div layout:fragment="content">
   <div class="paymentHistory-body">
-    <ul class="paymentHistory-body">
+    <div class="payment-header">
+      <h1>비타민 결제 내역</h1>
+    </div>
+    <ul class="paymentHistory-List">
       <li class="paymentHistory-List">
-
+        <table>
+          <thead>
+          <tr>
+            <th>주문명</th>
+            <th>금액</th>
+            <th>승인 일자</th>
+          </tr>
+          </thead>
+          <tbody class="paymentHistoryList-table-body"></tbody>
+        </table>
       </li>
     </ul>
     <div class="row mt-3">
@@ -38,18 +131,24 @@
 
   const paymentHistoryList = document.querySelector('.paymentHistory-List');
 
-  function printList(dtoList){
+
+
+  function printList(dtoList) {
+    const tableBody = document.querySelector('.paymentHistoryList-table-body');
+
     let str = '';
-    if(dtoList && dtoList.length > 0) {
-      for(const dto of dtoList){
-        str += `<span>
-<div>${dto.orderName}</div>
-<div>${dto.amount}</div>
-<div>${dto.approveAt}</div>
-</span>`
+    if (dtoList && dtoList.length > 0) {
+      for (const dto of dtoList) {
+        const formattedAmount = new Intl.NumberFormat('ko-KR').format(dto.amount);
+
+        str += `<tr>
+                            <td>${dto.orderName}</td>
+                            <td>${formattedAmount}</td>
+                            <td>${dto.approveAt}</td>
+                        </tr>`;
       }
     }
-    paymentHistoryList.innerHTML =str;
+    tableBody.innerHTML = str;
   }
 
   const paymentPaging = document.querySelector('.paymentHistoryList-paging');
@@ -104,5 +203,7 @@
     }
     return result.data;
   }
+
+
 </script>
 </html>

@@ -32,4 +32,5 @@ public interface MemberService {
 
     void payCoin(Long mno, int price); //코인 결제
 
+    void exchangeCoin(Long mno);
 }

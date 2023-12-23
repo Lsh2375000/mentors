@@ -198,11 +198,13 @@
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <th:block sec:authorize="hasRole('ROLE_MENTOR')">
                       <a class="dropdown-item" th:href="@{/member/mentorModify}" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
+                      <a class="dropdown-item" th:href="@{/mypage/exchange}" style="font-family: 'Orbit', sans-serif;">비타민 환전</a>
                     </th:block>
                     <th:block sec:authorize="hasRole('ROLE_MENTEE')">
                       <a class="dropdown-item" th:href="@{/member/menteeModify}" style="font-family: 'Orbit', sans-serif;">개인정보 수정</a>
                       <a class="dropdown-item" th:href="@{/member/mentorApply}" style="font-family: 'Orbit', Sans-serif;">멘토 신청하기</a>
                       <a class="dropdown-item" th:href="@{/mypage/mainListTee}" style="font-family: 'Orbit', sans-serif;">멘토링 목록</a>
+                      <a class="dropdown-item" th:href="@{/mypage/paymentsHistory}" style="font-family: 'Orbit', sans-serif;">비타민 구매 내역</a>
                     </th:block>
                     <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>
                     <div class="dropdown-divider"></div>
@@ -301,7 +303,6 @@
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록</a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개</a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/exchange">비타민 환전하기</a>
               </div> <!--End List Group Flush-->
             </th:block>
           </th:block> <!--End 멘토 마이페이지-->
@@ -330,6 +331,8 @@
       </div>
     </div>
   </div> <!--End Wrapper-->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 </div> <!--End D-flex-->
 
 <script th:inline="javascript">

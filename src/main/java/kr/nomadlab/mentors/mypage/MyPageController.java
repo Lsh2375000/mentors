@@ -160,6 +160,8 @@ public class MyPageController {
     public String exchangeVitamin(@AuthenticationPrincipal MemberSecurityDTO member, PageRequestDTO pageRequestDTO, Model model){
         PageResponseDTO<PayInfoDto> payInfoDtoList = payInfoService.getPayInfo(member.getMno(), pageRequestDTO);
         model.addAttribute("payInfoDtoList", payInfoDtoList);
+        enterMentorPage(model, member);
+
         return "/mypage/exchange";
     }
 
@@ -174,8 +176,8 @@ public class MyPageController {
                 .mentorMno(member.getMno())
                 .mbNo(0L)
                 .build();
-
-        payInfoService.savePayInfo( 0L,payInfoDto);
+        payInfoService.savePayInfo( 0L,payInfoDto); //0은 관리자
+        memberService.exchangeCoin(member.getMno());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Authentication 객체의 Principal이 MemberSecurityDTO인지 확인 후 변경
@@ -212,7 +214,9 @@ public class MyPageController {
     }
     /* 멘티 메인 영역 끝*/
     @GetMapping("/paymentsHistory")
-    public String paymentHistory(){
+    public String paymentHistory(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model){
+        enterMenteePage(model, memberSecurityDTO);
+
         return "/mypage/paymentsHistory";
     }
 

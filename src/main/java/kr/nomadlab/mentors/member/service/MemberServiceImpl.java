@@ -134,6 +134,10 @@ public class MemberServiceImpl implements MemberService {
     public int getMemberRole(String memberId) {
         return memberMapper.getMemberRole(memberId);
     }
+
+    public void exchangeCoin(Long mno){
+        memberMapper.updateCoin(mno, 0);
+    }
     // --------------------------------------------------------------------------------
     //
 
