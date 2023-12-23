@@ -24,92 +24,64 @@
 <style>
   @import url(https://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700);
 
-  .outerSidebar{
-    background: #2E4374;
-    color: #ffffff;
-    border: none;
-    padding-left: 20px;
+  .outerSidebar{ /*사이드바 모든 영역*/
+    background-color: #d7e5ea;
+    color: black;
+    padding-left: 50px;
+    width: 300px;
   }
-  .list-group-item{
-    background: #2E4374;
-    color: #ffffff;
-    border: none;
+
+  a.nav-link {
+    color: white;
+    font-size: 20px;
+  }
+
+  .list-group-item{ /*사이드바 세부 메뉴 영역*/
+    background-color:transparent;
+    color: black;
     font-size: 15pt;
+    border: none;
     font-family: 'Orbit', sans-serif;
   }
-  .sidebar_header{
+
+  .sidebar_header{ /*사이드 바 마이페이지 or 프로필 글자영역*/
     font-weight: bold;
     font-size: 30px;
     border: none;
     font-family: 'Do Hyeon', sans-serif;
   }
 
-  /*#sidebarToggle{*/
-  /*  background-color: #2f87ff;*/
-  /*  border: none;*/
-  /*  color: #6e6e6e;*/
-  /*  font-family: 'Do Hyeon', sans-serif;*/
-  /*}*/
-
-  .btnLightBlue {
-    background: #E5C3A6;
-  }
-
-
-  button.button {
-    display: block;
-    position: relative;
-    float: left;
-    width: 120px;
-    padding: 0;
-    margin: 10px 20px 10px 0;
-    font-weight: 600;
-    text-align: center;
-    line-height: 50px;
-    color: #5e5e5e;
-    border-radius: 5px;
-    transition: all 0.2s ;
-    border: none;
-    font-family: 'Assistant', sans-serif;}
-  /* 3D */
-
-  .btnLightBlue.btnPush {
-    box-shadow: 0px 5px 0px 0px #e09f66;
-  }
-
-  .btnPush:hover {
-    margin-top: 15px;
-    margin-bottom: 5px;
-  }
-
-  .btnLightBlue.btnPush:hover {
-    box-shadow: 0px 0px 0px 0px #e09f66;
-  }
-
-  .profileBox {
-    border-radius: 5px;
-    border: none;
+  .profileBox { /*프로필 영역*/
+    border-bottom: 1px solid #717171;
     width: 200px;
     height: 100px;
     margin-left: 20px;
     display: flex;
     flex-direction: column;
+
   }
 
-  .nicknameSpan {
+  #sidebar-wrapper .list-group {
+    width: 200px;
+    padding-bottom: 20px;
+    margin-left: 20px;
+    border-bottom: 1px solid #717171;
+  }
+
+  .nicknameSpan { /*닉네임 나오는 영역*/
     font-family: 'Do Hyeon', sans-serif;
     font-size: 30px;
   }
-  .reviewBox {
+  .reviewBox { /*수강평 정보 영역*/
     font-family: 'Orbit', sans-serif;
     font-size: 13px;
     display: flex;
     flex-direction: column;
   }
-  .num {
+  .num { /*수강평 영역 숫자정보*/
     font-weight: bold;
   }
-  .reviewSpan {
+  .reviewSpan { /*수강평 정보 제목*/
     margin-top: 5px;
   }
 
@@ -171,12 +143,6 @@
             </th:block>
             <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}"><!-- 회원 로그인 -->
               <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/logout">로그아웃</a></li>
-              <th:block sec:authorize="hasRole('ROLE_MENTOR')"> <!--멘토 로그인시-->
-                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
-              </th:block>
-              <th:block sec:authorize="hasRole('ROLE_MENTEE')"> <!--멘티 로그인시-->
-                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
-              </th:block>
               <li class="nav-item mx-0 mx-lg-1" style="position: relative;">
                 <div class="notify" >
                   <img src="/img/basic/notify.png" alt="알림 이미지" height="50" width="50">
@@ -208,7 +174,7 @@
                     </th:block>
                     <a class="dropdown-item" id="privacyModify" href="#" style="font-family: 'Orbit', sans-serif;">회원 탈퇴</a>
                     <div class="dropdown-divider"></div>
-                    <span class="dropdown-item"></span>
+                    <span class="dropdown-item">보유 비타민 : <span th:text="${memberDTO.coin}" style="font-weight: bold"></span>개</span>
                   </div>
                 </li> <!--End Nav Dropdown-->
               </th:block>
@@ -219,7 +185,7 @@
       </div> <!--End Container-->
     </nav> <!--End Nav-->
     <div style="display: flex;">
-      <div class="outerSidebar" id="sidebar-wrapper" style="border: none; width: 300px; margin-left: 100px">
+      <div class="outerSidebar" id="sidebar-wrapper" style="margin-left: 100px;">
 
         <!--비로그인시 멘토, 멘티 유저 프로필-->
         <th:block th:if="${#authentication.principal == 'anonymousUser'}">
@@ -239,15 +205,15 @@
               </div>
             </th:block>
           </div>
-          <div class="list-group list-group-  flush" style="margin-top: -30px">
+          <div class="list-group list-group-flush" style="margin-top: -30px">
             <th:block th:if="${memberRole == 0}">
-              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
             </th:block>
             <th:block th:if="${memberRole == 1}">
-              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈</a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
             </th:block>
-            <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개</a>
-            <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글</a>
+            <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개     ></a>
+            <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
           </div> <!--End List Group Flush-->
         </th:block>
 
@@ -272,13 +238,13 @@
             </div>
             <div class="list-group list-group-flush">
               <th:block th:if="${memberRole == 0}">
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록</a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록     ></a>
               </th:block>
               <th:block th:if="${memberRole == 1}">
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈</a>
-              </th:block>              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개</a>
-              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글</a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
+              </th:block>              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개     ></a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
             </div> <!--End List Group Flush-->
           </th:block>
 
@@ -299,10 +265,10 @@
               <!-- 회원 간단 정보 끝-->
 
               <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글</a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
               </div> <!--End List Group Flush-->
             </th:block>
           </th:block> <!--End 멘토 마이페이지-->
@@ -318,9 +284,9 @@
                 </div>
               </div>
               <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">홈</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개</a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글</a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
               </div> <!--End List Group Flush-->
             </th:block>
           </th:block> <!--End 멘티 마이페이지-->
