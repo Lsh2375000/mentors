@@ -144,9 +144,489 @@
       </div>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="/js/chat/chat.js"></script>
 
 </footer>
+
+<!-- 채팅방 css -->
+<style>
+  * { margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+
+  .chat-modal {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+
+    width: 400px;
+    background-color: #B2C7D9;
+    border: 1px solid #999;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .chat-header {
+    height: fit-content;
+    padding: 10px;
+    color: #000000;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .chat-body {
+    height: 500px;
+    padding: 10px;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+
+    -ms-overflow-style: none;
+  }
+  .chat-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  .content {
+    display: flex;
+    align-items: end;
+    margin-top: 0.4rem;
+  }
+
+  .sender {
+    justify-content: flex-end;
+  }
+
+  .sender .send {
+    background-color: #fff3cd;
+  }
+
+  .receive-wrap { margin-bottom: 10px; }
+
+  .receiver {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .message {
+    max-width: 70%;
+    background-color: #fff;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 8px;
+    word-break: break-all;
+  }
+
+  .send-time {
+    margin: 0 5px;
+    font-size: 11px;
+  }
+
+  .chat-form {
+    width: 100%;
+    display: flex;
+  }
+
+  .chat-input {
+    width: 100%;
+    max-height: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-bottom-left-radius: 5px;
+    outline: none;
+    display: block;
+    resize: none;
+    overflow-y: hidden;
+  }
+
+  .chat-send-btn {
+    width: 70px;
+    padding: 10px;
+    background-color: #0084ff;
+    color: #fff;
+    border: none;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .show-modal { display: block; }
+</style>
+
+<!--채팅 목록 css -->
+
+<style>
+  .button {
+    display: inline-block;
+    padding: 10px 20px; /* Adjust padding for desired size */
+    border-radius: 10px; /* Adjust border-radius for slight rounding */
+    background-color: #3498db; /* Set background color */
+    color: #fff; /* Set text color */
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px; /* Adjust font size */
+    cursor: pointer;
+
+    position: fixed;
+    bottom: 12%;
+    right: 25px;
+  }
+
+  .button:hover {
+    background-color: #2980b9; /* Change background color on hover */
+  }
+
+  /* Add more styles as needed */
+
+  /* Your CSS styles here */
+
+  /* Style the chat list container */
+  .chat-list {
+    width: 25%;
+    height: 60vh;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    z-index: 9999;
+
+    position: fixed;
+    bottom: 20%;
+    left: 25px;
+
+  }
+
+  .chat-list h5 {
+    padding: 10px 20px;
+    margin-bottom: 0;
+  }
+
+  /* Style each chat item */
+  .chat-item {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer; /* Add pointer cursor for better hover indication */
+    transition: background-color 0.3s ease; /* Hover effect transition */
+    background-color: #fff; /* Set the background color */
+  }
+
+  /* Style for hover effect */
+  .chat-item:hover {
+    background-color: #f2f2f2; /* Change the background color on hover */
+  }
+
+  .chat-item-header { display: flex; justify-content: space-between; }
+
+  .chat-item p { margin-bottom: 0; }
+
+  /* Style the sender's name */
+  .chat-name {
+    font-weight: bold; /* Make the name bold */
+  }
+
+  .current-members {
+    font-size: 15px;
+    color: #888;
+  }
+
+  /* Style the date */
+  .date {
+    font-size: 15px;
+  }
+
+  /* Add more styles as needed */
+
+
+</style>
+
+<!-- 채팅방 -->
+
+<div class="chat-modal">
+  <div class="chat-header">
+    <span class="room-name"></span>
+    <span class="close-button">x</span>
+  </div>
+  <div class="chat-body">
+
+  </div>
+  <form class="chat-form">
+    <textarea class="chat-input" placeholder="메시지를 입력하세요..." cols="20" rows="2"></textarea>
+    <button class="chat-send-btn">전송</button>
+  </form>
+</div>
+
+<!-- 채팅목록 -->
+<div id="conversation" class="chat-list">
+  <h5>채팅
+    <button id="connect">connect</button>
+    <button id="disconnect">disconnect</button>
+  </h5>
+  <div class="chat-list-inner"></div>
+</div>
+
+<button class="button trigger">채팅</button>
+
+<script th:inline="javascript">
+
+  // 채팅 기능 구현
+
+  function printChatList(chatList) { // 채팅방 목록 출력
+    if(chatList != null) {
+      for (const chat of chatList) {
+        var times = chat.lastMessageTime;
+        var sendTime = new Date(times[0], times[1], times[2], times[3], times[4]);
+        var options = { hour: "numeric", minute: "numeric" };
+
+        $('.chat-list').append(
+                `<div id="${chat.roomId}" class="chat-item">
+                    <div class="chat-item-header">
+                       <div>
+                           <span class="chat-name">${chat.name}</span>
+                           <span class="current-members">${chat.currentMembers}</span>
+                       </div>
+                       <span class="date">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                    </div>
+                    <p>${chat.lastMessage}</p>
+                 </div>`
+        );
+
+        roomIds.push(chat.roomId);
+      }
+
+      // 클릭 이벤트 바인딩
+      $('.chat-item').on('click', async function() {
+        // 채팅 메세지 초기화
+        $(".chat-body").html("");
+
+        // 입장할 roomId 저장
+        currentRoomId = $(this).attr('id');
+        console.log('Current Room ID: ' + currentRoomId);
+
+        // 여기에 클릭 이벤트에 대한 추가적인 로직을 작성하세요.
+        var result = await getRoom(currentRoomId); // DB에서 채팅 메세지 목록 조회
+        var room = result.room; // 채팅방 정보
+
+        $('.room-name').text(room.name); // 채팅방 이름 추가
+
+        loadChat(result.messages); // 이전 채팅목록 출력
+
+        stompClient.send("/pub/chat/enter", {},
+                JSON.stringify({
+                  'roomId': currentRoomId,
+                  'sender': sender
+                }));
+        $(".chat-input").val('');
+      });
+    }
+  }
+
+  var stompClient = null;
+  var roomIds = [];
+  var currentRoomId = null;
+  var mno = 0;
+  var sender = null;
+
+  function setConnected(connected) { // 연결 상태 설정
+    $("#connect").prop("disabled", connected);
+    $("#disconnect").prop("disabled", !connected);
+    if (connected) {
+      $("#conversation").show();
+    }
+    else {
+      outChat(); // 채팅방 나가기
+      $("#conversation").hide();
+    }
+    $(".chat-input").html("");
+  }
+
+  function connect() { // stomp 연결
+    var socket = new SockJS("/stomp/chat");
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, async function (frame) {
+      setConnected(true);
+      console.log('Connected: ' + frame);
+
+      if (auth === 'anonymousUser') { // 로그인이 안된경우
+        disconnect(); // stomp 연결 해제
+        return;
+      }
+
+      // 로그인한 회원 고유번호 및 닉네임 저장
+      mno = auth.mno;
+      sender = auth.nickname;
+
+      // 채팅 목록 가져오기
+      const result = await getRooms(mno);
+      console.log(result);
+
+      // 채팅 목록 화면에 출력
+      printChatList(result.chatList);
+
+      // 구독
+      for (const roomId of roomIds) {
+        stompClient.subscribe('/sub/chat/room/' + roomId, function (chatMessage) {
+          var messages = JSON.parse(chatMessage.body);
+          var userList = messages.state;
+          var sendTime = new Date(messages.sendTime);
+          var options = { hour: "numeric", minute: "numeric" };
+
+          console.log(messages);
+          console.log(userList);
+          console.log(userList.indexOf(sender));
+          if (userList.indexOf(sender) > -1) {
+            showChat(messages);
+          }
+
+          // 특정 조건을 만족하는 태그 선택
+          var room = $('.chat-item').filter(function() {
+            return $(this).attr('id') === messages.roomId;
+          });
+
+          room.find('.date').text(sendTime.toLocaleTimeString('ko-KR', options));
+          room.find('p').text(messages.message);
+          room.prependTo('.chat-list-inner');
+        });
+      }
+    });
+  }
+
+  function disconnect() { // stomp 연결 해제
+    if (stompClient !== null) {
+      stompClient.disconnect();
+    }
+    setConnected(false);
+    console.log("Disconnected");
+  }
+
+  //html 에서 입력값, roomId 를 받아서 Controller 로 전달
+  function sendChat() {
+    if ($(".chat-input").val() != "") {
+      stompClient.send("/pub/chat/message", {},
+              JSON.stringify({
+                'roomId': currentRoomId,
+                'mno': mno,
+                'sender': sender,
+                'message' : $(".chat-input").val()
+              }));
+      $(".chat-input").val('');
+    }
+  }
+
+  //저장된 채팅 불러오기
+  function loadChat(chatList){
+    if(chatList != null) {
+      for(const chat of chatList) {
+        var times = chat.sendTime;
+        var sendTime = new Date(times[0], times[1], times[2], times[3], times[4]);
+        var options = { hour: "numeric", minute: "numeric" };
+
+        if (chat.sender === sender) {
+          $(".chat-body").append(
+                  `<div class="content sender">
+                            <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                            <span class="message send">${chat.message}</span>
+                         </div>`
+          );
+        } else {
+          $(".chat-body").append(
+                  `<div class="receive-wrap">
+                            <div class="receiver">${chat.sender}</div>
+                            <p class="content">
+                                <span class="message">${chat.message}</span>
+                                <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                            </p>
+                        </div>`
+          );
+        }
+      }
+    }
+    $('.chat-body').scrollTop($('.chat-body')[0].scrollHeight); // 채팅이 많아질시에 자동 스크롤
+  }
+
+  //보낸 채팅 보기
+  function showChat(chatMessage) {
+    var sendTime = new Date(chatMessage.sendTime);
+    var options = { hour: "numeric", minute: "numeric" };
+
+    if (chatMessage.sender === sender) {
+      $(".chat-body").append(
+              `<div class="content sender">
+                    <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                    <span class="message send">${chatMessage.message}</span>
+                </div>`
+      );
+    } else {
+      $(".chat-body").append(
+              `<div class="receive-wrap">
+                    <div class="receiver">${chatMessage.sender}</div>
+                    <p class="content">
+                        <span class="message">${chatMessage.message}</span>
+                        <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+                    </p>
+                </div>`
+      );
+    }
+    $('.chat-modal').show();
+    $('.chat-body').scrollTop($('.chat-body')[0].scrollHeight);
+  }
+
+  function outChat() { // 채팅방 나가기
+    stompClient.send("/pub/chat/out", {},
+            JSON.stringify({
+              'roomId': currentRoomId,
+              'sender': sender
+            }));
+
+    // 모달 닫기
+    $('.chat-modal').hide();
+  }
+
+  // 모달 토글
+  function toggleModal() {
+    $('.chat-list').toggle();
+  }
+
+  $(function () {
+    $("form").on('submit', function (e) {
+      e.preventDefault();
+    });
+    $( "#connect" ).click(function() { connect(); });
+    $( "#disconnect" ).click(function() { disconnect(); });
+    $( ".chat-send-btn" ).click(function() { sendChat(); });
+    $( ".trigger"). click(function () { toggleModal()});
+    $( ".close-button").click(function () { outChat(); });
+  });
+</script>
+<script>
+  //창 키면 바로 연결
+  window.onload = function (){
+    connect();
+  }
+
+  window.BeforeUnloadEvent = function (){
+    disconnect();
+  }
+</script>
+
+
 <script th:inline="javascript">
   const notifyUser = [[${#authentication.principal}]]
 

@@ -1,6 +1,5 @@
 package kr.nomadlab.mentors.board.dto;
 
-import kr.nomadlab.mentors.board.domain.HashTagVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

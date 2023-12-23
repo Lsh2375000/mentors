@@ -38,7 +38,7 @@ class ChatRoomMapperTest {
 
     @Test
     void selectRoomListTest() {
-        Long mno = 1L;
+        Long mno = 2L;
         List<ChatRoomDTO> chatRoomDTOList = chatRoomMapper.selectRoomList(mno);
         chatRoomDTOList.forEach(log::info);
     }
