@@ -190,6 +190,24 @@
     .pageNum{
         cursor: pointer;
     }
+    .reviewList{
+        margin-bottom: 10px;
+    }
+    .reviewScore{
+        margin-bottom: 8px;
+    }
+    .stars{
+        font-weight: bold;
+        color: #c5c500;
+        font-size: 20pt;
+    }
+    .reviewComment{
+        font-size: 15pt;
+        margin-bottom: 7px;
+    }
+    .reviewDate{
+        color: #abb0b5;
+    }
 </style>
 <body>
 <!--        멘토 랭킹 배너-->
@@ -321,7 +339,7 @@
                                 <a th:href="@{/mypage/mentorProfile(nickname=${mainList.nickName})}">[[${mainList.nickName}]]</a>
                             </div>
                             <div class="card_score">
-                                <a href="#"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mainList.score}]]</a>
+                                <a th:onclick="|reviewListBtn(${mainList.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mainList.score}]]</a>
                             </div>
                         </div>
                     </a>
@@ -407,6 +425,23 @@
 <!--                        본인 글이거나 멘토는 신청하기 안보임-->
                         <div class="enrollBtnDiv">
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--    수강평 목록 출력 모달-->
+        <div class="modal reviewListModal" id="reviewListModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header" style="border: none; padding:8px;">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-body-content">
+                            <div class="reviewWrap">
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -530,8 +565,8 @@
                 modalIntroduce.innerHTML = `${data.content}`;
                 modalPrice.innerHTML = `${data.price}`;
                 modalLanguage.innerHTML = `${data.devLanguage}`;
-                modalStartDate.innerHTML = `${data.startDate}`;
-                modalEndDate.innerHTML = `${data.endDate}`;
+               modalStartDate.innerHTML = `${data.startDate[0]+'-'+data.startDate[1]+'-'+ data.startDate[2]}`;
+               modalEndDate.innerHTML = `${data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2]}`;
                 if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
                     console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
                     // 만석이면 disabled 적용
@@ -632,7 +667,60 @@
         })
     })
 
+    // 수강평 목록 출력 모달
+    const reviewListModal = new bootstrap.Modal(document.querySelector('.reviewListModal'));
+    const reviewWrap = document.querySelector('.reviewWrap');
 
+    async function reviewListBtn(mno) {
+        try {
+            const data = await reviewList(mno);
+            let str = "";
+            for (const review of data) {
+                const months = review.addDate[1].toString().padStart(2, '0');
+                const days = review.addDate[2].toString().padStart(2, '0');
+                const hours = review.addDate[3].toString().padStart(2, '0');
+                const minutes = review.addDate[4].toString().padStart(2, '0');
+
+                // 기본으로 5개의 빈 별표를 생성
+                const emptyStars = '<span class="stars">&#9734;</span>'.repeat(5);
+                // review.score 값에 따라서 일부 별표를 색칠해줌
+                const coloredStars = '<span class="stars">&#9733;</span>'.repeat(review.score);
+                // 남은 빈 별표를 추가
+                const remainingEmptyStars = '<span class="stars">&#9734;</span>'.repeat(5 - review.score);
+
+                // 별표를 표시하기 위한 HTML 문자열 생성
+                const stars = `${coloredStars}${remainingEmptyStars}`;
+
+                // 리뷰 정보를 템플릿 리터럴로 추가
+                // 리뷰 점수와 코멘트를 템플릿 리터럴로 추가
+                str += `
+                <div class="reviewList">
+                    <div class="reviewScore">
+                        ${stars}
+                    </div>
+                    <div class="reviewComment">
+                        ${review.review}
+                    </div>
+                    <p class="reviewDate">${review.addDate[0]+`-`+months+`-`+days+` `+hours+`:`+minutes}</p>
+                </div>
+            `;
+            }
+            reviewWrap.innerHTML = str;
+            reviewListModal.show();
+        } catch (error) {
+            console.error("Error fetching review data:", error);
+        }
+    }
+
+    async function reviewList(mno) {
+        try {
+            const response = await axios.get(`/mypage/reviewList/${mno}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching review list:", error);
+            throw error; // 오류를 상위로 다시 던지기
+        }
+    }
 
 </script>
 </body>

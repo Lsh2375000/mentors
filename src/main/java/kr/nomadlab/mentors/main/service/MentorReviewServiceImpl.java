@@ -9,6 +9,9 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -26,6 +29,19 @@ public class MentorReviewServiceImpl implements MentorReviewService{
         mentorReviewMapper.updateScore(mno); // 해당 멘토의 score 갱신
         mainMapper.updateScore(mno); // 해당 멘토가 작성한 main글의 score 갱신
 
+    }
+
+    @Override
+    public List<MentorReviewDTO> mentorReviewList(Long mentorMno) { // 멘토에게 달린 수강평 목록
+        List<MentorReviewVO> voList = mentorReviewMapper.mentorReviewList(mentorMno);
+        List<MentorReviewDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(mentorReviewVO -> {
+            MentorReviewDTO mentorReviewDTO = modelMapper.map(mentorReviewVO, MentorReviewDTO.class);
+            dtoList.add(mentorReviewDTO);
+        });
+
+        return dtoList;
     }
 
     @Override

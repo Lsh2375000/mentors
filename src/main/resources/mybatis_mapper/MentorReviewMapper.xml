@@ -11,7 +11,7 @@
     </insert>
     <!--멘토의 score 업데이트-->
     <update id="updateScore">
-        UPDATE mentor SET score = (SELECT ROUND(AVG(score), 1) FROM mentorReview WHERE mno = #{mno}) WHERE mno = #{mno};
+        UPDATE mentor SET score = (SELECT ROUND(AVG(score), 1) FROM mentorReview WHERE mentorMno = #{mno}) WHERE mno = #{mno};
     </update>
 
     <!--해당멘티가 작성한 수강평 목록-->
@@ -21,14 +21,14 @@
 
     <!--해당 멘토에게 달린 수강평 목록 -->
     <select id="mentorReviewList" resultType="kr.nomadlab.mentors.main.domain.MentorReviewVO">
-        select * from `mentorReview` where `mno` = #{mno}
+        select * from `mentorReview` where `mentorMno` = #{mentorMno}
     </select>
 
     <!--멘토에게 달린 수강평 수-->
     <select id="mentorReviewCount" resultType="int">
         select count(`review`) from `mentorReview` where `mentorMno` = #{mentorMno}
     </select>
-
+<!--    멘티가 작성한 수강평 수-->
     <select id="menteeReviewCount" resultType="int">
         select count(`review`) from `mentorReview` where `menteeMno` = #{menteeMno}
     </select>
