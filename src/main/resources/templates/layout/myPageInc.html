@@ -153,8 +153,8 @@
   <div id="page-content-wrapper">
     <!-- Top navigation-->
     <nav class="navbar navbar-expand-lg" style="background-color: #0766AD;">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/main"><img class="mainImage" src="/assets/progrow2.png" style="width: 110px; height: 90px;"/></a>
+      <div class="container-fluid" style="padding-left: 100px;">
+        <a class="navbar-brand" href="/main"><img class="mainImage" src="/assets/mentorsLogo.png" style="width: 280px; height: 80px;"/></a>
         <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -191,9 +191,9 @@
             </th:block>
 
             <th:block th:unless="${#authentication.principal == 'anonymousUser'}">
-                <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+              <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
+                <li class="nav-item mx-0 mx-lg-1 dropdown">
+                  <a class="nav-link py-3 px-0 px-lg-3 rounded dropdown-toggle" id="navbarDropdown" href="#" role="button"
                      data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white; font-family: 'Orbit', sans-serif;">개인정보</a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <th:block sec:authorize="hasRole('ROLE_MENTOR')">
@@ -213,12 +213,6 @@
             </th:block>
           </ul>
         </div>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent" style="width: 100px;">
-          <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-
-          </ul>
-        </div> <!--End Collapse-->
 
       </div> <!--End Container-->
     </nav> <!--End Nav-->
