@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/myPageInc.html}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>환전하기</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    #historyList {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 80%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #historyList th, #historyList td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      color: #333; /* 글자색 변경 */
+    }
+
+    #historyList th {
+      background-color: #007BFF; /* 배경색 변경 */
+      color: white;
+    }
+
+    #historyList td {
+      background-color: #f5f5f5; /* 배경색 변경 */
+    }
+
+    #historyList tr:nth-child(even) td {
+      background-color: #e0e0e0; /* 배경색 변경 */
+    }
+
+    #exchange-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 50px;
+    }
+
+    #remainingAmount {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .exchangeBtn {
+      padding: 15px 30px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    .exchangeBtn:hover {
+      background-color: #45a049;
+    }
+
+    #getVitamin {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #666;
+    }
+
+    .pagination {
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      color: #007BFF;
+      padding: 8px 16px;
+      text-decoration: none;
+      transition: background-color .3s;
+      border: 1px solid #ddd;
+      margin: 0 4px;
+      cursor: pointer;
+    }
+
+    .pagination a.active {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    .pagination a:hover:not(.active) {
+      background-color: #ddd;
+    }
+
+    .modal-title {
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div id="exchange-container">
+    <h1 id="remainingAmount">보유 비타민</h1>
+    <div id="getVitamin">
+      <img src="/img/basic/비타민.png" alt="코인이미지" width="50px" height="50px">
+      [[${#authentication.principal.coin}]]개
+    </div>
+    <button class="exchangeBtn">환전 신청</button>
+    <table id="historyList">
+      <tr>
+        <th>제목</th>
+        <th>비타민 수</th>
+        <th>완료일</th>
+        <th>상태</th>
+      </tr>
+      <tr th:each="payInfoDto:${payInfoDtoList.dtoList}">
+        <td>[[${payInfoDto.mbNo == 0 ? '환전 신청' : '멘토링'}]]</td>
+        <td>
+          <img src="/img/basic/비타민.png" alt="비타민이미지" width="30px" height="30px">
+          [[${payInfoDto.price}]]개
+        </td>
+        <td>[[${payInfoDto.completeDate}]]</td>
+        <td>[[${payInfoDto.isComplete == false ? '진행 중' : '완료'}]]</td>
+      </tr>
+    </table>
+    <form action="/mypage/exchange" method="get" name="frmSearch">
+      <div class="pagination float-end">
+        <ul class="pagination">
+          <li class="page-item" th:if="${payInfoDtoList.prev}">
+            <a class="page-link" th:data-num="${payInfoDtoList.start - 1}">이전</a>
+          </li>
+          <th:block th:each="i: ${#numbers.sequence(payInfoDtoList.start, payInfoDtoList.end)}">
+            <li th:if="${i != 0}" th:class="${payInfoDtoList.page == i} ? 'page-item active' : 'page-item'">
+              <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+            </li>
+          </th:block>
+          <li class="page-item" th:if="${payInfoDtoList.next}">
+            <a class="page-link" th:data-num="${payInfoDtoList.end + 1}">다음</a>
+          </li>
+        </ul>
+      </div>
+    </form>
+  </div>
+  <div class="modal fade registerModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">환전 신청</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="bankInfoForm" action="/mypage/bankInfo" method="POST">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="memberName" class="form-label">이름</label>
+              <input type="text" class="form-control" id="memberName" name="memberName">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">계좌번호</label>
+              <div class="input-group">
+                <select id="bankSelect" class="form-select bankChoose" name="bank">
+                  <option>직접입력</option>
+                  <option value="국민은행">국민은행</option>
+                  <option value="신한은행">신한은행</option>
+                  <option value="우리은행">우리은행</option>
+                  <!-- 추가 은행 목록-->
+                </select>
+                <input type="text" class="form-control accountNum" id="accountNum" placeholder="-를 포함하여 입력해주세요" name="accountNum">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label><img src="/img/basic/비타민.png" width="20px" height="20px" class="me-2">
+                <span class="badge bg-primary">
+                            [[${#authentication.principal.coin}]]개
+                        </span>
+                환전 금액</label>
+
+              <span class="badge bg-success" id="formattedAmount">
+                        </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary registerBtn">신청</button>
+            <button type="button" class="btn btn-outline-dark closeRegisterBtn">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+  const auth = [[${#authentication.principal}]]
+  document.addEventListener('DOMContentLoaded', function () {
+    const formObj = document.querySelector("form[name=frmSearch]");
+
+    // 페이징
+    document.querySelector(".pagination").addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const target = e.target;
+
+      if (target.tagName !== 'A') {
+        return;
+      }
+      const num = target.getAttribute("data-num");
+      formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`;
+
+      formObj.submit();
+    }, false)
+  });
+
+  const exchangeBtn = document.querySelector('.exchangeBtn');
+  const registerModal = new bootstrap.Modal(document.querySelector('.registerModal'));
+  exchangeBtn.addEventListener('click', function() {
+    if(auth.coin < 1000) {
+      alert('비타민 1000개부터 환전신청이 가능 합니다.');
+      return;
+    }
+    registerModal.show();
+  })
+
+  document.getElementById('bankSelect').addEventListener('change', function (e) {
+    const bankNameInput = document.querySelector('input[name=bankName]');
+    if(e.target.value ==='직접입력'){
+      bankNameInput.value='';
+    }else {
+      bankNameInput.value = e.target.value;
+    }
+  });
+  const form = document.getElementById('bankInfoForm');
+  document.querySelector('.registerBtn').addEventListener('click', function(){
+    form.submit();
+    alert('환전 신청이 완료 되었습니다.\n' +
+            '기간이 2~3일 정도 소요될 수 있습니다.');
+    registerModal.hide();
+  })
+  document.querySelector('.closeRegisterBtn').addEventListener('click', function() {
+    registerModal.hide();
+  });
+
+  var amount = [[${#authentication.principal.coin*1000}]]; // 해당 값을 적절히 가져와야 합니다.
+  var formattedAmount = new Intl.NumberFormat('ko-KR').format(amount);
+
+  document.getElementById('formattedAmount').innerText = formattedAmount + '원';
+
+</script>
+</html>

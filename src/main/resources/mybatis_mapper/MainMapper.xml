@@ -137,14 +137,45 @@
     <select id="isMentoring" resultType="int">
         select count(*) from main where mno = #{mno};
     </select>
+<!--    채팅방 현재 인원 업데이트-->
+    <update id="updateCurPeople">
+        update main set curPeople = (select count(*) from chatList where role = 'MEMBER' and roomId = #{roomId}) where roomId = #{roomId}
+    </update>
+<!-- 멘토의 score를 메인에 업데이트-->
+    <update id="updateScore">
+        update main set score = (select score from mentor where mno = #{mno}) where mno = #{mno}
+    </update>
 
+    <sql id="myPageSearch">
+        <choose>
+            <when test="sort != null">
+                <if test="sort.equals('end')">
+                    and `endDate` <![CDATA[<]]> now()
+                </if>
+                <if test="sort.equals('ing')">
+                    and `endDate` > now()
+                </if>
+            </when>
+        </choose>
+    </sql>
 
 <!--    마이페이지 메인 목록-->
     <select id="myPageList" resultType="kr.nomadlab.mentors.main.domain.MainVO">
         select * from main where mno = #{mno} order by mbNo desc limit #{skip}, #{size}
     </select>
-<!--    마이페이지 갯수 새기-->
+<!--   멘토의 마이페이지 갯수 새기-->
     <select id="myPageCount" resultType="int">
         select count(mbNo) from main where mno = #{mno}
+    </select>
+
+<!--    멘티가 참가중인 멘토링 목록-->
+    <select id="mainListTee" resultType="kr.nomadlab.mentors.main.domain.MainVO">
+        select * from `main` inner join chatList on main.roomId = chatList.roomId where chatList.mno = #{mno}
+        <include refid="myPageSearch"/>
+         order by `endDate` desc limit #{skip}, #{size}
+    </select>
+<!--    멘티의 멘토링 목록 갯수 -->
+    <select id="mainListTeeCnt" resultType="int">
+        select count(*) from main inner join chatList on main.roomId = chatList.roomId where chatList.mno = #{mno} <include refid="myPageSearch"/>
     </select>
 </mapper>

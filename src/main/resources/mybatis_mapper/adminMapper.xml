@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.nomadlab.mentors.admin.mapper.AdminUserMapper">
+<mapper namespace="kr.nomadlab.mentors.admin.mapper.AdminMapper">
 
     <resultMap id="getAdmin" type="kr.nomadlab.mentors.admin.domain.AdminVO">
         <id property="ano" column="ano"></id>
@@ -27,10 +27,14 @@
 
         select `a`.*, `ars`.`role_set`
         from `adminAccount` `a`
-                 left join `admin_role_set` `ars`
-                           on `a`.`adminId` = `ars`.`adminId`
+                 left join `member_role_set` `ars`
+                           on `a`.`adminId` = `ars`.`memberId`
         where `a`.`adminId` = #{adminId}
 
+    </select>
+
+    <select id="getApplyList" resultType="kr.nomadlab.mentors.member.domain.MentorApplyVO">
+        select * from `mentorApply`
     </select>
 
 

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -17,5 +18,6 @@ public class PayInfoDto {
     private Long menteeMno;
     private int price;
     private boolean isComplete;
+    private LocalDate completeDate;
     private LocalDateTime addDate;
 }

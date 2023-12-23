@@ -23,7 +23,14 @@ public interface MainMapper {
     void deleteOne(Long mbNo); // 게시물 삭제
     
     int isMentoring(Long mno); // 멘토 본인이 작성한 글이 있는지
+    void updateCurPeople(String roomId); // 채팅방 현재 인원 업데이트
 
-    List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 마이페이지 멘토링 목록 리스트 출력
-    int myPageCount(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 마이페이지 총 갯수
+    void updateScore(Long mno); // 멘토의 score를 main에 업데이트
+
+
+    List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 멘토의 마이페이지 멘토링 목록 리스트 출력
+    int myPageCount(@Param("size") int size, @Param("skip") int skip, @Param("mno") Long mno); // 멘토의 마이페이지 총 갯수
+
+    List<MainVO> mainListTee(@Param("size")int size, @Param("skip")int skip, @Param("sort")String sort, @Param("mno")Long mno); // 멘티가 참가중인 멘토링 목록
+    int mainListTeeCnt(@Param("size") int size, @Param("skip") int skip, @Param("sort")String sort, @Param("mno") Long mno); // 멘티의 참가중인 멘토링 목록 갯수
 }

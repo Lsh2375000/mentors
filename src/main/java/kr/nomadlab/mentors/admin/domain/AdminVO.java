@@ -18,13 +18,13 @@ public class AdminVO {
 
 
     @Builder.Default
-    private Set<AdminRole> roleSet = new HashSet<>();
+    private Set<MemberRole> roleSet = new HashSet<>();
 
-    public void addRole(AdminRole adminRole) {
+    public void addRole(MemberRole adminRole) {
         this.roleSet.add(adminRole);
     }
 
-    public void setRoleSet(Set<AdminRole> roleSet) {
+    public void setRoleSet(Set<MemberRole> roleSet) {
         this.roleSet = roleSet;
     }
 }

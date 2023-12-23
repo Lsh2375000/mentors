@@ -22,8 +22,15 @@ public interface MainService {
     // 게시판 삭제
     void removeOne(Long mbNo);
 
+    // 멘토링 작성 여부
     boolean isMentoring(Long mno);
+
+    // 채팅방 현재인원 업데이트
+    void updateCurPeople(String roomId);
 
     // 마이페이지 멘토링목록 출력
     PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno);
+
+    // 마이페이지 멘티의 멘토링 참가 목록
+    PageResponseDTO<MainDTO> mainListTee(PageRequestDTO pageRequestDTO, Long mno);
 }

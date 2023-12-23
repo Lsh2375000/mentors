@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminInc.html}">
+<head>
+    <link href="/css/login.css" rel="stylesheet">
+    <title>관리자 로그인</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,800" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+</head>
+<body class="align-middle" >
+    <div layout:fragment="content" style="padding-bottom: 300px;">
+        <!-- Heading -->
+        <h1>Admin Login</h1>
+        <!-- Links -->
+        <form id="loginForm" action="/admin/login" method="post">
+            <!-- email input -->
+            <div class="first-input input__block first-input__block">
+                <input name="username" type="email" placeholder="Email" class="input" id="email"   />
+            </div>
+            <!-- password input -->
+            <div class="input__block">
+                <input name="password" type="password" placeholder="Password" class="input" id="password"    />
+            </div>
+            <!-- sign in button -->
+            <button class="login_btn">
+                관리자 로그인
+            </button>
+        </form>
+    </div>
+    <script layout:fragment="script" th:inline="javascript">
+
+    </script>
+</body>
+
+

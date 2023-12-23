@@ -22,7 +22,7 @@
 
 
 
-    <insert id="addMember">
+    <insert id="addMember" parameterType="kr.nomadlab.mentors.member.domain.MemberVO" useGeneratedKeys="true" keyProperty="mno" keyColumn="mno">
         insert into `member` (`memberId`, `passwd`, `regdate`, `moddate`, `del`, `social`, `nickname`, `memberName`, `coin`, `region`)
         VALUES (#{memberId}, #{passwd}, now(), now(), 0, #{social}, #{nickname}, #{memberName}, #{coin}, #{region})
     </insert>
@@ -33,13 +33,11 @@
     </insert>
 
     <select id="getMemberId" resultMap="getMember" parameterType="String">
-
         select `m`.*, `mrs`.`role_set`
         from `member` `m`
             left join `member_role_set` `mrs`
                 on `m`.`memberId` = `mrs`.`memberId`
         where `m`.`memberId` = #{memberId}
-
     </select>
 
     <select id="getOne" resultType="kr.nomadlab.mentors.member.domain.MemberVO">
@@ -78,6 +76,14 @@
         insert into `mentorApply` (mno, devLanguage, fileNames, univName, major)
         values (#{mno}, #{devLanguage}, #{fileNames}, #{univName}, #{major})
     </insert>
+    <insert id="insertMentorCoin">
+        update `member` set coin = +#{price} where mno=#{mentorMno}
+    </insert>
+
+    <select id="getMemberRole" resultType="int">
+        select `role_set` from `member_role_set` where `memberId` = #{memberId}
+    </select>
+
 
 
 </mapper>

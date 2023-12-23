@@ -34,15 +34,17 @@ public class MemberServiceImpl implements MemberService {
     private String uploadPath;
 
     @Override
-    public void add(MemberDTO memberDTO) { // 회원 가입
+    public Long add(MemberDTO memberDTO) { // 회원 가입
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         memberDTO.setPasswd(passwordEncoder.encode(memberDTO.getPasswd()));
         MemberVO memberVO = modelMapper.map(memberDTO, MemberVO.class);
 
-        log.info("memberVO : " + memberVO);
 
         memberMapper.addMember(memberVO);
+        log.info("memberVO : " + memberVO);
+
+        return memberVO.getMno();
     }
     // --------------------------------------------------------------------------------
     // 해당 이메일 조회
@@ -122,6 +124,19 @@ public class MemberServiceImpl implements MemberService {
         log.info(memberDTO);
 
         return memberDTO;
+    }
+    @Override
+    public void payCoin(Long mno, int price) {
+        memberMapper.updateCoin(mno, price);
+    }
+
+    @Override
+    public int getMemberRole(String memberId) {
+        return memberMapper.getMemberRole(memberId);
+    }
+
+    public void exchangeCoin(Long mno){
+        memberMapper.updateCoin(mno, 0);
     }
     // --------------------------------------------------------------------------------
     //
