@@ -35,4 +35,6 @@ public interface MemberMapper {
     int getMemberRole(String memberId);
 
     void insertMentorCoin(PayInfoVO payInfoVO);
+
+    void exchangeCoin(Long mno);
 }

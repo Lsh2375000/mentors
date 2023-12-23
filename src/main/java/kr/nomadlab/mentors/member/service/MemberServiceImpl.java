@@ -136,7 +136,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public void exchangeCoin(Long mno){
-        memberMapper.updateCoin(mno, 0);
+        memberMapper.exchangeCoin(mno);
     }
     // --------------------------------------------------------------------------------
     //
