@@ -33,24 +33,26 @@ public class MemberSecurityDTO extends User implements OAuth2User {
     private Map<String, Object> props;
 
 
+
     // MemberSecurityDTO 가 생성될 때 username, password, authorities를 받아와서
     // 상속받은 User의 메소드 ( super(username, password, authorities) )를 사용해 설정해 줌
     public MemberSecurityDTO(Long mno, String username, String password, boolean del, boolean social, String nickname, String memberName, int coin,
                              String region,
                              Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
-        log.info(authorities);
-        this.mno = mno;
-        this.memberId = username;
-        this.passwd = password;
-        this.del = del;
-        this.social = social;
-        this.nickname = nickname;
-        this.memberName = memberName;
-        this.coin = coin;
-        this.region = region;
-        log.info("@@@");
-        log.info(password);
+            log.info(authorities.toArray()[0].toString().equals("ROLE_MENTOR"));
+            this.mno = mno;
+            this.memberId = username;
+            this.passwd = password;
+            this.del = del;
+            this.social = social;
+            this.nickname = nickname;
+            this.memberName = memberName;
+            this.coin = coin;
+            this.region = region;
+            log.info("@@@");
+            log.info(password);
+
     }
 
     @Override

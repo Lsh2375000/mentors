@@ -2,7 +2,9 @@ package kr.nomadlab.mentors.admin.service;
 
 import kr.nomadlab.mentors.admin.domain.AdminVO;
 import kr.nomadlab.mentors.admin.dto.AdminDTO;
-import kr.nomadlab.mentors.admin.mapper.AdminUserMapper;
+import kr.nomadlab.mentors.admin.mapper.AdminMapper;
+import kr.nomadlab.mentors.member.domain.MentorApplyVO;
+import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -10,12 +12,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
 
-    private final AdminUserMapper adminMapper;
+    private final AdminMapper adminMapper;
     private final ModelMapper modelMapper;
 
     @Override
@@ -35,5 +40,18 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public AdminVO getMemberId(String adminId) { // 관리자 정보 불러오기
         return adminMapper.getAdminId(adminId);
+    }
+    @Override
+    public List<MentorApplyDTO> getApplyList() {
+        List<MentorApplyVO> voList = adminMapper.getApplyList();
+        log.info(voList);
+        List<MentorApplyDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(mentorApplyVO -> {
+            MentorApplyDTO mentorApplyDTO = modelMapper.map(mentorApplyVO, MentorApplyDTO.class);
+            dtoList.add(mentorApplyDTO);
+        });
+
+        return dtoList;
     }
 }

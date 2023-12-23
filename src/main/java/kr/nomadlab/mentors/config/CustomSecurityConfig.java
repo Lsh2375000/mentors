@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.config;
 
+import kr.nomadlab.mentors.security.CustomOAuth2UserService;
 import kr.nomadlab.mentors.security.CustomUserDetailService;
 import kr.nomadlab.mentors.security.handler.Custom403Handler;
 import kr.nomadlab.mentors.security.handler.CustomAuthFailureHandler;
@@ -19,8 +20,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -37,29 +40,63 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
-@Order(2)
 public class CustomSecurityConfig {
     //주입 필요
     private final DataSource dataSource;
     private final CustomUserDetailService customUserDetailService;
+    
+
+
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain filterChainMemberAdmin(HttpSecurity httpSecurity) throws Exception {
+        log.info("---------------------Configuration MEMBER ADMIN-----------------------");
+        httpSecurity.securityMatcher("/admin/**");
+        httpSecurity.authorizeHttpRequests(requests -> {
+           requests.requestMatchers("/admin/login").permitAll();
+           requests.anyRequest().hasRole("ADMIN");
+
+        });
+        httpSecurity.formLogin(config -> {
+            config.loginPage("/admin/login");
+            config.defaultSuccessUrl("/admin/mentorApply");
+        });
+        httpSecurity.csrf(crsf -> crsf.disable());
+        return httpSecurity.build();
+    }
 
     @Bean
     public SecurityFilterChain userFilterChain(HttpSecurity http) throws Exception {
         log.info("-----------------User Configuration-------------------");
+
          // 커스텀 로그인 페이지
-         http.formLogin().loginPage("/member/login");
+         http.formLogin(login -> login
+                 .loginPage("/member/login")
+                 .defaultSuccessUrl("/")
+         );
          // CRSF 토큰 비활성화
          http.csrf(AbstractHttpConfigurer::disable);
-         http.headers().frameOptions().sameOrigin();
-         http.rememberMe()
+         http.headers(header -> header
+                 .frameOptions()
+                 .sameOrigin()
+                 );
+
+         http.rememberMe(remember -> remember
                  .key("12345678")
                  .tokenRepository(persistentTokenRepository())
                  .userDetailsService(customUserDetailService)
-                 .tokenValiditySeconds(60 * 60 * 24 * 30); // 유효기간 30일
+                 .tokenValiditySeconds(60 * 60 * 24 * 30)// 유효기간 30일
+                 );
+        http.exceptionHandling(config -> config
+                .accessDeniedHandler(accessDeniedHandler())
+        );
 
-        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+        http.oauth2Login(login -> login
+                .loginPage("/member/login")
+                .successHandler(authenticationSuccessHandler())
+        );
 
-        http.oauth2Login().loginPage("/member/login").successHandler(authenticationSuccessHandler());
         return http.build();
 
     }

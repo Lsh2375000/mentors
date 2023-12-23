@@ -82,8 +82,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         log.info(member);
         // 데이터베이스에 해당 이메일의 사용자가 없다면
-
-
         if(member == null) {
             log.info("social member");
 
@@ -92,8 +90,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     Arrays.asList(new SimpleGrantedAuthority("ROLE_"))
             );
             memberSecurityDTO.setProps(params);
-
-
             return memberSecurityDTO;
         }
         else {

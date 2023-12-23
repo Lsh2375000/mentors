@@ -54,6 +54,12 @@
     .nicknameSpan {
       color: white;
     }
+
+    #mainNav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   </style>
 </head>
 <body>
@@ -61,8 +67,8 @@
 
 </th:block>
 <!-- Navigation-->
-<nav class="navbar navbar-expand-lg bg-secondary text-uppercase sticky-top deActive" id="mainNav" >
-  <div class="container">
+<nav class="navbar navbar-expand-lg bg-secondary text-uppercase sticky-top deActive" id="mainNav">
+  <div style="margin-left: 200px;">
     <a class="navbar-brand" href="/main"><img class="mainImage" src="/assets/progrow2.png" style="width: 110px; height: 90px;"/></a>
     <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
@@ -70,9 +76,11 @@
       Menu
       <i class="fas fa-bars"></i>
     </button>
+  </div>
+  <div style="margin-right: 100px;">
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">게시판</a></li>
+        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">팀 프로젝트</a></li>
         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/qboard/list">Q&A 게시판</a></li>
         <th:block th:if="${#authentication.principal == 'anonymousUser' || #authentication.principal.getPasswd() == '1111'}"> <!-- 비회원 -->
           <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/member/login">로그인</a></li>
@@ -84,21 +92,21 @@
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
           </th:block>
           <th:block sec:authorize="hasRole('ROLE_MENTEE')"> <!--멘티 로그인시-->
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-1 rounded" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
           </th:block>
           <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}"><!-- 회원 로그인 -->
+            <li class="nav-item mx-0 mx-lg-1"><span class="nav py-3 px-0 px-lg-3 rounded nicknameSpan">[<span th:text="${#authentication.principal.getNickname()}"></span>]보유 코인 : <span th:text="${#authentication.principal.getCoin()}"></span></span></li>
             <li class="nav-item mx-0 mx-lg-1" style="position: relative;">
-            <div class="notify" >
-              <img src="/img/basic/notify.png" alt="알림 이미지" height="50" width="50">
-              <span class="notifyCnt"></span>
-            </div>
-            <div id="notifyModal" class="notifyModal" style="font-size: 12px;">
-              <!-- 모달 내용 -->
+              <div class="notify" >
+                <img src="/img/basic/notify.png" alt="알림 이미지" height="50" width="50">
+                <span class="notifyCnt"></span>
+              </div>
+              <div id="notifyModal" class="notifyModal" style="font-size: 12px;">
+                <!-- 모달 내용 -->
                 <span class="close" onclick="closeNotifyModal()">&times;</span>
                 <span class="newNotifyList"></span>
-            </div>
-          </li>
-            <li class="nav-item mx-0 mx-lg-1"><span class="nav py-3 px-0 px-lg-3 rounded nicknameSpan">[<span th:text="${#authentication.principal.getNickname()}"></span>]보유 코인 : <span th:text="${#authentication.principal.getCoin()}"></span></span></li>
+              </div>
+            </li>
           </th:block>
         </th:block>
       </ul>

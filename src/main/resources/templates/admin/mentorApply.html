@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminInc.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<div layout:fragment="content" style="padding-bottom: 300px;">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">회원 번호</th>
+            <th scope="col">전공언어</th>
+            <th scope="col">포트폴리오</th>
+            <th scope="col">학교 및 전공</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dto : ${dtoList}">
+            <th scope="row" th:text="${dto.mno}"></th>
+            <td th:text="${dto.devLanguage}"></td>
+            <td th:each="file : ${dto.fileNames.split('\|')}">
+                <img src="/img/pdfIcon.png" style="width: 20px; margin-right: 5px;" alt="pdf"/>
+                <a target="_blank" style="color: black; text-decoration: none;" th:href="|@{/mentorApply/}${file}|">
+                    [[${file.split('_')[1]}]]
+                </a>
+            </td>
+            <td><span th:text="${dto.univName}"></span> / <span th:text="${dto.major}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>
