@@ -16,6 +16,14 @@
         background-color: #0dcaf0;
         height: 200px;
     }
+    .ranking{
+        width: 100px;
+    }
+    .ranking .card_score{
+        cursor: pointer;
+        margin: 0 auto;
+        width: 60px;
+    }
     .fa-crown{
         font-size: 50px;
     }
@@ -211,25 +219,33 @@
 </style>
 <body>
 <!--        멘토 랭킹 배너-->
-    <div layout:fragment="banner">
+<div layout:fragment="banner">
     <div class="d-flex justify-content-between w-75" style="margin: 0 auto; padding-top: 50px; height: 100px;">
-        <div class="text-center">
-            <i class="fa-solid fa-crown" style="color: #ffd700;"></i><br>
-            멘토1번 닉네임<br>
-            멘토1번 전공언어<br>
-            멘토1번 스코어
-        </div>
-        <div class="text-center">
-            <i class="fa-solid fa-crown" style="color: #c0c0c0;"></i><br>
-            멘토2번 닉네임<br>
-            멘토2번 전공언어<br>
-            멘토2번 스코어
-        </div>
-        <div class="text-center">
-            <i class="fa-solid fa-crown" style="color: #b87333;"></i><br>
-            멘토3번 닉네임<br>
-            멘토3번 전공언어<br>
-            멘토3번 스코어
+        <div th:each="mentor:${mentorList}">
+            <div class="text-center ranking" th:if="${mentor.ranking == 1}">
+                <i class="fa-solid fa-crown" style="color: #ffd700;"></i><br>
+                <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a><br>
+                <span th:text="${mentor.devLanguage}"></span><br>
+                <div class="card_score">
+                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                </div>
+            </div>
+            <div class="text-center ranking" th:if="${mentor.ranking == 2}">
+                <i class="fa-solid fa-crown" style="color: #c0c0c0;"></i><br>
+                <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a><br>
+                <span th:text="${mentor.devLanguage}"></span><br>
+                <div class="card_score">
+                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                </div>
+            </div>
+            <div class="text-center ranking" th:if="${mentor.ranking == 3}">
+                <i class="fa-solid fa-crown" style="color: #b87333;"></i><br>
+                <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a><br>
+                <span th:text="${mentor.devLanguage}"></span><br>
+                <div class="card_score">
+                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -438,10 +454,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="modal-body-content">
-                            <div class="reviewWrap">
+                        <div class="reviewWrap">
 
-                            </div>
                         </div>
                     </div>
                 </div>

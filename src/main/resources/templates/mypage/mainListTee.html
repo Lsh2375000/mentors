@@ -80,6 +80,7 @@
         background-color: rgba(255, 210, 77, 0.85);
     }
     .reviewBtn{
+        text-decoration: underline;
         cursor: pointer;
     }
     .page_wrap{
@@ -178,7 +179,7 @@
                 </a>
             </div>
             <div class="text-center mt-2" th:if="${#temporals.format(mainList.endDate, 'yyyy-MM-dd') lt #dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
-                <a class="reviewBtn" th:onclick="|writeModalBtn(${mainList.mno})|">수강평을 달아주세요!..</a>
+                <a class="reviewBtn" th:onclick="|writeModalBtn(${mainList.mno},${mainList.mbNo})|" th:if="${isReview == false}">수강평을 달아주세요!..</a>
             </div>
         </div>
     </div>
@@ -211,6 +212,7 @@
                 </div>
                 <form action="/mypage/review/write" method="post">
                     <div class="modal-body">
+                        <input type="hidden" name="mbNo">
                         <input type="hidden" name="mentorMno">
                         <input type="hidden" name="menteeMno" th:value="${#authentication.principal.getMno()}">
                         <input type="hidden" name="page">
@@ -224,7 +226,7 @@
                             <label for="3-stars" class="star">&#9733;</label>
                             <input type="radio" id="2-stars" name="score" value="2" />
                             <label for="2-stars" class="star">&#9733;</label>
-                            <input type="radio" id="1-star" name="score" value="1" />
+                            <input type="radio" id="1-star" name="score" value="1" checked />
                             <label for="1-star" class="star">&#9733;</label>
                         </div>
                         <div class="review mt-2">
@@ -287,9 +289,11 @@
         location.href =`/mypage/mainListTee?page=${page}&size=12&sort=end`;
     })
 
+
     // 수강평 작성 모달
     const writeModal = new bootstrap.Modal(document.getElementById('writeModal'));
-    function writeModalBtn(mno){
+    function writeModalBtn(mno,mbNo){
+        document.querySelector('input[name=mbNo]').value = mbNo
         document.querySelector('input[name=mentorMno]').value = mno;
         document.querySelector('input[name=page]').value = page;
         document.querySelector('input[name=sort]').value = sort;

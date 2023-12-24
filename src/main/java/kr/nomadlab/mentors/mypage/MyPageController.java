@@ -199,10 +199,11 @@ public class MyPageController {
         PageResponseDTO<MainDTO> mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
         log.info("서비스 sort ?"+pageRequestDTO.getSort());
         enterMenteePage(model, memberSecurityDTO);
+        boolean isReview = mentorReviewService.isReview(memberSecurityDTO.getMno());
 
+        model.addAttribute("isReview", isReview);
         model.addAttribute("mainList", mainListTee);
         model.addAttribute("sort", pageRequestDTO.getSort());
-
     }
 
     @PostMapping("/review/write")

@@ -65,6 +65,13 @@ public class MentorServiceImpl implements MentorService{
         return mentorDTOList;
     }
 
+    @Override
+    public List<MentorDTO> listByRanking() { // 랭킹 순 멘토 목록
+        List<MentorVO> mentorVOList = mentorMapper.listByRanking();
+        List<MentorDTO> mentorDTOList = new ArrayList<>();
+        mentorVOList.forEach(mentorVO -> mentorDTOList.add(modelMapper.map(mentorVO, MentorDTO.class)));
+        return mentorDTOList;
+    }
 
 
     @Override

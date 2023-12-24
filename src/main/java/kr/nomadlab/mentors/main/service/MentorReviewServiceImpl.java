@@ -28,7 +28,7 @@ public class MentorReviewServiceImpl implements MentorReviewService{
         mentorReviewMapper.insert(mentorReviewVO); // 수강평 등록
         mentorReviewMapper.updateScore(mno); // 해당 멘토의 score 갱신
         mainMapper.updateScore(mno); // 해당 멘토가 작성한 main글의 score 갱신
-
+        mentorReviewMapper.updateRanking(); // 멘토의 랭킹 업데이트
     }
 
     @Override
@@ -52,5 +52,10 @@ public class MentorReviewServiceImpl implements MentorReviewService{
     @Override
     public int menteeReviewCount(Long menteeMno) { // 멘티가 작성한 수강평 수
         return mentorReviewMapper.menteeReviewCount(menteeMno);
+    }
+
+    @Override
+    public boolean isReview(Long menteeMno) {
+        return mentorReviewMapper.isReview(menteeMno);
     }
 }
