@@ -99,6 +99,7 @@
         cursor: pointer;
     }
     .pageNum{
+        border-radius: 5px;
         cursor: pointer;
     }
 
@@ -204,7 +205,7 @@
             <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
                 <th:block th:if="${i != 0}">
                     <li th:class="${mainList.page == i} ? 'page-item-active' : 'page-item'" >
-                        <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'color:red; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
+                        <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'background-color:#3498db; color:white; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
                     </li>
                 </th:block>
             </th:block>

@@ -216,6 +216,7 @@
     }
     .pageNum{
         cursor: pointer;
+        border-radius: 5px;
     }
     .reviewList{
         margin-bottom: 10px;
@@ -401,15 +402,16 @@
         </div>
 <!--        메인 콘텐츠 끝-->
         <!--    페이징-->
-        <div class="page_wrap paging d-flex justify-content-end w-75 mt-3 mb-5">
-            <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
+        <div class="page_wrap paging d-flex mt-3 mb-5">
+            <div class="w-25"></div>
+            <ul class="pagination flex-wrap w-75 d-flex justify-content-center" th:with="mainList=${mainList}">
                 <li class="page-item" th:if="${mainList.prev}">
                     <a class="page-link pageNum" th:data-num="${mainList.start - 1}" style="color: black;">이전</a>
                 </li>
                 <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
                     <th:block th:if="${i != 0}">
                         <li th:class="${mainList.page == i} ? 'page-item-active' : 'page-item'" >
-                            <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'color:red; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
+                            <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'background-color:#3498db; color:white; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
                         </li>
                     </th:block>
                 </th:block>

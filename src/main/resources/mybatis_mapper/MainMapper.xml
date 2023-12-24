@@ -161,11 +161,11 @@
 
 <!--    마이페이지 메인 목록-->
     <select id="myPageList" resultType="kr.nomadlab.mentors.main.domain.MainVO">
-        select * from main where mno = #{mno} order by mbNo desc limit #{skip}, #{size}
+        select * from main where mno = #{mno} <include refid="myPageSearch"/> order by mbNo desc limit #{skip}, #{size}
     </select>
 <!--   멘토의 마이페이지 갯수 새기-->
     <select id="myPageCount" resultType="int">
-        select count(mbNo) from main where mno = #{mno}
+        select count(mbNo) from main where mno = #{mno} <include refid="myPageSearch"/>
     </select>
 
 <!--    멘티가 참가중인 멘토링 목록-->

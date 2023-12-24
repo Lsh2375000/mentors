@@ -123,9 +123,10 @@ public class MyPageController {
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
         log.info("end는 ?"+mainList.getEnd());
-        model.addAttribute("mainList", mainList);
-
         enterMentorPage(model, memberSecurityDTO);
+
+        model.addAttribute("mainList", mainList);
+        model.addAttribute("sort", pageRequestDTO.getSort());
     }
 
     @GetMapping("/mainList/remove") // 내가 작성한 멘토링 삭제

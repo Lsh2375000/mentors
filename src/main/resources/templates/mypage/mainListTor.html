@@ -8,6 +8,25 @@
     <script src="https://kit.fontawesome.com/ff50ff83ce.js" crossorigin="anonymous"></script>
 </head>
 <style layout:fragment="style">
+    .tabBtn{
+        text-align: center;
+        border-radius: 5px;
+        background-color: transparent;
+        background-image: none;
+        border: none;
+        width: 150px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    .tabBtn:nth-child(1){
+        width: 100px;
+    }
+    .tabBtn:hover{
+        color: aqua;
+        font-weight: 600;
+    }
     .mentoringList{
         grid-template-columns: repeat(4, 1fr);
         grid-gap: 20px;
@@ -91,6 +110,7 @@
         background-color: #00884FFF;
     }
     .pageNum{
+        border-radius: 5px;
         cursor: pointer;
     }
     .reviewList{
@@ -114,8 +134,15 @@
 </style>
 <body>
 <div layout:fragment="content">
+    <!--    탭 버튼-->
+    <div class="d-flex justify-content-center gap-5 mt-3">
+        <span class="tabBtn" id="allBtn" th:style="${sort == 'new' ? 'background-color: #3498db; color:white;' : ''}">전체</span>
+        <span class="tabBtn" id="ingBtn" th:style="${sort == 'ing' ? 'background-color: #3498db; color:white;' : ''}">진행중인 수업</span>
+        <span class="tabBtn" id="endBtn" th:style="${sort == 'end' ? 'background-color: #3498db; color:white;' : ''}">종료된 수업</span>
+    </div>
+<!--    멘토링 목록-->
     <div class="mentoringList d-grid mt-3">
-        <div th:each="mainList:${mainList.dtoList}">
+        <div th:each="mainList:${mainList.dtoList}" th:style="${sort == 'end' || #temporals.format(mainList.endDate, 'yyyy-MM-dd') lt #dates.format(#dates.createNow(), 'yyyy-MM-dd') ? 'filter: saturate(50%) brightness(70%);' : ''}">
             <div class="card-body">
                 <a href="#">
                     <div class="card-top">
@@ -159,7 +186,7 @@
             <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
                 <th:block th:if="${i != 0}">
                     <li th:class="${mainList.page == i} ? 'page-item-active' : 'page-item'" >
-                        <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'color:red; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
+                        <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'background-color:#3498db; color:white; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
                     </li>
                 </th:block>
             </th:block>
@@ -191,14 +218,31 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script layout:fragment="script" th:inline="javascript">
 
-
     const pageNums = document.querySelectorAll('.pageNum');
     // 페이지번호 클릭
     pageNums.forEach(pageNum => {
         pageNum.addEventListener('click', function (){
             const page = pageNum.getAttribute('data-num');
-            location.href =`/mypage/mainList?page=${page}&size=12`;
+            location.href =`/mypage/mainListTor?page=${page}&size=12`;
         })
+    })
+
+    let sort = [[${sort}]]
+    let page = [[${mainList.page}]]
+    // '전체' 탭 클릭
+    const allBtn = document.getElementById('allBtn');
+    allBtn.addEventListener('click', function (){
+        location.href =`/mypage/mainListTor?page=${page}&size=12`;
+    })
+    // '진행중인 수업' 탭 클릭
+    const ingBtn = document.getElementById('ingBtn');
+    ingBtn.addEventListener('click', function (){
+        location.href =`/mypage/mainListTor?page=${page}&size=12&sort=ing`;
+    })
+    // '종료된 수업' 탭 클릭
+    const endBtn = document.getElementById('endBtn');
+    endBtn.addEventListener('click', function (){
+        location.href =`/mypage/mainListTor?page=${page}&size=12&sort=end`;
     })
 
     // 수강평 목록 출력 모달
