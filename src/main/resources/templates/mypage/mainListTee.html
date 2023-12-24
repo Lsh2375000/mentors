@@ -9,10 +9,23 @@
 </head>
 <style layout:fragment="style">
     .tabBtn{
-        font-size: 20pt;
-        border-bottom: 1px solid #7a7a7a;
-        padding-bottom: 7px;
+        text-align: center;
+        border-radius: 5px;
+        background-color: transparent;
+        background-image: none;
+        border: none;
+        width: 150px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
         cursor: pointer;
+    }
+    .tabBtn:nth-child(1){
+        width: 100px;
+    }
+    .tabBtn:hover{
+        color: aqua;
+        font-weight: 600;
     }
     .mentoringList{
         grid-template-columns: repeat(4, 1fr);
@@ -70,6 +83,8 @@
         border-bottom: 1px solid black;
     }
     .card_score{
+        height: 25px;
+        line-height: 25px;
         background-color: rgba(255,210,77,.5);
         width: 60px;
         text-align: center;
@@ -82,9 +97,6 @@
     .reviewBtn{
         text-decoration: underline;
         cursor: pointer;
-    }
-    .page_wrap{
-        width: 62.5%;
     }
     .pageNum{
         cursor: pointer;
@@ -146,9 +158,9 @@
 <div layout:fragment="content">
 <!--    탭 버튼-->
     <div class="d-flex justify-content-center gap-5 mt-3">
-        <span class="tabBtn" id="allBtn" th:style="${sort == 'new' ? 'background-color:#cacaca;' : ''}">전체</span>
-        <span class="tabBtn" id="ingBtn" th:style="${sort == 'ing' ? 'background-color:#cacaca;' : ''}">진행중인 수업</span>
-        <span class="tabBtn" id="endBtn" th:style="${sort == 'end' ? 'background-color:#cacaca;' : ''}">종료된 수업</span>
+        <span class="tabBtn" id="allBtn" th:style="${sort == 'new' ? 'background-color: #3498db; color:white;' : ''}">전체</span>
+        <span class="tabBtn" id="ingBtn" th:style="${sort == 'ing' ? 'background-color: #3498db; color:white;' : ''}">진행중인 수업</span>
+        <span class="tabBtn" id="endBtn" th:style="${sort == 'end' ? 'background-color: #3498db; color:white;' : ''}">종료된 수업</span>
     </div>
 <!--    멘토링 목록-->
     <div class="mentoringList d-grid mt-3">
@@ -184,7 +196,7 @@
         </div>
     </div>
     <!--    페이징-->
-    <div class="page_wrap paging d-flex justify-content-end  mt-3 mb-5">
+    <div class="page_wrap paging d-flex justify-content-center  mt-3 mb-5">
         <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
             <li class="page-item" th:if="${mainList.prev}">
                 <a class="page-link pageNum" th:data-num="${mainList.start - 1}" style="color: black;">이전</a>

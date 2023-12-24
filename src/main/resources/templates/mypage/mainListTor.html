@@ -66,6 +66,8 @@
     .card_score{
         background-color: rgba(255,210,77,.5);
         width: 60px;
+        height: 25px;
+        line-height: 25px;
         text-align: center;
         border-radius: 4px;
         color: red;
@@ -87,9 +89,6 @@
     }
     #modifyBtn:hover{
         background-color: #00884FFF;
-    }
-    .page_wrap{
-        width: 62.5%;
     }
     .pageNum{
         cursor: pointer;
@@ -152,7 +151,7 @@
         </div>
     </div>
     <!--    페이징-->
-    <div class="page_wrap paging d-flex justify-content-end  mt-3 mb-5">
+    <div class="page_wrap paging d-flex justify-content-center  mt-3 mb-5">
         <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
             <li class="page-item" th:if="${mainList.prev}">
                 <a class="page-link pageNum" th:data-num="${mainList.start - 1}" style="color: black;">이전</a>

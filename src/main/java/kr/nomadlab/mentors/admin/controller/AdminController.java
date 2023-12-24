@@ -18,6 +18,12 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
+    @GetMapping("/")
+    public String adminMain(){
+
+        return "/admin/main";
+    }
+
     @GetMapping("/login")
     public void adminLoginGET() {
         log.info("adminLoginGET....");
