@@ -223,7 +223,7 @@
                 <div class="modal-header text-center">
                     <h1 class="modal-title fs-5 w-100" id="staticBackdropLabel">멘토링 수강평을 작성해주세요</h1>
                 </div>
-                <form action="/mypage/review/write" method="post">
+                <form action="/mypage/review/write" method="post" name="modalForm">
                     <div class="modal-body">
                         <input type="hidden" name="mbNo">
                         <input type="hidden" name="mentorMno">
@@ -247,7 +247,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">등록</button>
+                        <button type="button" class="btn btn-primary submitBtn">등록</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                     </div>
                 </form>
@@ -289,29 +289,45 @@
     // '전체' 탭 클릭
     const allBtn = document.getElementById('allBtn');
     allBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTee?page=${page}&size=12`;
+        location.href =`/mypage/mainListTee?page=1&size=12`;
     })
     // '진행중인 수업' 탭 클릭
     const ingBtn = document.getElementById('ingBtn');
     ingBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTee?page=${page}&size=12&sort=ing`;
+        location.href =`/mypage/mainListTee?page=1&size=12&sort=ing`;
     })
     // '종료된 수업' 탭 클릭
     const endBtn = document.getElementById('endBtn');
     endBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTee?page=${page}&size=12&sort=end`;
+        location.href =`/mypage/mainListTee?page=1&size=12&sort=end`;
     })
 
 
     // 수강평 작성 모달
     const writeModal = new bootstrap.Modal(document.getElementById('writeModal'));
+
+    const modalForm = document.querySelector('form[name=modalForm]')
     function writeModalBtn(mno,mbNo){
         document.querySelector('input[name=mbNo]').value = mbNo
         document.querySelector('input[name=mentorMno]').value = mno;
         document.querySelector('input[name=page]').value = page;
         document.querySelector('input[name=sort]').value = sort;
         writeModal.show();
+
+        const commentValue = document.querySelector('textarea[name=review]');
+        document.querySelector('.submitBtn').addEventListener('click', function (){
+            if(commentValue.value.trim() === ''){
+                alert('내용을 입력해주세요.')
+            }else {
+                if(confirm('등록하시겠습니까?')){
+                    modalForm.submit()
+                }else{
+
+                }
+            }
+        })
     }
+
 
     // 수강평 목록 출력 모달
     const reviewListModal = new bootstrap.Modal(document.querySelector('.reviewListModal'));

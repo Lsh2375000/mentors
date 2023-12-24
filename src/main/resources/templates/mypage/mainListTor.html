@@ -232,17 +232,17 @@
     // '전체' 탭 클릭
     const allBtn = document.getElementById('allBtn');
     allBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTor?page=${page}&size=12`;
+        location.href =`/mypage/mainListTor?page=1&size=12`;
     })
     // '진행중인 수업' 탭 클릭
     const ingBtn = document.getElementById('ingBtn');
     ingBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTor?page=${page}&size=12&sort=ing`;
+        location.href =`/mypage/mainListTor?page=1&size=12&sort=ing`;
     })
     // '종료된 수업' 탭 클릭
     const endBtn = document.getElementById('endBtn');
     endBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTor?page=${page}&size=12&sort=end`;
+        location.href =`/mypage/mainListTor?page=1&size=12&sort=end`;
     })
 
     // 수강평 목록 출력 모달
