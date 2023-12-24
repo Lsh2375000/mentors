@@ -17,4 +17,6 @@ public class MentorVO {
     private int rating; // 멘토링 횟수에 따른 등급
     private boolean isMentoring; // 현재 멘토링 참여 여부
     private Double score;
+    private String univName;
+    private String major;
 }
