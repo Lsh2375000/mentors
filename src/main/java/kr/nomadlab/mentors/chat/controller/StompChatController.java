@@ -3,6 +3,7 @@ package kr.nomadlab.mentors.chat.controller;
 import kr.nomadlab.mentors.chat.dto.ChatMessageDTO;
 import kr.nomadlab.mentors.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Log4j2
 public class StompChatController {
 
     private final SimpMessagingTemplate template; // 특정 Broker로 메세지를 전달
@@ -28,6 +30,8 @@ public class StompChatController {
     public void enter(ChatMessageDTO message) {
         List<String> liveUser = new ArrayList<>();
         message.setMessage(message.getSender() + "님이 채팅방에 참여하였습니다.");
+        log.info("sender---------");
+        log.info(message.getSender());
 
         map.put(message.getSender(), message.getRoomId());
         for(Map.Entry<String, String> entry : map.entrySet()){
@@ -35,14 +39,18 @@ public class StompChatController {
                 liveUser.add(entry.getKey());
             }
         }
+
+        log.info("liveUser--------");
+        log.info(liveUser);
+
         message.setUserList(liveUser);
         message.setState(0); // 입장하거나 채팅방 활동시
 
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
-    @MessageMapping(value = "/chat/out")
-    public void out(ChatMessageDTO message){
+    @MessageMapping(value = "/chat/close")
+    public void close(ChatMessageDTO message){
         message.setMessage(message.getSender() + "님이 채팅방에 나가셨습니다.");
 
         List<String> liveUser = new ArrayList<>();
@@ -52,6 +60,31 @@ public class StompChatController {
                 liveUser.add(entry.getKey());
             }
         }
+
+        log.info("liveUser-------");
+        log.info(liveUser);
+
+        message.setUserList(liveUser);
+        message.setState(1); // 퇴장시
+        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+    }
+
+    @MessageMapping(value = "/chat/leave")
+    public void leave(ChatMessageDTO message){
+        message.setMessage(message.getSender() + "님이 채팅방에 나가셨습니다.");
+        chatService.removeChatMember(message.getRoomId(), message.getMno()); // 채팅방 회원정보 삭제
+
+        List<String> liveUser = new ArrayList<>();
+        map.remove(message.getSender());
+        for(Map.Entry<String, String> entry : map.entrySet()){
+            if(entry.getValue().equals(message.getRoomId()) ){
+                liveUser.add(entry.getKey());
+            }
+        }
+
+        log.info("liveUser-------");
+        log.info(liveUser);
+
         message.setUserList(liveUser);
         message.setState(1); // 퇴장시
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);

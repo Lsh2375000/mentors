@@ -14,4 +14,5 @@ public class ChatListDTO {
     private Long mno; // 채팅에 참여한 회원 고유번호
     private String roomId; // 채팅방 아이디
     private String role; // LEADER OR MEMBER
+    private String nickname; // 채팅에 참여한 회원의 닉네임
 }

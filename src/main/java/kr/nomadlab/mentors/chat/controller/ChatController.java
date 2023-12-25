@@ -31,6 +31,7 @@ public class ChatController {
         Map<String, Object> response = new HashMap<>();
         response.put("messages", chatService.getMessages(roomId));
         response.put("room", chatService.getRoom(roomId));
+        response.put("chatMembers", chatService.getChatMembers(roomId));
 
         return ResponseEntity.ok(response);
     }
@@ -42,9 +43,7 @@ public class ChatController {
 
         Map<String, Object> response = new HashMap<>();
 
-        log.info("채팅방 목록 조회");
         response.put("chatList", chatService.getRoomList(mno));
-        log.info("채팅방 목록 조회2");
 
         return ResponseEntity.ok(response);
     }
