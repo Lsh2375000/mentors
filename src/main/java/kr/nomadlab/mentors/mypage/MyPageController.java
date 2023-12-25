@@ -122,16 +122,16 @@ public class MyPageController {
     public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String nickname){
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainList = null;
-        if(memberSecurityDTO != null){
+
+        if(memberSecurityDTO != null){ // 로그인 했을때
              mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
              enterMentorPage(model, memberSecurityDTO);
-        } else {
+        } else { // 비 로그인 시
             MemberDTO memberDTO = memberService.getProfileNickname(nickname);
             mainList = mainService.myPageList(pageRequestDTO, memberDTO.getMno());
         }
 
         log.info("end는 ?"+mainList.getEnd());
-
 
         model.addAttribute("mainList", mainList);
         model.addAttribute("sort", pageRequestDTO.getSort());
@@ -205,12 +205,13 @@ public class MyPageController {
     public void mainListTee(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String nickname){
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainListTee = null;
-        if(memberSecurityDTO != null){
+        
+        if(memberSecurityDTO != null){ // 로그인 했을때
             mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
             enterMenteePage(model, memberSecurityDTO);
             boolean isReview = mentorReviewService.isReview(memberSecurityDTO.getMno());
             model.addAttribute("isReview", isReview);
-        }else{
+        }else{ // 비로그인 시
             MemberDTO memberDTO = memberService.getProfileNickname(nickname);
             mainListTee = mainService.mainListTee(pageRequestDTO, memberDTO.getMno());
         }

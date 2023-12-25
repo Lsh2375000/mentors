@@ -18,7 +18,7 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String adminMain(){
 
         return "/admin/main";
@@ -35,6 +35,22 @@ public class AdminController {
         List<MentorApplyDTO> mentorApplyDTO = adminService.getApplyList();
         model.addAttribute("dtoList", mentorApplyDTO);
     }
+    
+    @GetMapping("/stats")
+    public void adminStats(){ // 통계 페이지
+        
+    }
 
+    @GetMapping("/exchangeList")
+    public void exchangeList(){ // 환전 신청 처리 페이지
+        
+    }
 
+    @GetMapping("/userPage")
+    public String userPage(){ // 사용자 페이지 가기
+        
+        // 어드민 로그아웃 메소드
+        
+        return "redirect:/main";
+    }
 }
