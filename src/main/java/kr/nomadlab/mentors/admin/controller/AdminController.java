@@ -19,9 +19,9 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("")
-    public String adminMain(){
+    public String adminStats(){// 통계 페이지
 
-        return "/admin/main";
+        return "/admin/stats";
     }
 
     @GetMapping("/login")
@@ -35,11 +35,7 @@ public class AdminController {
         List<MentorApplyDTO> mentorApplyDTO = adminService.getApplyList();
         model.addAttribute("dtoList", mentorApplyDTO);
     }
-    
-    @GetMapping("/stats")
-    public void adminStats(){ // 통계 페이지
-        
-    }
+
 
     @GetMapping("/exchangeList")
     public void exchangeList(){ // 환전 신청 처리 페이지
