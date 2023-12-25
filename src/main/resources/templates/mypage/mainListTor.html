@@ -218,12 +218,14 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script layout:fragment="script" th:inline="javascript">
 
+    let nickname = [[${mainList.nickname}]]
+
     const pageNums = document.querySelectorAll('.pageNum');
     // 페이지번호 클릭
     pageNums.forEach(pageNum => {
         pageNum.addEventListener('click', function (){
             const page = pageNum.getAttribute('data-num');
-            location.href =`/mypage/mainListTor?page=${page}&size=12`;
+            location.href =`/mypage/mainListTor?page=${page}&size=12&nickname=${nickname}`;
         })
     })
 
@@ -232,17 +234,17 @@
     // '전체' 탭 클릭
     const allBtn = document.getElementById('allBtn');
     allBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTor?page=1&size=12`;
+        location.href =`/mypage/mainListTor?page=1&size=12&nickname=${nickname}`;
     })
     // '진행중인 수업' 탭 클릭
     const ingBtn = document.getElementById('ingBtn');
     ingBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTor?page=1&size=12&sort=ing`;
+        location.href =`/mypage/mainListTor?page=1&size=12&sort=ing&nickname=${nickname}`;
     })
     // '종료된 수업' 탭 클릭
     const endBtn = document.getElementById('endBtn');
     endBtn.addEventListener('click', function (){
-        location.href =`/mypage/mainListTor?page=1&size=12&sort=end`;
+        location.href =`/mypage/mainListTor?page=1&size=12&sort=end&nickname=${nickname}`;
     })
 
     // 수강평 목록 출력 모달

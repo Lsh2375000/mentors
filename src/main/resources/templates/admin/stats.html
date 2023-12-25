@@ -5,14 +5,25 @@
   <meta charset="UTF-8">
   <title>Admin Stats</title>
 </head>
+<style layout:fragment="style">
+  .visitor{
+    background-color: #0abe94;
+    height: 500px;
+  }
+  .coinStats{
+    background-color: #555555;
+    height: 500px;
+  }
+</style>
 <body>
 <div layout:fragment="content">
-  <div>
+  <div class="visitor">
     <div>
       <h2>방문자 수 통계</h2>
     </div>
   </div>
-  <div>
+
+  <div class="coinStats">
     <div>
       <h2>코인 충전 수 통계</h2>
     </div>
