@@ -170,10 +170,12 @@
             </div>
             <div class="d-flex justify-content-center gap-3 mt-3 mb-5">
 <!--                수업 끝나면 수정안됌-->
+                <th:block th:if="${#authentication.principal != 'anonymousUser'}">
                 <a th:href="@{/mypage/mainList/modify(mbNo=${mainList.mbNo})}" class="myPageBtn" id="modifyBtn"
                    th:if="${#temporals.format(mainList.endDate, 'yyyy-MM-dd') gt #dates.format(#dates.createNow(), 'yyyy-MM-dd') && mainList.mno == #authentication.principal.getMno()}">
                     수정
                 </a>
+                </th:block>
             </div>
         </div>
     </div>
@@ -218,7 +220,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script layout:fragment="script" th:inline="javascript">
 
-    let nickname = [[${nickname}]]
+    let nickname = [[${nickname}]];
 
     const pageNums = document.querySelectorAll('.pageNum');
     // 페이지번호 클릭

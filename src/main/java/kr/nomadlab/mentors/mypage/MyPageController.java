@@ -170,7 +170,7 @@ public class MyPageController {
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainList = null;
         MemberDTO memberDTO = memberService.getProfileNickname(nickname);
-        log.info("로그인 여부 : " + memberSecurityDTO);
+
 
         if(memberSecurityDTO != null){
             log.info("로그인 시");
