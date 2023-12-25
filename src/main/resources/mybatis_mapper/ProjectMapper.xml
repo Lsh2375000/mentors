@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.project.mapper.ProjectMapper">
+
+    <!-- ProjectVO에 대한 resultMap 설정 -->
+    <resultMap id="projectResultMap" type="kr.nomadlab.mentors.project.domain.ProjectVO">
+        <id property="projectNo" column="projectNo" />
+        <result property="memberId" column="memberId" />
+        <result property="writer" column="writer" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="hit" column="hit" />
+        <result property="addDate" column="addDate" />
+        <!-- projectReply, projectLike에 대한 매핑 -->
+        <result property="replyCount" column="replyCount" />
+        <result property="likeCount" column="likeCount" />
+        <!-- HashTag에 대한 매핑 -->
+        <collection property="tagVOList" column="projectNo" ofType="kr.nomadlab.mentors.project.domain.ProjectTagVO"
+                    select="selectTagList" />
+    </resultMap>
+
+    <select id="selectTagList" resultType="kr.nomadlab.mentors.project.domain.ProjectTagVO" >
+        SELECT *
+        FROM `projectTag` AS `ht`
+        WHERE `ht`.`projectNo` = #{projectNo}
+    </select>
+
+    <!-- 게시글 전체 조회 -->
+    <select id="selectProjectList" resultMap="projectResultMap">
+        SELECT
+        `p`.*,
+        COUNT(DISTINCT `pr`.`pjrNo`) AS replyCount,
+        COUNT(DISTINCT `pjl`.`pjlNo`) AS likeCount
+        FROM `project` AS `p`
+        LEFT JOIN `projectReply` AS `pr` ON `p`.`projectNo` = `pr`.`projectNo`
+        LEFT JOIN `projectLike` AS `pjl` ON `p`.`projectNo` = `pjl`.`projectNo`
+        LEFT JOIN `projectTag` AS `pt` ON `p`.`projectNo` = `pt`.`projectNo`
+        <include refid="search"/>
+        GROUP BY `p`.`projectNo`
+        ORDER BY
+        <!-- 정렬 조건 -->
+        <choose>
+            <when test="sort == 'reply'">replyCount</when>
+            <when test="sort == 'like'">likeCount</when>
+            <!-- 추가적인 컬럼이 있으면 위와 같이 추가 -->
+            <otherwise>p.projectNo</otherwise>
+        </choose>
+        <!-- 여기까지 -->
+        DESC LIMIT #{skip}, #{size}
+    </select>
+
+    <sql id="search">
+        <where>
+            <if test="types != null and types.length > 0">
+                <foreach collection="types" item="type" open="(" close=")" separator=" OR">
+                    <if test="type == 't'.toString()">
+                        `p`.`title` like concat('%', #{keyword}, '%')
+                    </if>
+                    <if test="type == 'w'.toString()">
+                        `p`.`writer` like concat('%', #{keyword}, '%')
+                    </if>
+                    <if test="type == 'c'.toString()">
+                        `p`.`content` like concat('%', #{keyword}, '%')
+                    </if>
+                </foreach>
+            </if>
+
+            <if test="hashTags != null and hashTags.length > 0">
+                <foreach collection="hashTags" item="hashTag" open=" AND (" close=")" separator=" OR ">
+                    `pt`.`tagName` = #{hashTag}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertProject" parameterType="kr.nomadlab.mentors.project.domain.ProjectVO" useGeneratedKeys="true" keyProperty="projectNo">
+        INSERT INTO `project` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
+        VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
+    </insert>
+
+    <!-- 상위 10개 태그 조회 -->
+    <select id="selectTopTagList" resultType="kr.nomadlab.mentors.project.dto.ProjectTagDTO">
+        SELECT tagName, COUNT(tagName) AS tagCount
+        FROM projectTag
+        GROUP BY tagName
+        ORDER BY tagCount DESC
+            LIMIT 10;
+    </select>
+
+    <!-- 태그 등록 -->
+    <insert id="insertTag">
+        INSERT INTO `projectTag` (`projectNo`, `tagName`) VALUES (#{projectNo}, #{tagName})
+    </insert>
+
+    <!-- 태그 삭제 -->
+    <delete id="deleteTag">
+        DELETE FROM `projectTag` WHERE `projectNo` = #{projectNo}
+    </delete>
+
+    <!-- 게시글 수정 -->
+    <update id="updateProject">
+        update `project` set `title` = #{title}, `content` = #{content}
+        where `projectNo` = #{projectNo}
+    </update>
+
+    <!-- 조회수 업데이트 -->
+    <update id="updateHit">
+        update `project` set `hit` = `hit` + 1 where `projectNo` = #{projectNo}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteProject">
+        delete from `project` where `projectNo` = #{projectNo}
+    </delete>
+
+    <!-- 게시글 조회 -->
+    <select id="selectProject" resultMap="projectResultMap">
+        SELECT *
+        FROM `project`
+        WHERE `projectNo` = #{projectNo}
+    </select>
+
+    <!-- 게시글 좋아요 추가 -->
+    <insert id="insertLike" parameterType="kr.nomadlab.mentors.project.domain.ProjectLikeVO" useGeneratedKeys="true" keyProperty="pjlNo">
+        INSERT INTO `projectLike`(`projectNo`, `mno`) VALUES (#{projectNo}, #{mno})
+    </insert>
+
+    <!-- 게시글 좋아요 삭제 -->
+    <delete id="deleteLike">
+        delete from `projectLike` where `pjlNo` = #{pjlNo}
+    </delete>
+
+    <!-- 좋아요 조회 -->
+    <select id="selectLikeList" resultType="kr.nomadlab.mentors.project.domain.ProjectLikeVO">
+        SELECT * FROM `projectLike` WHERE `projectNo` = #{projectNo}
+    </select>
+
+    <!--게시물 갯수-->
+    <select id="getCount" resultType="int">
+        SELECT COUNT(DISTINCT `p`.`projectNo`)
+        FROM `project` AS `p`
+        LEFT JOIN `projectTag` AS `pt` ON `p`.`projectNo` = `pt`.`projectNo`
+        <include refid="search" />
+    </select>
+
+</mapper>

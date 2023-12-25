@@ -33,23 +33,23 @@
         .search-container .form-control { border: none; outline: none; height: 50px; }
         .search-container .form-control:focus { border: none;  box-shadow: none; }
         .search-container .btn { font-weight: 700; width: 100px; height: 50px; border-radius: 0.3rem; margin-left: 15px; }
-        .board-list-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; }
-        .board-list-header ul { display: inline-flex; }
-        .board-list-header ul li { margin: 0 1rem; list-style-type: disc; cursor: pointer; font-weight: 400; color: #868e96; }
-        .board-list-header ul li:hover { font-weight: 600; }
+        .project-list-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; }
+        .project-list-header ul { display: inline-flex; }
+        .project-list-header ul li { margin: 0 1rem; list-style-type: disc; cursor: pointer; font-weight: 400; color: #868e96; }
+        .project-list-header ul li:hover { font-weight: 600; }
         .active { font-weight: 700 !important; color: #1b1c1d !important;}
         .active::marker { color: #0abe94; }
-        .board-list-header a { color: #000000; }
-        .board-list { border-top: 1px solid #dee2e6; padding-left: 0 !important; }
-        .board-container { border-bottom: 1px solid #dee2e6; padding: 18px; box-sizing: border-box; }
-        .board-container:hover { background-color: #f8f9fa; }
-        .board-title { font-size: 21px; }
-        .board-content { color: #495057; }
+        .project-list-header a { color: #000000; }
+        .project-list { border-top: 1px solid #dee2e6; padding-left: 0 !important; }
+        .project-container { border-bottom: 1px solid #dee2e6; padding: 18px; box-sizing: border-box; }
+        .project-container:hover { background-color: #f8f9fa; }
+        .project-title { font-size: 21px; }
+        .project-content { color: #495057; }
         .tag-list { display: flex; }
         .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 5px 5px 5px 0;
             font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
-        .board-footer { display: flex; justify-content: space-between; color: #868e96; }
-        .board-footer span, dt, dd { font-size: 14px; }
+        .project-footer { display: flex; justify-content: space-between; color: #868e96; }
+        .project-footer span, dt, dd { font-size: 14px; }
         .footer-right { display: flex; }
         /*.footer-right dt { visibility: hidden; }*/
         .footer-right dd { margin: 0 5px;}
@@ -68,7 +68,7 @@
         <section>
             <!-- 검색 입력 창 -->
             <div class="row mt-3">
-                <form action="/board/list" method="get" name="frmSearch">
+                <form action="/project/list" method="get" name="frmSearch">
                     <div class="search-container">
                         <div class="search-item">
                             <div class="search-input">
@@ -94,7 +94,7 @@
             </div>
 
             <!-- 정렬 탭 버튼 -->
-            <div class="board-list-header">
+            <div class="project-list-header">
                 <ul class="tap-btn">
                     <li th:class="${pageRequestDTO.sort == 'new' ? 'active' : ''}">
                         <a data-sort="new">최신순</a>
@@ -108,27 +108,27 @@
                 </ul>
 
                 <div th:with="link = ${pageRequestDTO.getLink()}">
-                    <a th:href="|@{/board/register}?${link}|">
+                    <a th:href="|@{/project/register}?${link}|">
                         <button type="button" class="btn btn-secondary">글쓰기</button>
                     </a>
                 </div>
             </div>
 
             <!-- 게시글 목록 -->
-            <ul class="board-list" th:with="link = ${pageRequestDTO.getLink()}">
-                <li class="board-container" th:each="dto, status:${responseDTO.dtoList}">
-                    <a th:href="|@{/board/view(boardNo=${dto.boardNo})}&${link}|" class="view-link">
-                        <div class="board">
-                            <h3 class="board-title">
+            <ul class="project-list" th:with="link = ${pageRequestDTO.getLink()}">
+                <li class="project-container" th:each="dto, status:${responseDTO.dtoList}">
+                    <a th:href="|@{/project/view(projectNo=${dto.projectNo})}&${link}|" class="view-link">
+                        <div class="project">
+                            <h3 class="project-title">
                                 [[${dto.title}]]
                             </h3>
-                            <p class="board-content">내용</p>
+                            <p class="project-content">내용</p>
                             <ul class="tag-list">
                                <li class="tag-style" th:each="tag:${dto.tagList}">
                                    [[${tag.tagName}]]
                                </li>
                             </ul>
-                            <div class="board-footer">
+                            <div class="project-footer">
                                 <div class="footer-left">
                                     <span class="writer">
                                         [[${dto.writer}]]
@@ -240,7 +240,7 @@
         document.querySelector(".clearBtn").addEventListener("click", function (e){
             e.preventDefault();
 
-            self.location='/board/list';
+            self.location='/project/list';
         }, false)
 
         let hashTags = []; // 태그 임시저장 배열
