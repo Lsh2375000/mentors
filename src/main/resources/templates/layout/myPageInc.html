@@ -27,11 +27,11 @@
   .outerSidebar{ /*사이드바 모든 영역*/
     background-color: #d7e5ea;
     color: black;
-    padding-left: 50px;
-    width: 300px;
+    padding-left: 20px;
+    width: 330px;
   }
 
-  a.nav-link {
+  a.nav-link { /**/
     color: white;
     font-size: 20px;
   }
@@ -53,7 +53,7 @@
 
   .profileBox { /*프로필 영역*/
     border-bottom: 1px solid #717171;
-    width: 200px;
+    width: 250px;
     height: 100px;
     margin-left: 20px;
     display: flex;
@@ -62,7 +62,7 @@
   }
 
   #sidebar-wrapper .list-group {
-    width: 200px;
+    width: 250px;
     padding-bottom: 20px;
     margin-left: 20px;
     border-bottom: 1px solid #717171;
@@ -205,14 +205,15 @@
               </div>
             </th:block>
           </div>
-          <div class="list-group list-group-flush" style="margin-top: -30px">
+          <div class="list-group list-group-flush">
             <th:block th:if="${memberRole == 0}">
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${memberDTO.nickname})}">멘토링 목록     ></a>
             </th:block>
             <th:block th:if="${memberRole == 1}">
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
             </th:block>
-            <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개     ></a>
+            <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
             <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
           </div> <!--End List Group Flush-->
         </th:block>
@@ -239,11 +240,12 @@
             <div class="list-group list-group-flush">
               <th:block th:if="${memberRole == 0}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${memberDTO.nickname})}">멘토링 목록     ></a>
               </th:block>
               <th:block th:if="${memberRole == 1}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
-              </th:block>              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">[[${memberDTO.nickname}]]님의 소개     ></a>
+              </th:block>
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
               <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
             </div> <!--End List Group Flush-->
           </th:block>
@@ -259,15 +261,15 @@
                 <span class="nicknameSpan">[[${memberDTO.nickname}]]님</span>
                 <div class="reviewBox">
                   <span class="reviewSpan">수강평 개수  <span class="num">[[${reviewCnt}]]</span></span>
-                  <span class="reviewSpan">평균평점  <span class="num">[[${mentorDTO.score}]]</span></span>
+                    <span class="reviewSpan">평균평점  <span class="num">[[${mentorDTO.score}]]</span></span>
                 </div>
               </div>
               <!-- 회원 간단 정보 끝-->
 
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor}">멘토링 목록     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${#authentication.principal.getNickname()})}">멘토링 목록     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
               </div> <!--End List Group Flush-->
             </th:block>
@@ -285,7 +287,8 @@
               </div>
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/introduce">나의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTee(nickname=${#authentication.principal.getNickname()})}">멘토링 목록     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
               </div> <!--End List Group Flush-->
             </th:block>

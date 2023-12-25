@@ -56,6 +56,7 @@ public class MyPageController {
     public void mentorMyPageGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname) {
         log.info("mentorProfile GET...");
 
+        /*공통으로 담을 값*/
         MemberDTO memberDTO = memberService.getProfileNickname(nickname);
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
@@ -65,6 +66,7 @@ public class MyPageController {
 
         int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
         model.addAttribute("memberRole", memberRole);
+        /*공통으로 담을 값*/
 
 
         if (memberSecurityDTO != null) { // 로그인시 가져올 값
@@ -80,15 +82,14 @@ public class MyPageController {
           MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
           model.addAttribute("mentorDTO", mentorDTO);
         }
-
-
     }
     /*멘토 프로필 끝*/
     /*멘티 프로필 시작*/
     @GetMapping("/menteeProfile")
     public void menteeMyPageGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname) { // 멘티 마이페이지 GET
-        log.info("mentorProfile GET...");
+        log.info("menteeProfile GET...");
 
+        /*공통으로 담을 값*/
         MemberDTO memberDTO = memberService.getProfileNickname(nickname);
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
@@ -98,6 +99,7 @@ public class MyPageController {
 
         int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
         model.addAttribute("memberRole", memberRole);
+        /*공통으로 담을 값*/
 
         if(memberSecurityDTO != null) {
             if (memberSecurityDTO.getNickname().equals(nickname)) {
@@ -117,17 +119,78 @@ public class MyPageController {
 
     /*멘티 프로필 끝*/
 
+    /*자기 소개 시작*/
+    @GetMapping("/intro")
+    public void introduceGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname ) {
+        log.info("introduceGET() ...");
+
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("자기소개 memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        log.info("자기소개 회원 롤 : " + memberRole);
+        model.addAttribute("memberRole", memberRole);
+
+        // 마이페이지 자기소개 페이지
+        if (memberSecurityDTO != null) { // 로그인 하고 자기 소개 페이지로 갔을 때
+            if (memberSecurityDTO.getAuthorities().toArray()[0].toString().equals("ROLE_MENTOR")) {
+                log.info("멘토 유저 마이페이지 자기소개 진입");
+                /*멘토 로그인*/
+                MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+                model.addAttribute("mentorDTO", mentorDTO);
+
+                int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
+                log.info("멘티 자기소개 수강평 수");
+                model.addAttribute("reviewCnt", reviewCnt);
+
+            } else if (memberSecurityDTO.getAuthorities().toArray()[0].toString().equals("ROLE_MENTEE")) {
+                log.info("멘티 유저 마이페이지 자기소개 진입");
+                /*멘티 로그인*/
+                enterMenteePage(model, memberSecurityDTO); // 회원정보, 멘티정보 들고옴
+                int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+                log.info("멘티 자기소개 수강평 수");
+                model.addAttribute("reviewCnt", reviewCnt);
+            }
+        } else if (memberSecurityDTO == null){ // 로그인 안하고 유저의 자기소개 들어갔을 때
+            log.info("비로그인 유저 프로필 진입");
+            anonymousUserEnter(model, nickname);
+        }
+
+
+    }
+    /*자기 소개 끝*/
+
+
+
+
     /* 멘토 메인 영역*/
     @GetMapping("/mainListTor")// 내가 작성한 멘토링 목록 보기
     public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String nickname){
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainList = null;
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("로그인 여부 : " + memberSecurityDTO);
 
-        if(memberSecurityDTO != null){ // 로그인 했을때
-             mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
-             enterMentorPage(model, memberSecurityDTO);
-        } else { // 비 로그인 시
-            MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        if(memberSecurityDTO != null){
+            log.info("로그인 시");
+            if (memberSecurityDTO.getNickname().equals(nickname)) {
+                // 멘토 마이페이지에서 멘토링 목록진입
+                log.info("멘토 마이페이지 멘토링 목록");
+                enterMentorPage(model, memberSecurityDTO);
+                mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
+
+            } else {
+                // 다른 멘토의 프로필에서 멘토링 목록진입
+                log.info("다른 멘토 프로필의 멘토링 목록");
+                enterMentorProfile(model, nickname);
+                mainList = mainService.myPageList(pageRequestDTO, memberDTO.getMno());
+
+            }
+
+        } else if (memberSecurityDTO == null){
+            log.info("비로그인 멘토 멘토링 목록");
+            anonymousUserEnter(model, nickname);
             mainList = mainService.myPageList(pageRequestDTO, memberDTO.getMno());
         }
 
@@ -206,7 +269,7 @@ public class MyPageController {
     public void mainListTee(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String nickname){
         pageRequestDTO.setSize(12);
         PageResponseDTO<MainDTO> mainListTee = null;
-        
+
         if(memberSecurityDTO != null){ // 로그인 했을때
             mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
             enterMenteePage(model, memberSecurityDTO);
@@ -238,17 +301,22 @@ public class MyPageController {
         return "/mypage/paymentsHistory";
     }
 
-    private void enterMentorPage(Model model, MemberSecurityDTO memberSecurityDTO) { // 멘토페이지 GetMapping 입장 조건
+    private void enterMentorPage(Model model, MemberSecurityDTO memberSecurityDTO) {
+        // 멘토페이지 GetMapping 입장 조건
         MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
         log.info("memberDTO: " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
 
         MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
         log.info("mentorDTO: " + mentorDTO);
         model.addAttribute("mentorDTO", mentorDTO);
     }
 
-    private void enterMenteePage(Model model, MemberSecurityDTO memberSecurityDTO) { // 멘티페이지 GetMapping 입장 조건
+    private void enterMenteePage(Model model, MemberSecurityDTO memberSecurityDTO) {
+        // 멘티페이지 GetMapping 입장 조건
         MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
         log.info("memberDTO: " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
@@ -256,5 +324,49 @@ public class MyPageController {
         MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
         log.info("mentorDTO: " + menteeDTO);
         model.addAttribute("mentorDTO", menteeDTO);
+    }
+
+    private void enterMentorProfile(Model model, String nickname) {
+        // (나를 제외한)멘토 프로필에 들어갈때 해당 멘토의 닉네임을 가져와서 처리
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
+        log.info("mentorDTO : " + mentorDTO);
+        model.addAttribute("mentorDTO", mentorDTO);
+    }
+
+    private void anonymousUserEnter(Model model, String nickname) {
+        log.info("anonymousUserEnter ....");
+        // 비회원이 회원 프로필에 들어갔을때 닉네임을 파라미터로 가져와서 회원정보를 조회함
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        // 해당 회원의 ROLE을 확인
+        model.addAttribute("memberRole", memberRole);
+
+        if (memberRole == 0) { // 비회원이 멘토 프로필에 들어갔을 때
+            int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
+            model.addAttribute("reviewCnt", reviewCnt);
+            // 멘토에게 달린 수강평 수와 평균평점
+
+            MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
+            model.addAttribute("mentorDTO", mentorDTO);
+            // 멘토 정보
+
+        } else if (memberRole == 1) { // 비회원이 멘티 프로필에 들어갔을때
+            int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+            model.addAttribute("reviewCnt", reviewCnt);
+            // 멘티가 작성한 수강평 수
+
+            MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+            model.addAttribute("menteeDTO", menteeDTO);
+            // 멘티 정보
+        }
+
+
     }
 }
