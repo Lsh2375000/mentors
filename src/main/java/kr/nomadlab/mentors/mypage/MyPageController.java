@@ -119,11 +119,19 @@ public class MyPageController {
 
     /* 멘토 메인 영역*/
     @GetMapping("/mainListTor")// 내가 작성한 멘토링 목록 보기
-    public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
+    public void mainList(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String nickname){
         pageRequestDTO.setSize(12);
-        PageResponseDTO<MainDTO> mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
+        PageResponseDTO<MainDTO> mainList = null;
+        if(memberSecurityDTO != null){
+             mainList = mainService.myPageList(pageRequestDTO, memberSecurityDTO.getMno());
+             enterMentorPage(model, memberSecurityDTO);
+        } else {
+            MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+            mainList = mainService.myPageList(pageRequestDTO, memberDTO.getMno());
+        }
+
         log.info("end는 ?"+mainList.getEnd());
-        enterMentorPage(model, memberSecurityDTO);
+
 
         model.addAttribute("mainList", mainList);
         model.addAttribute("sort", pageRequestDTO.getSort());
@@ -194,15 +202,21 @@ public class MyPageController {
     /* 멘티 메인 영역*/
 
     @GetMapping("/mainListTee") // 멘토링 목록
-    public void mainListTee(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
+    public void mainListTee(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String nickname){
         pageRequestDTO.setSize(12);
+        PageResponseDTO<MainDTO> mainListTee = null;
+        if(memberSecurityDTO != null){
+            mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
+            enterMenteePage(model, memberSecurityDTO);
+            boolean isReview = mentorReviewService.isReview(memberSecurityDTO.getMno());
+            model.addAttribute("isReview", isReview);
+        }else{
+            MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+            mainListTee = mainService.mainListTee(pageRequestDTO, memberDTO.getMno());
+        }
 
-        PageResponseDTO<MainDTO> mainListTee = mainService.mainListTee(pageRequestDTO, memberSecurityDTO.getMno());
         log.info("서비스 sort ?"+pageRequestDTO.getSort());
-        enterMenteePage(model, memberSecurityDTO);
-        boolean isReview = mentorReviewService.isReview(memberSecurityDTO.getMno());
 
-        model.addAttribute("isReview", isReview);
         model.addAttribute("mainList", mainListTee);
         model.addAttribute("sort", pageRequestDTO.getSort());
     }
