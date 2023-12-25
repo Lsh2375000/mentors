@@ -133,6 +133,7 @@ public class MyPageController {
 
         log.info("end는 ?"+mainList.getEnd());
 
+        model.addAttribute("nickname", nickname);
         model.addAttribute("mainList", mainList);
         model.addAttribute("sort", pageRequestDTO.getSort());
     }
