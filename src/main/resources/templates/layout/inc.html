@@ -95,7 +95,9 @@
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-1 rounded" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
           </th:block>
           <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}"><!-- 회원 로그인 -->
-            <li class="nav-item mx-0 mx-lg-1"><span class="nav py-3 px-0 px-lg-3 rounded nicknameSpan">[<span th:text="${#authentication.principal.getNickname()}"></span>]보유 코인 : <span th:text="${#authentication.principal.getCoin()}"></span></span></li>
+            <li class="nav-item mx-0 mx-lg-1"><span class="nav py-3 px-0 px-lg-3 rounded nicknameSpan">[<span th:text="${#authentication.principal.getNickname()}"></span>]보유 코인 : <span th:text="${#authentication.principal.getCoin()}"></span>
+              <button class="btn btn-sm btn-primary" onclick="window.location.href='/payments'" style="margin-left: 10px;">충전하기</button></span>
+            </li>
             <li class="nav-item mx-0 mx-lg-1" style="position: relative;">
               <div class="notify" >
                 <img src="/img/basic/notify.png" alt="알림 이미지" height="50" width="50">
@@ -672,6 +674,7 @@
       });
     })
   }
+
   //모달 닫기
   function closeNotifyModal() {
     document.getElementById('notifyModal').style.display = 'none';
