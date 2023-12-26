@@ -55,15 +55,31 @@
 
     <!-- 채팅방 조회 -->
     <select id="selectRoomById" resultType="kr.nomadlab.mentors.chat.dto.ChatRoomDTO">
-        SELECT cr.*, (COUNT(cl.clNo) - 1) AS currentMembers
+        SELECT cr.*
         FROM chatRoom AS cr
-        LEFT JOIN chatList AS cl ON cr.roomId = cl.roomId
         WHERE cr.roomId = #{roomId}
     </select>
 
-    <!-- 채팅방에 해당 회원 조회 -->
+    <!-- 채팅방 참여회원 목록 조회 -->
+    <select id="selectChatMembers" resultType="kr.nomadlab.mentors.chat.dto.ChatListDTO">
+        SELECT cl.*, m.nickname
+        FROM chatList AS cl
+                 LEFT JOIN member AS m ON cl.mno = m.mno
+        WHERE cl.roomId = "be9b7a5a-04db-47a5-98bf-6e5e7003b886";
+    </select>
+
+    <!-- 채팅방에 해당 회원 존재 여부 확인 -->
     <select id="findMemberInRoom" resultType="Boolean">
         SELECT COUNT(*) FROM chatList WHERE roomId = #{roomId} AND mno = #{mno}
     </select>
 
+    <!-- 채팅방 나간회원 삭제 -->
+    <delete id="deleteChatMember">
+        DELETE FROM chatList WHERE roomId = #{roomId} and mno = #{mno}
+    </delete>
+
+    <!-- 채팅방 종료시 방장 mno를 0으로 변경 -->
+    <update id="updateLeaderMno">
+        UPDATE chatRoom SET mno = 0 WHERE roomId = #{roomId}
+    </update>
 </mapper>

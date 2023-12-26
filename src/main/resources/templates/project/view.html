@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/inc.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>상세페이지</title>
+</head>
+
+<body>
+
+
+<div layout:fragment="content">
+    <style>
+        * { margin: 0; padding: 0; }
+        ul, li { list-style: none; padding-left: 0; }
+        a { text-decoration: none; }
+
+        .view-container { background-color: #FFFFFF; padding: 100px 0;}
+        .view-header span {margin-right: 10px; color: #6c757d; }
+        .view-body { min-height: 600px; }
+        .tag-list { display: flex; }
+        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 5px 5px 5px 0;
+            font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
+        .tag-style a { display: block; color: var(--bs-body-color); }
+        .view-footer { padding: 20px; text-align: right; position: fixed; top: 40%; right: 5%; z-index: 9; }
+        .view-footer form { display: flex; flex-direction: column; align-items: center; }
+        .view-footer form button { margin-bottom: 1rem; width: 84px; font-weight: 400; cursor: pointer;
+            box-shadow: 0 3px 8px 0 rgba(33,37,41,.05); padding: 11px; border-radius: 8px;
+            color: #1b1c1d; border: 1px solid #e9ecef; background-color: #fff; }
+        .view-footer form button a { display: block; color: #1b1c1d; }
+        .comment-container { background-color: #f8f9fa; padding: 50px; }
+        .comment-container #comment-input { line-height: 2; }
+        .comment-list { padding-top: 40px; }
+        .comment { margin-bottom: 20px; padding: 20px 30px; border-radius: 5px; border: 1px solid #dee2e6; background-color: #FFFFFF; }
+        .edit-btn-area { margin-left: 0.5rem; }
+        .edit-btn-area button { background: none; border: none; text-decoration-line: underline; color: #6c757d; }
+        .comment-body .btn-area { margin-top: 1rem; }
+        .btn-area button { font-weight: 600; }
+        .reply-list { margin: 20px 0; }
+        .reply { border-left: 5px solid #dee2e6; padding: 15px; }
+        .pagination { justify-content: flex-end; }
+        .hide { display: none; }
+    </style>
+
+    <main th:with="link = ${pageRequestDTO.getLink()}">
+
+        <!-- 게시글 섹션 -->
+        <section class="view-container">
+            <h2>[[${project.title}]]</h2>
+            <div class="view-header">
+                <h5><a href="#">[[${project.writer}]]</a></h5>
+                <span>작성일 [[${#temporals.format(project.addDate, 'yyyy-MM-dd HH:mm')}]]</span>
+                <span>조회수 [[${project.hit}]]</span>
+            </div>
+            <hr>
+            <div class="view-body" th:utext="${project.content}"></div>
+            <ul class="tag-list">
+                <li class="tag-style" th:each="tag:${project.tagList}">
+                    <a th:href="|@{/project/list(hashTag=${tag.tagName})}|">[[${tag.tagName}]]</a>
+                </li>
+            </ul>
+            <div class="view-footer">
+                <form action="/project/remove" method="post">
+                    <button type="button">
+                        <a th:href="|@{/project/list}?${link}|" class="text-decoration-none">이전</a>
+                    </button>
+                    <button type="button" id="likeBtn">좋아요</button>
+                    <button type="button">
+                        <a th:href="|@{/project/modify(projectNo=${project.projectNo})}&${link}|">수정</a>
+                    </button>
+                    <button type="submit" id="removeBtn">삭제</button>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- 댓글 섹션 -->
+        <section class="comment-container">
+            <h3>댓글 <span class="comment-count">0</span></h3>
+            <input type="text" id="comment-input" name="content" class="form-control" placeholder="댓글을 작성해보세요">
+            <ul class="comment-list">
+
+            </ul>
+            <ul class="pagination reply-paging">
+
+            </ul>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/project/project.js"></script>
+    <script src="/js/project/reply.js"></script>
+
+</div> <!-- reply end -->
+</body>
+<script layout:fragment="script" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const projectNo = [[${project.projectNo}]];
+        const likeList = [[${project.likeList}]];
+        const mno = 2; // 회원 고유번호 테스트
+        let pjlNo = 0; // 좋아요 고유번호를 담을 변수
+        let isLike = false; // 좋아요 유무 확인
+
+        for (const like of likeList) {
+            isLike = (like.mno === mno);
+            pjlNo = like.pjlNo;
+        }
+
+        document.getElementById('likeBtn').addEventListener('click', async function (e) { // 좋아요 클릭 이벤트
+            e.preventDefault();
+            e.stopPropagation();
+
+            const projectLikeDTO = { projectNo: projectNo, mno: 2 }; // 좋아요 정보를 담을 객체
+            console.log(likeList);
+
+            if (isLike) { // 좋아요를 한경우
+                const result = await removeLike(pjlNo);
+                console.log(result);
+                isLike = !result;
+                alert("좋아요 취소")
+            }
+            else {
+                const result = await addLike(projectLikeDTO);
+                pjlNo = result.pjlNo;
+                console.log(pjlNo);
+                isLike = true;
+                alert("좋아요 등록")
+            }
+        });
+
+        // 삭제 버튼 클릭 시 이벤트
+        document.getElementById('removeBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const form = document.querySelector('.view-footer form');
+
+            if (confirm("정말 삭제하시겠습니까?")) {
+                form.innerHTML += `<input type="hidden" name="projectNo" value="${projectNo}">`;
+                form.submit();
+            }
+        });
+
+        function printReplies(page, size, goLast){
+            getList({projectNo, page, size, goLast}).then(
+                data => {console.log(data);
+                    printList(data.dtoList);
+                    printPages(data);
+                    printCount(data.total);
+                }
+            ).catch(e => {
+                console.error();
+            });
+        }
+        printReplies(1, 10); //무조건 호출
+        // printReplies(1, 10, true);
+
+        const commentCount = document.querySelector('.comment-count'); // 댓글 수 DOM
+        const commentList = document.querySelector('.comment-list');//댓글 목록 DOM
+        const replyPaging = document.querySelector('.reply-paging'); //페이지 목록 DOM
+
+        function printCount(total) { // 댓글 수 출력
+            const replyList = document.querySelectorAll('.reply');
+            let totalCount = total;
+
+            if (replyList.length > 0) {
+                totalCount += replyList.length;
+            }
+
+            commentCount.textContent = totalCount;
+        }
+
+        function printList(dtoList) { //댓글 목록 출력
+            let str = '';
+            let date;
+            let dateFomatter;
+            if (dtoList && dtoList.length > 0){
+                for(const comment of dtoList){ // 댓글
+                    date = comment.addDate; // 댓글 등록 날짜
+                    dateFomatter = `${date[0]}.${date[1].toString().padStart(2, '0')}.${date[2].toString().padStart(2, '0')}
+                        ${date[3]}:${date[4].toString().padStart(2, '0')}`; // 날짜 포맷
+                    console.log(date);
+                    str += `<li class ="comment" id="${comment.pjrNo}">
+                                <div class="comment-header">
+                                    <h6><a href="#">${comment.writer}</a></h6>
+                                    <span>${dateFomatter}</span>
+                                    <span>${!comment.cmEdtNot ? ' · 수정됨' : ''}</span>
+                                    <span class="edit-btn-area">
+                                        <button class="mod-comment-btn">수정</button>
+                                        <button class="remove-comment-btn">삭제</button>
+                                    </span>
+                                </div>
+                                <hr>
+                                <div class="comment-body">
+                                    <p>${comment.content}</p>
+                                    <input type="text" name="content" class="form-control mod-input hide" value="${comment.content}">
+                                    <div class="btn-area" data-reply-count="${comment.children.length}">
+                                        <button class="hide-btn btn btn-outline-primary
+                                            ${comment.children.length <= 0 ? 'hide' : ''}">△ 숨기기</button>
+                                        <button class="reg-reply-btn btn btn-outline-primary">답글달기</button>
+                                    </div>
+                                </div>
+                                <ul class="reply-list">`;
+                    for (const reply of comment.children) { // 대댓글
+                        date = reply.addDate; // 대댓글 등록 날짜
+                        dateFomatter = `${date[0]}.${date[1].toString().padStart(2, '0')}.${date[2].toString().padStart(2, '0')}
+                            ${date[3]}:${date[4].toString().padStart(2, '0')}`; // 날짜 포맷
+                        str += `<li class="reply" id="${reply.pjrNo}">
+                                <div>
+                                    <a href="#" style="font-weight: 600;">${reply.writer}</a>
+                                    <span>&nbsp;·&nbsp;</span>
+                                    <span>${dateFomatter}</span>
+                                    <span class="edit-btn-area">
+                                        <button class="remove-reply-btn">삭제</button>
+                                    </span>
+                                </div>
+                                <p>${reply.content}</p>
+                             </li>`;
+                    }
+                    str += `</ul>
+                            <input type="text" name="content" class="form-control reply-input hide" placeholder="답변을 작성해보세요">
+                        </li>`;
+                }
+            }
+            commentList.innerHTML = str;
+
+            // 댓글 수정 클릭 이벤트
+            document.querySelectorAll('.mod-comment-btn').forEach(modButton => {
+                modButton.addEventListener('click', function (e) {
+                    // 부모 엘리먼트(.comment)에서 input 엘리먼트 찾기
+                    const inputElement = this.closest('.comment').querySelector('.comment-body .mod-input');
+                    const pElement = inputElement.previousElementSibling;
+                    const modButton = e.target;
+                    console.log(pElement);
+
+                    inputElement.classList.toggle('hide');
+                    pElement.classList.toggle('hide');
+
+                    // input 엘리먼트에 class hide가 존재하지 않는 경우
+                    if (!inputElement.classList.contains('hide')) {
+                        console.log(inputElement.value);
+                        modButton.textContent = '취소';
+                        inputElement.focus();
+                        inputElement.addEventListener('keyup', modifyComment); // 키업 이벤트 등록
+                    }
+                    else {
+                        modButton.textContent = '수정';
+                        inputElement.removeEventListener('keyup', modifyComment); // 키업 이벤트 삭제
+                    }
+                });
+            });
+
+            // 댓글 수정 함수
+            async function modifyComment(e){
+                console.log(e.key);
+                const pjrNo = this.closest('.comment').id; // 댓글 고유 번호
+                const content = e.target; // 댓글 입력창
+                if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
+
+                if (e.key === 'Enter') {
+                    console.log('엔터키 누름');
+                    console.log('댓글작성 내용: ', content.value);
+
+                    // 매개변수로 전달할 객체
+                    const replyObj = {
+                        pjrNo: pjrNo,
+                        content: content.value,
+                        cmEdtNot: false
+                    };
+
+                    await modifyReply(replyObj)
+                        .then(result => {
+                            content.value = '';
+                            alert(result.pjrNo + '댓글이 수정되었습니다!');
+                            printReplies(page, size);
+                        })
+                        .catch(e => {
+                            console.log(e);
+                            alert('댓글 수정이 불가능합니다.');
+                        });
+                }
+            }
+
+            // 댓글 삭제 버튼 전체 목록
+            document.querySelectorAll('.remove-comment-btn').forEach(removeBtn => {
+               removeBtn.addEventListener('click', function (e) { // 댓글 삭제 클릭 이벤트
+                   const comment = this.closest('.comment'); // 댓글
+                   console.log(comment);
+                   const pjrNo = comment.id; // 댓글 고유번호
+                   const replyCount = comment.querySelector('.btn-area').dataset.replyCount; // 답변 갯수
+
+                   if (replyCount > 0) { // 답변이 존재하는 경우
+                       alert('답변이 달리면 댓글을 삭제할 수 없습니다.');
+                       return;
+                   }
+
+                   removeReply(pjrNo).then(result => {
+                       alert(result.pjrNo + '댓글이 삭제되었습니다.');
+                       page = 1; // 해당 댓글이 삭제시 1페이지로 이동
+                       printReplies(page, size);
+                   }).catch(e => {
+                       console.log(e);
+                   });
+               });
+            });
+
+            // 대댓글 삭제 버튼 목록
+            document.querySelectorAll('.remove-reply-btn').forEach(removeBtn => {
+                removeBtn.addEventListener('click', function (e) { // 대댓글 삭제 클릭 이벤트
+                    const pjrNo = this.closest('.reply').id; // 대댓글 고유번호
+
+                    removeReply(pjrNo).then(result => {
+                        alert(result.pjrNo + '댓글이 삭제되었습니다.');
+                        page = 1; // 해당 댓글이 삭제시 1페이지로 이동
+                        printReplies(page, size);
+                    }).catch(e => {
+                        console.log(e);
+                    });
+                });
+            });
+
+            // 대댓글 숨김 버튼 전체 목록
+            document.querySelectorAll('.hide-btn').forEach(hideButton => {
+                hideButton.addEventListener('click', function (e) {
+                    const replyList = this.closest('.comment').querySelector('.reply-list'); // 대댓글 목록
+                    const replyCount = this.closest('.btn-area').dataset.replyCount;
+                    console.log(replyList);
+                    console.log(replyCount);
+
+                    replyList.classList.toggle('hide');
+
+                    if (!replyList.classList.contains('hide')) {
+                        e.target.textContent = '△ 숨기기';
+                    }
+                    else {
+                        e.target.textContent = `▽ ${replyCount}개 답글`;
+                    }
+                });
+            });
+
+            // 대댓글 등록 버튼 전체 목록
+            document.querySelectorAll('.reg-reply-btn').forEach(registerButton => {
+                registerButton.addEventListener('click', function (e) {
+                    const inputElement = this.closest('.comment').querySelector('.reply-input'); // 대댓글 입력창
+
+                    inputElement.classList.toggle('hide');
+
+                    if (!inputElement.classList.contains('hide')) { // 입력창이 클래스에 hide가 없는 경우
+                        e.target.textContent = '취소하기';
+                        inputElement.focus();
+                        inputElement.addEventListener('keyup', registerReply); // 키업 이벤트 등록
+                    }
+                    else {
+                        e.target.textContent = '답글달기';
+                        inputElement.value = '';
+                        inputElement.removeEventListener('keyup', registerReply); // 키업 이벤트 등록
+                    }
+                });
+            });
+        }
+
+        function printPages(data){ //페이지 목록 출력
+            let pageStr = '';
+            if (data.prev){ // 이전 페이지
+                pageStr += `<li class="page-item"><a class="page-link" data-page="${data.start -1}">PREV</a></li>`;
+            }
+            for (let i = data.start; i <= data.end; i++){
+                pageStr += `<li class="page-item ${i === data.page ? "active" : ""}">
+                          <a class="page-link" data-page="${i}">${i}</a></li>`;
+            }
+            if (data.next){ // 다음 페이지
+                pageStr += `<li class="page-item"><a class="page-link" data-page="${data.end + 1}">NEXT</a></li>`;
+            }
+            console.log(pageStr);
+            replyPaging.innerHTML = pageStr;
+        }
+
+        const commentInput = document.getElementById('comment-input'); // 댓글 등록 입력창
+        commentInput.addEventListener('keyup', registerReply); // 키업 이벤트 등록
+
+        // 댓글 등록 함수
+        async function registerReply(e) {
+            console.log(e.key);
+            const content = e.target; // 댓글 작성 내용
+            const comment = content.closest('.comment'); // 댓글 가져오기
+
+            if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
+
+            if (e.key === 'Enter') {
+                console.log('엔터키 누름');
+                console.log('댓글작성 내용: ', content.value);
+
+                // 매개변수로 전달할 객체
+                const replyObj = {
+                    mno: 1, // 임시 회원 번호
+                    projectNo: projectNo,
+                    content: content.value,
+                    writer: 'testNick' // 임시 닉네임
+                };
+
+                if (comment != null) { // 댓글이 존재하는 경우
+                    replyObj.parentNo = comment.id;
+                }
+
+                await addReply(replyObj).then(result => { //등록이 된 후 결과처리
+                    alert(result.data.pjrNo);
+                    content.value = '';
+                    printReplies(1, 10); //댓글목록갱신
+                }).catch(e => {
+                    alert('exception');
+                });
+            }
+        }
+
+        // 페이징 클릭
+        let page = 1;
+        let size = 10;
+        replyPaging.addEventListener('click', function (e){
+            e.preventDefault();
+            e.stopPropagation();
+
+            const target = e.target;
+            if (!target || target.tagName != 'A'){
+                return;
+            }
+
+            const pageNum = target.getAttribute("data-page");
+            page = pageNum
+            printReplies(page, size);
+        }, false);
+
+    });
+</script>
+</html>

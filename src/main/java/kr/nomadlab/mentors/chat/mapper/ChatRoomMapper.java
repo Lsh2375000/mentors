@@ -18,6 +18,12 @@ public interface ChatRoomMapper {
 
     public ChatRoomDTO selectRoomById(String roomId); // 채팅방 조회
     
+    public List<ChatListDTO> selectChatMembers(String roomId); // 채팅방에 참여한 회원 목록 조회
+    
     public Boolean findMemberInRoom(@Param("roomId") String roomId, @Param("mno") Long mno); // 채팅방에 해당 회원 존재 여부
+
+    
+    public void deleteChatMember(ChatListDTO chatListDTO); // 채팅방 나간 회원번호 삭제
+    public void updateLeaderMno(String roomId); // 채팅방 방장이 나갈경우 mno를 0으로 변경
 
 }
