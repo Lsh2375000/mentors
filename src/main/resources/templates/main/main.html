@@ -13,8 +13,30 @@
         background-color: #efefef;
     }
     .banner{
-        background-color: #0dcaf0;
-        height: 200px;
+    }
+    .mentorRank{
+        width: 200px;
+        height: 250px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.3);
+    }
+    .mentorLan{
+        border: 1px solid #7a7a7a;
+        border-radius: 4px;
+        padding: 2px;
+    }
+    .ranking{
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+    .ranking .card_score{
+        cursor: pointer;
+        margin: 0 auto;
+        width: 60px;
     }
     .fa-crown{
         font-size: 50px;
@@ -40,6 +62,7 @@
         background-color: #00b000;
     }
     .tabBtn{
+        border-radius: 5px;
         background-color: transparent;
         background-image: none;
         border: none;
@@ -48,7 +71,7 @@
         font-size: 20px;
     }
     .tabBtn:hover{
-        color: #0dcaf0;
+        color: aqua;
         font-weight: 600;
     }
     input{
@@ -99,6 +122,8 @@
         font-size: 18px
     }
     .filter_reset{
+        border: none;
+        background-color: inherit;
         text-decoration: none;
         color: black;
         font-weight: bold;
@@ -168,7 +193,9 @@
     .modalNickName{
         color: black;
         font-weight: bold;
-        border-bottom: 1px solid black;
+    }
+    .modalNickName a{
+        text-decoration: underline;
     }
     .mentorInfo{
         color: #00c471;
@@ -189,29 +216,74 @@
     }
     .pageNum{
         cursor: pointer;
+        border-radius: 5px;
+    }
+    .reviewList{
+        margin-bottom: 10px;
+    }
+    .reviewScore{
+        margin-bottom: 8px;
+    }
+    .stars{
+        font-weight: bold;
+        color: #c5c500;
+        font-size: 20pt;
+    }
+    .reviewComment{
+        font-size: 15pt;
+        margin-bottom: 7px;
+    }
+    .reviewDate{
+        color: #abb0b5;
     }
 </style>
 <body>
 <!--        멘토 랭킹 배너-->
-    <div layout:fragment="banner">
-    <div class="d-flex justify-content-between w-75" style="margin: 0 auto; padding-top: 50px; height: 100px;">
-        <div class="text-center">
-            <i class="fa-solid fa-crown" style="color: #ffd700;"></i><br>
-            멘토1번 닉네임<br>
-            멘토1번 전공언어<br>
-            멘토1번 스코어
-        </div>
-        <div class="text-center">
-            <i class="fa-solid fa-crown" style="color: #c0c0c0;"></i><br>
-            멘토2번 닉네임<br>
-            멘토2번 전공언어<br>
-            멘토2번 스코어
-        </div>
-        <div class="text-center">
-            <i class="fa-solid fa-crown" style="color: #b87333;"></i><br>
-            멘토3번 닉네임<br>
-            멘토3번 전공언어<br>
-            멘토3번 스코어
+<div layout:fragment="banner">
+    <div class="d-flex justify-content-evenly w-75" style="margin: 0 auto; padding-top: 50px;">
+        <div class="mentorRank" th:each="mentor:${mentorList}">
+            <div class="text-center ranking" th:if="${mentor.ranking == 1}">
+                <div>
+                    <i class="fa-solid fa-crown" style="color: #ffd700;"></i><br>
+                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a>
+                </div>
+                <div>
+                    <span th:each="language : ${#strings.arraySplit(mentor.devLanguage, ',')}">
+                        <span class="mentorLan" th:text="${language}"></span>
+                    </span>
+                </div>
+                <div class="card_score">
+                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                </div>
+            </div>
+            <div class="text-center ranking" th:if="${mentor.ranking == 2}">
+                <div>
+                    <i class="fa-solid fa-crown" style="color: #c0c0c0;"></i><br>
+                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a>
+                </div>
+                <div>
+                    <span th:each="language : ${#strings.arraySplit(mentor.devLanguage, ',')}">
+                        <span class="mentorLan" th:text="${language}"></span>
+                    </span>
+                </div>
+                <div class="card_score">
+                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                </div>
+            </div>
+            <div class="text-center ranking" th:if="${mentor.ranking == 3}">
+                <div>
+                    <i class="fa-solid fa-crown" style="color: #b87333;"></i><br>
+                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a>
+                </div>
+                <div>
+                    <span th:each="language : ${#strings.arraySplit(mentor.devLanguage, ',')}">
+                        <span class="mentorLan" th:text="${language}"></span>
+                    </span>
+                </div>
+                <div class="card_score">
+                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -225,9 +297,9 @@
         </th:block>
 
         <div class="d-flex justify-content-center w-75 mt-4 ms-auto gap-xxl-5">
-            <button type="button" class="tabBtn" id="allBtn" th:style="${paidFree == 'all' ? 'background-color: yellow;' : ''}">전체</button>
-            <button type="button" class="tabBtn" id="freeBtn" value="free" th:style="${paidFree == 'free' ? 'background-color: yellow;' : ''}">무료</button>
-            <button type="button" class="tabBtn" id="paidBtn" value="paid" th:style="${paidFree == 'paid' ? 'background-color: yellow;' : ''}">유료</button>
+            <button type="button" class="tabBtn" id="allBtn" th:style="${paidFree == 'all' ? 'background-color: #3498db; color:white;' : ''}">전체</button>
+            <button type="button" class="tabBtn" id="freeBtn" value="free" th:style="${paidFree == 'free' ? 'background-color: #3498db; color:white;' : ''}">무료</button>
+            <button type="button" class="tabBtn" id="paidBtn" value="paid" th:style="${paidFree == 'paid' ? 'background-color: #3498db; color:white;' : ''}">유료</button>
         </div>
 <!--        메인 콘텐츠-->
         <div class="d-flex mt-3 gap-4">
@@ -321,7 +393,7 @@
                                 <a th:href="@{/mypage/mentorProfile(nickname=${mainList.nickName})}">[[${mainList.nickName}]]</a>
                             </div>
                             <div class="card_score">
-                                <a href="#"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mainList.score}]]</a>
+                                <a th:onclick="|reviewListBtn(${mainList.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mainList.score}]]</a>
                             </div>
                         </div>
                     </a>
@@ -330,15 +402,16 @@
         </div>
 <!--        메인 콘텐츠 끝-->
         <!--    페이징-->
-        <div class="page_wrap paging d-flex justify-content-end w-75 mt-3 mb-5">
-            <ul class="pagination flex-wrap" th:with="mainList=${mainList}">
+        <div class="page_wrap paging d-flex mt-3 mb-5">
+            <div class="w-25"></div>
+            <ul class="pagination flex-wrap w-75 d-flex justify-content-center" th:with="mainList=${mainList}">
                 <li class="page-item" th:if="${mainList.prev}">
                     <a class="page-link pageNum" th:data-num="${mainList.start - 1}" style="color: black;">이전</a>
                 </li>
                 <th:block th:each="i: ${#numbers.sequence(mainList.start, mainList.end)}">
                     <th:block th:if="${i != 0}">
                         <li th:class="${mainList.page == i} ? 'page-item-active' : 'page-item'" >
-                            <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'color:red; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
+                            <a class="page-link pageNum"  th:data-num="${i}" th:style="${mainList.page == i} ? 'background-color:#3498db; color:white; font-weight:bold;' : 'color:black;'">[[${i}]]</a>
                         </li>
                     </th:block>
                 </th:block>
@@ -361,7 +434,7 @@
                             <div class="modalNickName">
                             </div>
                             <h2 class="mt-2 modalTitle"></h2>
-                            <div class="d-flex justify-content-between" style="border-bottom: 1px solid black">
+                            <div class="d-flex justify-content-between p-1" style="border-bottom: 1px solid #ababab">
                                 <div>
                                     <span class="mt-2 mentorInfo">멘토 정보</span>
                                     <div class="mt-3">
@@ -406,6 +479,21 @@
                         <p>비타민 : <img src="/img/basic/비타민.png" width="25px" height="25px"><span class="modalPrice"></span> 개</p>
 <!--                        본인 글이거나 멘토는 신청하기 안보임-->
                         <div class="enrollBtnDiv">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--    수강평 목록 출력 모달-->
+        <div class="modal reviewListModal" id="reviewListModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header" style="border: none; padding:8px;">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="reviewWrap">
 
                         </div>
                     </div>
@@ -530,8 +618,8 @@
                 modalIntroduce.innerHTML = `${data.content}`;
                 modalPrice.innerHTML = `${data.price}`;
                 modalLanguage.innerHTML = `${data.devLanguage}`;
-                modalStartDate.innerHTML = `${data.startDate}`;
-                modalEndDate.innerHTML = `${data.endDate}`;
+               modalStartDate.innerHTML = `${data.startDate[0]+'-'+data.startDate[1]+'-'+ data.startDate[2]}`;
+               modalEndDate.innerHTML = `${data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2]}`;
                 if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
                     console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
                     // 만석이면 disabled 적용
@@ -632,7 +720,60 @@
         })
     })
 
+    // 수강평 목록 출력 모달
+    const reviewListModal = new bootstrap.Modal(document.querySelector('.reviewListModal'));
+    const reviewWrap = document.querySelector('.reviewWrap');
 
+    async function reviewListBtn(mno) {
+        try {
+            const data = await reviewList(mno);
+            let str = "";
+            for (const review of data) {
+                const months = review.addDate[1].toString().padStart(2, '0');
+                const days = review.addDate[2].toString().padStart(2, '0');
+                const hours = review.addDate[3].toString().padStart(2, '0');
+                const minutes = review.addDate[4].toString().padStart(2, '0');
+
+                // 기본으로 5개의 빈 별표를 생성
+                const emptyStars = '<span class="stars">&#9734;</span>'.repeat(5);
+                // review.score 값에 따라서 일부 별표를 색칠해줌
+                const coloredStars = '<span class="stars">&#9733;</span>'.repeat(review.score);
+                // 남은 빈 별표를 추가
+                const remainingEmptyStars = '<span class="stars">&#9734;</span>'.repeat(5 - review.score);
+
+                // 별표를 표시하기 위한 HTML 문자열 생성
+                const stars = `${coloredStars}${remainingEmptyStars}`;
+
+                // 리뷰 정보를 템플릿 리터럴로 추가
+                // 리뷰 점수와 코멘트를 템플릿 리터럴로 추가
+                str += `
+                <div class="reviewList">
+                    <div class="reviewScore">
+                        ${stars}
+                    </div>
+                    <div class="reviewComment">
+                        ${review.review}
+                    </div>
+                    <p class="reviewDate">${review.addDate[0]+`-`+months+`-`+days+` `+hours+`:`+minutes}</p>
+                </div>
+            `;
+            }
+            reviewWrap.innerHTML = str;
+            reviewListModal.show();
+        } catch (error) {
+            console.error("Error fetching review data:", error);
+        }
+    }
+
+    async function reviewList(mno) {
+        try {
+            const response = await axios.get(`/mypage/reviewList/${mno}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching review list:", error);
+            throw error; // 오류를 상위로 다시 던지기
+        }
+    }
 
 </script>
 </body>

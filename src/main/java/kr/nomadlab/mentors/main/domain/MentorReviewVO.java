@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @ToString
 public class MentorReviewVO {
     private Long mrNo;
+    private Long mbNo; // 게시물 번호
     private Long mentorMno; // 멘토 mno
     private Long menteeMno; // 멘티 mno
     private Double score; // 별점

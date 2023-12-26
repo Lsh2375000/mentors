@@ -6,6 +6,8 @@ import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.dto.MainDTO;
 import kr.nomadlab.mentors.main.service.MainService;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
+import kr.nomadlab.mentors.member.dto.MentorDTO;
+import kr.nomadlab.mentors.member.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,12 +27,13 @@ public class MainController {
 
     private final MainService mainService;
     private final ChatService chatService;
+    private final MentorService mentorService;
 
-    @GetMapping("")
+    @GetMapping("") // 메인
     public String main(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO) {
         pageRequestDTO.setSize(20);
-        PageResponseDTO<MainDTO> mainList = mainService.list(pageRequestDTO);
-
+        PageResponseDTO<MainDTO> mainList = mainService.list(pageRequestDTO); // 멘토링 목록
+        List<MentorDTO> mentorDTOList = mentorService.listByRanking(); // 멘토 회원 목록
         log.info("스킵 "+pageRequestDTO.getSkip());
         log.info("사이즈 "+pageRequestDTO.getSize());
 
@@ -56,6 +59,7 @@ public class MainController {
             model.addAttribute("language", language);
         }
 
+        model.addAttribute("mentorList", mentorDTOList);
         model.addAttribute("paidFree", paidFree);
         model.addAttribute("sort", sort);
         model.addAttribute("keyword", keyword);

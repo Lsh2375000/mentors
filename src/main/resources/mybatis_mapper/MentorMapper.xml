@@ -11,6 +11,9 @@
     <select id="selectAll" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
         SELECT * FROM `mentor` ORDER BY `mno` DESC;
     </select>
+    <select id="listByRanking" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
+        select * from `mentor` order by `ranking` asc;
+    </select>
 
     <select id="selectOne" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
         SELECT * FROM `mentor` WHERE `memberId` = #{memberId};

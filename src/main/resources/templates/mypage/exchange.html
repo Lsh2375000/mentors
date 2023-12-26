@@ -170,7 +170,7 @@
               <label class="form-label">계좌번호</label>
               <div class="input-group">
                 <select id="bankSelect" class="form-select bankChoose" name="bank">
-                  <option>직접입력</option>
+                  <option>은행명</option>
                   <option value="국민은행">국민은행</option>
                   <option value="신한은행">신한은행</option>
                   <option value="우리은행">우리은행</option>
@@ -233,16 +233,19 @@
     registerModal.show();
   })
 
-  document.getElementById('bankSelect').addEventListener('change', function (e) {
-    const bankNameInput = document.querySelector('input[name=bankName]');
-    if(e.target.value ==='직접입력'){
-      bankNameInput.value='';
-    }else {
-      bankNameInput.value = e.target.value;
-    }
-  });
+
   const form = document.getElementById('bankInfoForm');
   document.querySelector('.registerBtn').addEventListener('click', function(){
+    const bankSelect = document.querySelector('#bankSelect');
+    if(bankSelect.value === '' || bankSelect.value === '은행명'){
+      alert('은행을 선택해주세요');
+      return;
+    }
+    const accountNumInput = document.querySelector('input[name=accountNum]');
+    if(accountNumInput.value.length <= 0) {
+      alert("계좌 번호를 입력해주세요");
+      return;
+    }
     form.submit();
     alert('환전 신청이 완료 되었습니다.\n' +
             '기간이 2~3일 정도 소요될 수 있습니다.');

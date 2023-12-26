@@ -6,13 +6,25 @@
 
     <!--수강평 작성-->
     <insert id="insert">
-        insert into `mentorReview` (`mentorMno`, `menteeMno`, `score`, `review`, `addDate`)
-        values (#{mentorMno}, #{menteeMno}, #{score}, #{review}, now())
+        insert into `mentorReview` (`mbNo`,`mentorMno`, `menteeMno`, `score`, `review`, `addDate`)
+        values (#{mbNo}, #{mentorMno}, #{menteeMno}, #{score}, #{review}, now())
     </insert>
     <!--멘토의 score 업데이트-->
     <update id="updateScore">
-        UPDATE mentor SET score = (SELECT ROUND(AVG(score), 1) FROM mentorReview WHERE mno = #{mno}) WHERE mno = #{mno};
+        UPDATE mentor SET score = (SELECT ROUND(AVG(score), 1) FROM mentorReview WHERE mentorMno = #{mentorMno}) WHERE mno = #{mentorMno};
     </update>
+    <!--멘토의 ranking 업데이트-->
+    <update id="updateRanking">
+        UPDATE mentor AS m
+            JOIN (SELECT mno, (@rank := @rank + 1) AS ranking
+            FROM mentor,
+            (SELECT @rank := 0) AS b
+            ORDER BY score DESC) AS subquery
+        ON m.mno = subquery.mno
+            SET m.ranking = subquery.ranking;
+    </update>
+
+
 
     <!--해당멘티가 작성한 수강평 목록-->
     <select id="menteeReviewList" resultType="kr.nomadlab.mentors.main.domain.MentorReviewVO">
@@ -21,14 +33,17 @@
 
     <!--해당 멘토에게 달린 수강평 목록 -->
     <select id="mentorReviewList" resultType="kr.nomadlab.mentors.main.domain.MentorReviewVO">
-        select * from `mentorReview` where `mno` = #{mno}
+        select * from `mentorReview` where `mentorMno` = #{mentorMno}
     </select>
-
+    <!--멘티가 특정 멘토링에 수강평을 달았는지 여부 -->
+    <select id="isReview" resultType="boolean">
+        select count(mbNo) from mentorReview where menteeMno = #{menteeMno};
+    </select>
     <!--멘토에게 달린 수강평 수-->
     <select id="mentorReviewCount" resultType="int">
         select count(`review`) from `mentorReview` where `mentorMno` = #{mentorMno}
     </select>
-
+<!--    멘티가 작성한 수강평 수-->
     <select id="menteeReviewCount" resultType="int">
         select count(`review`) from `mentorReview` where `menteeMno` = #{menteeMno}
     </select>

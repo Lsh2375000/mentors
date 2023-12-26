@@ -101,7 +101,7 @@ public class MainServiceImpl implements MainService{
     @Override
     public PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno) { // 마이페이지에서 멘토가 작성한 글 목록보기
 
-        List<MainVO> voList = mainMapper.myPageList(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), mno);
+        List<MainVO> voList = mainMapper.myPageList(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), pageRequestDTO.getSort(), mno);
 
         List<MainDTO> dtoList = new ArrayList<>();
 
@@ -110,7 +110,7 @@ public class MainServiceImpl implements MainService{
             dtoList.add(mainDTO);
         });
 
-        int total = mainMapper.myPageCount(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), mno);
+        int total = mainMapper.myPageCount(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), pageRequestDTO.getSort(), mno);
 
         PageResponseDTO<MainDTO> responseDTO = PageResponseDTO.<MainDTO>withAll()
                 .dtoList(dtoList)

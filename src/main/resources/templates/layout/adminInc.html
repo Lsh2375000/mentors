@@ -69,7 +69,7 @@
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg bg-secondary text-uppercase sticky-top deActive" id="mainNav">
   <div style="margin-left: 200px;">
-    <a class="navbar-brand" href="/admin/main"><img class="mainImage" src="/assets/progrow2.png" style="width: 110px; height: 90px;"/></a>
+    <a class="navbar-brand" href="/admin"><img class="mainImage" src="/img/basic/mentorsLogo.png" width="300"/></a>
     <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
             aria-expanded="false" aria-label="Toggle navigation">
@@ -80,9 +80,10 @@
   <div style="margin-right: 100px;">
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/admin/boardList">게시판 목록</a></li>
-        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/admin/memberList">회원 목록</a></li>
+        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/admin">통계</a></li>
+        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/admin/exchangeList">환전 신청목록</a></li>
         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/admin/mentorApply">멘토 신청목록</a></li>
+        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/admin/userPage">사용자 페이지</a></li>
       </ul>
     </div>
   </div>
@@ -95,41 +96,7 @@
 
 </div>
 
-<footer class="footer text-center">
-  <div class="container">
-    <div class="row">
-      <!-- Footer Location-->
-      <div class="col-lg-4 mb-5 mb-lg-0">
-        <h4 class="text-uppercase mb-4">Location</h4>
-        <p class="lead mb-0">
-          2215 John Daniel Drive
-          <br />
-          Clark, MO 65243
-        </p>
-      </div>
-      <!-- Footer Social Icons-->
-      <div class="col-lg-4 mb-5 mb-lg-0">
-        <h4 class="text-uppercase mb-4">Around the Web</h4>
-        <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-facebook-f"></i></a>
-        <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-twitter"></i></a>
-        <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-linkedin-in"></i></a>
-        <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-dribbble"></i></a>
-      </div>
-      <!-- Footer About Text-->
-      <div class="col-lg-4">
-        <h4 class="text-uppercase mb-4">About Freelancer</h4>
-        <p class="lead mb-0">
-          Freelance is a free to use, MIT licensed Bootstrap theme created by
-          <a href="http://startbootstrap.com">Start Bootstrap</a>
-          .
-        </p>
-      </div>
-    </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <th:block layout:fragment="script">
 
 </th:block>

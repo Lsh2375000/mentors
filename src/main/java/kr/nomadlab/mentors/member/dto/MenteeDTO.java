@@ -14,4 +14,5 @@ public class MenteeDTO {
     private String memberId; // 멘티 이메일
     private String nickname; // 멘티 닉네임
     private String devLanguage; // 멘티가 관심있는 개발언어
+    private String intro;
 }
