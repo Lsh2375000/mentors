@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -155,6 +156,11 @@ public class MemberController {
         log.info(memberDTO);
         model.addAttribute("memberDTO", memberDTO);
         MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+        if(menteeDTO.getDevLanguage()!=null){
+            List<String> devList = List.of(menteeDTO.getDevLanguage().split(","));
+            model.addAttribute("devList", devList);
+            log.info(devList);
+        }
         model.addAttribute("menteeDTO", menteeDTO);
     }
     @PreAuthorize("hasRole('ROLE_MENTOR')")
