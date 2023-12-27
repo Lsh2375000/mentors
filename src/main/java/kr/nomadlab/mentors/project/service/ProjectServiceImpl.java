@@ -144,7 +144,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public PageResponseDTO<ProjectDTO> getMyProjectList(Long mno, PageRequestDTO pageRequestDTO) {
-        List<ProjectVO> voList = projectMapper.selectMyProjectList(mno, pageRequestDTO);
+        List<ProjectVO> voList = projectMapper.selectMyProjectList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
         List<ProjectDTO> dtoList = new ArrayList<>();
 
         voList.forEach(projectVO -> {
