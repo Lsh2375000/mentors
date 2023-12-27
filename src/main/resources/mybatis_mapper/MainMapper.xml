@@ -133,10 +133,6 @@
     <delete id="deleteOne">
         DELETE FROM main WHERE mbNo = #{mbNo}
     </delete>
-<!--    내가 작성한 메인 글 여부-->
-    <select id="isMentoring" resultType="int">
-        select count(*) from main where mno = #{mno};
-    </select>
 <!--    채팅방 현재 인원 업데이트-->
     <update id="updateCurPeople">
         update main set curPeople = (select count(*) from chatList where role = 'MEMBER' and roomId = #{roomId}) where roomId = #{roomId}
@@ -178,4 +174,10 @@
     <select id="mainListTeeCnt" resultType="int">
         select count(*) from main inner join chatList on main.roomId = chatList.roomId where chatList.mno = #{mno} <include refid="myPageSearch"/>
     </select>
+    <update id="trueIsMentoring">
+        update `mentor` set isMentoring = true where mno = #{mno}
+    </update>
+    <update id="falseIsMentoring">
+        update `mentor` set isMentoring = false where mno = #{mno}
+    </update>
 </mapper>

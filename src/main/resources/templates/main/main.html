@@ -291,7 +291,7 @@
     <div layout:fragment="content">
 <!--        멘토로 로그인한 사람만 보이게-->
         <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}">
-            <th:block sec:authorize="hasRole('ROLE_MENTOR')" th:if="${isMentoring == false}"> <!--멘토 로그인시-->
+            <th:block sec:authorize="hasRole('ROLE_MENTOR')" th:if="${mentorDTO.isMentoring == false}"> <!--멘토 로그인시-->
                 <button type="button" class="writeBtn"><a href="/main/write">멘토링 작성</a></button>
             </th:block>
         </th:block>
@@ -592,6 +592,9 @@
                 }
                 passMessage(messageObj).then(data => {
                     alert('신청완료되었습니다.\n 마이페이지에서 확인하세요');
+                    let coinValue = document.querySelector('.getCoin');
+                    const coin = parseInt(coinValue.textContent);
+                    coinValue.textContent = coin-price;
                 })
             })
             //여기에 채팅방
@@ -634,6 +637,7 @@
 
         })
     }
+
     // 채팅방 입장
     async function enterChat(chatObj){
         await axios.post(`/main/chat`,chatObj);

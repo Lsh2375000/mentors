@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Data
 @NoArgsConstructor
@@ -18,4 +20,6 @@ public class ExchangeDto {
     private int coin;
     private int amount;
     private boolean isComplete;
+    private LocalDateTime addDate;
+    private LocalDateTime completeDate;
 }

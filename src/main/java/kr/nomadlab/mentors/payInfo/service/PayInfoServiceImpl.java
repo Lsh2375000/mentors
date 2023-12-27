@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.payInfo.service;
 
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
+import kr.nomadlab.mentors.main.mapper.MainMapper;
 import kr.nomadlab.mentors.member.mapper.MemberMapper;
 import kr.nomadlab.mentors.payInfo.dto.PayInfoDto;
 import kr.nomadlab.mentors.payInfo.mapper.PayInfoMapper;
@@ -25,8 +26,10 @@ public class PayInfoServiceImpl implements PayInfoService{
     private final PayInfoMapper payInfoMapper;
     private final MemberMapper memberMapper;
 
+    private final MainMapper mainMapper;
+
     @Override
-    public void savePayInfo(Long mno, PayInfoDto payInfoDto) {
+    public Long savePayInfo(Long mno, PayInfoDto payInfoDto) {
         PayInfoVO payInfoVO = PayInfoVO.builder()
                 .mbNo(payInfoDto.getMbNo())
                 .mentorMno(payInfoDto.getMentorMno())
@@ -35,7 +38,9 @@ public class PayInfoServiceImpl implements PayInfoService{
                 .price(payInfoDto.getPrice())
                 .build();
 
-        payInfoMapper.insertPayInfo(payInfoVO);
+        Long payInfoNo = payInfoMapper.insertPayInfo(payInfoVO);
+
+        return payInfoNo;
     }
 
     //00시 00분 00초에 전날 완료된 강의 멘토에게 비타민 보내기
@@ -47,6 +52,7 @@ public class PayInfoServiceImpl implements PayInfoService{
         log.info(payInfoVOList);
         payInfoVOList.forEach(payInfoVO -> {
             payInfoMapper.updateIsComplete(payInfoVO.getMbNo());
+            mainMapper.falseIsMentoring(payInfoVO.getMentorMno());
             memberMapper.insertMentorCoin(payInfoVO);
         });
     }

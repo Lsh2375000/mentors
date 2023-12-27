@@ -99,6 +99,16 @@ public class MainServiceImpl implements MainService{
     }
 
     @Override
+    public void trueIsMentoring(Long mno) { //글 작성시 isMentoring true
+        mainMapper.trueIsMentoring(mno);
+    }
+
+    @Override
+    public void falseIsMentoring(Long mno) { //수업 종료시 isMentoring false
+        mainMapper.falseIsMentoring(mno);
+    }
+
+    @Override
     public PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno) { // 마이페이지에서 멘토가 작성한 글 목록보기
 
         List<MainVO> voList = mainMapper.myPageList(pageRequestDTO.getSize(), pageRequestDTO.getSkip(), pageRequestDTO.getSort(), mno);
