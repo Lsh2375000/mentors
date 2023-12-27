@@ -143,4 +143,30 @@ public class QuestionServiceImpl implements QuestionService {
             tagList.forEach(this::addQuestionTag); // 수정한 태그 목록 DB에 추가
         }
     }
+
+    @Override
+    public PageResponseDTO<QuestionDTO> getMyQuestionList(Long mno, PageRequestDTO pageRequestDTO) {
+        List<QuestionVO> voList = questionMapper.selectMyQuestionList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
+        List<QuestionDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(questionVO -> {
+            QuestionDTO questionDTO = modelMapper.map(questionVO, QuestionDTO.class);
+
+            if (questionVO.getTagVOList().size() > 0) { // 태그 목록이 존재하는 경우
+                List<QuestionTagDTO> tagList = new ArrayList<>(); // 해시 태그 목록을 담을 리스트 객체
+                questionVO.getTagVOList().forEach(questionTagVO -> tagList.add(
+                        modelMapper.map(questionTagVO, QuestionTagDTO.class)));
+                questionDTO.setTagList(tagList);
+            }
+
+            dtoList.add(questionDTO);
+        });
+
+        int total = questionMapper.getMyCount(mno);
+
+        return PageResponseDTO.<QuestionDTO>withAll()
+                .dtoList(dtoList)
+                .total(total)
+                .pageRequestDTO(pageRequestDTO).build();
+    }
 }

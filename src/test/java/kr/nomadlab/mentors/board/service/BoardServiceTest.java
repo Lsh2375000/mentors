@@ -64,6 +64,7 @@ public class BoardServiceTest {
     void getMyBoardListTest() { // 내가 작성한 게시글 목록 테스트
         Long mno = 1L;
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder().build();
-        PageResponseDTO<BoardDTO> boardDTOList = boardService.getMyBoardList(mno, pageRequestDTO);
+        PageResponseDTO<BoardDTO> responseDTO = boardService.getMyBoardList(mno, pageRequestDTO);
+        responseDTO.getDtoList().forEach(log::info);
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 public class ProjectVO {
     private Long projectNo; // 게시글 고유번호
-    private String memberId; // 회원 아이디
+    private Long mno; // 회원 고유번호
     private String writer; // 회원 닉네임
     private String title; // 게시글 제목
     private String content; // 게시글 내용

@@ -10,6 +10,7 @@ import kr.nomadlab.mentors.question.domain.QuestionTagVO;
 import kr.nomadlab.mentors.question.domain.QuestionVO;
 import kr.nomadlab.mentors.question.dto.QuestionTagDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -47,4 +48,9 @@ public interface QuestionMapper {
 
     void updateComplete(Long qno); // 질문 해결 상태로 변경
 
+    List<QuestionVO> selectMyQuestionList(@Param("mno") Long mno,
+                                          @Param("skip") int skip,
+                                          @Param("size") int size); // 질문 전체 조회
+
+    int getMyCount(Long mno); // 본인 질문 총 갯수
 }

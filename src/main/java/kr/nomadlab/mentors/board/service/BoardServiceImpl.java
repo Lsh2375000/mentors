@@ -140,7 +140,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public PageResponseDTO<BoardDTO> getMyBoardList(Long mno, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<BoardDTO> getMyBoardList(Long mno, PageRequestDTO pageRequestDTO) { // 본인이 작성한 게시글 목록 조회
         List<BoardVO> voList = boardMapper.selectMyBoardList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
         List<BoardDTO> dtoList = new ArrayList<>();
 

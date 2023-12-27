@@ -32,4 +32,6 @@ public interface ProjectService {
 
     void modifyHashTag(Long projectNo, List<ProjectTagDTO> tagList); // 해쉬태그 수정
 
+    PageResponseDTO<ProjectDTO> getMyProjectList(Long mno, PageRequestDTO pageRequestDTO); // 게시글 목록 조회
+
 }
