@@ -435,11 +435,9 @@
                 e.stopPropagation();
                 return;
             }
-            const result = await lastCheck(emailVal, nicknameVal);
             const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,12}$/;
             const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 
-            const result2 = await matchConfirmKey(authCodeVal);
 
             // 회원 가입 유효성 검사
             if (!regExp.test(emailVal)) {
@@ -484,7 +482,11 @@
                 e.stopPropagation();
                 return;
 
-            } else if (authCodeVal === ''.trim()) { // 인증문자가 비어 있으면
+            }
+            const result = await lastCheck(emailVal, nicknameVal);
+
+            const result2 = await matchConfirmKey(authCodeVal);
+            if (authCodeVal === ''.trim()) { // 인증문자가 비어 있으면
 
                 alert('이메일 인증을 진행해 주세요.');
                 e.preventDefault();

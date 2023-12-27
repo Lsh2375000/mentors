@@ -1,14 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/myPageInc.html}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<style layout:fragment="style">
+    .view-link{
+        text-decoration: none;
+        color: black;
+    }
+    .board-container{
+        background-color: #e7e7e7;
+        border-radius: 5px;
+        padding: 0 20px 0 20px;
+    }
+    .board-container:hover{
+        background-color: #cacaca;
+    }
+    .board-title{
+        border-bottom: 1px solid #d2d2d2;
+    }
+    .board-content{
+        height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-bottom: 1px solid #d2d2d2;
+    }
+    .pagination{
+        cursor: pointer;
+    }
+</style>
 <body>
+    <div layout:fragment="content">
+        <div class="mt-3 p-3">
+            <div class="d-flex justify-content-between">
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList(nickname=${memberDTO.nickname})}">프로젝트 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList/hireBoard(nickname=${memberDTO.nickname})}">프로젝트 모집     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList/qnaBoard(nickname=${memberDTO.nickname})}">작성한 질문     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList/qnanswerBoard(nickname=${memberDTO.nickname})}">작성한 답변    ></a>
+            </div>
+            <div class="mt-3">
+                <h1 style="font-size: 30pt" th:if="${#authentication.principal == 'anonymousUser' || #authentication.principal.nickname != memberDTO.nickname}">[[${memberDTO.nickname}]] 님이 작성한 프로젝트 소개</h1>
+                <h1 style="font-size: 30pt" th:unless="${#authentication.principal == 'anonymousUser' || #authentication.principal.nickname != memberDTO.nickname}">내가 작성한 프로젝트 소개</h1>
+                <hr>
+            </div>
+        </div>
 
-<a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
-<a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
-<a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
+        <!-- 게시글 목록 -->
+        <ul class="board-list p-3">
+            <li class="board-container mb-4" th:each="introList:${introList.dtoList}">
+                <a href="#" class="view-link">
+                    <div class="board">
+                        <h3 class="board-title pt-3 pb-3">
+                            [[${introList.title}]]
+                        </h3>
+                        <div class="board-content pt-3 pb-3" th:utext="${introList.content}">
+                        </div>
+                        <div class="board-footer d-flex justify-content-between pt-3 pb-3">
+                            <div class="footer-left">
+                                <span class="writer">
+                                    [[${introList.writer}]]
+                                </span>
+                            </div>
+                            <div>
+                                <span class="addDate" th:text="${#temporals.format(introList.addDate, 'yyyy-MM-dd HH:mm')}">
+                                </span>
+                            </div>
+                            <div>
+                                <span>조회수 [[${introList.hit}]]</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+        <!--/* 페이징 start */-->
+        <div class="pt-1">
+            <div class="d-flex justify-content-center mb-3">
+                <ul class="pagination flex-wrap">
+                    <li class="page-item" th:if="${introList.prev}">
+                        <a class="page-link" th:data-num="${introList.start - 1}">이전</a>
+                    </li>
+                    <th:block th:each="i: ${#numbers.sequence(introList.start, introList.end)}">
+                        <li th:if="${i != 0}" th:class="${introList.page == i} ? 'page-item active' : 'page-item'">
+                            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:if="${introList.next}">
+                        <a class="page-link" th:data-num="${introList.end + 1}">다음</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--/* 페이징 end */-->
 
+    </div>
 </body>
+<script layout:fragment="script" th:inline="javascript">
+
+    const pageNums = document.querySelectorAll('.page-link'); // 페이지번호
+    const nickname = [[${nickname}]]
+    // 페이지번호 클릭
+    pageNums.forEach(pageNum => {
+        pageNum.addEventListener('click', function (){
+            const page = pageNum.getAttribute('data-num');
+            location.href =`/mypage/menteeBoardList?nickname=${nickname}&page=${page}`;
+        })
+    })
+
+    // img 빼기
+    const boardContents = document.querySelectorAll('.board-content');
+
+    function filterImgTags(content) {
+        // 적절한 방법으로 DOM을 생성
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+
+        // <img> 태그를 찾아 제거
+        const imgTags = tempDiv.getElementsByTagName('img');
+        for (let i = imgTags.length - 1; i >= 0; i--) {
+            imgTags[i].parentNode.removeChild(imgTags[i]);
+        }
+
+        // 필터링된 내용을 반환
+        return tempDiv.innerHTML;
+    }
+
+    // 모든 board-content에 대해 작업
+    boardContents.forEach((boardContent) => {
+        const editorContent = boardContent.innerHTML;
+        const filteredContent = filterImgTags(editorContent);
+
+        // 필터링된 내용을 해당 board-content에 다시 설정
+        boardContent.innerHTML = filteredContent;
+
+    });
+
+
+</script>
 </html>

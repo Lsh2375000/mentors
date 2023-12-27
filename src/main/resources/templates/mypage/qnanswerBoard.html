@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout/myPageInc.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>멘티 답변</title>
+</head>
+<style layout:fragment="style">
+  .view-link{
+    text-decoration: none;
+    color: black;
+  }
+  .board-container{
+    background-color: #e7e7e7;
+    border-radius: 5px;
+    padding: 0 20px 0 20px;
+  }
+  .board-container:hover{
+    background-color: #cacaca;
+  }
+  .board-title{
+    border-bottom: 1px solid #d2d2d2;
+  }
+  .board-content{
+    height: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-bottom: 1px solid #d2d2d2;
+  }
+  .pagination{
+    cursor: pointer;
+  }
+</style>
+<body>
+<div layout:fragment="content">
+  <div class="mt-3 p-3">
+    <div class="d-flex justify-content-between">
+      <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList(nickname=${memberDTO.nickname})}">프로젝트 소개     ></a>
+      <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList/hireBoard(nickname=${memberDTO.nickname})}">프로젝트 모집     ></a>
+      <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList/qnaBoard(nickname=${memberDTO.nickname})}">작성한 질문     ></a>
+      <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeBoardList/qnanswerBoard(nickname=${memberDTO.nickname})}">작성한 답변    ></a>
+    </div>
+    <div class="mt-3">
+      <h1 style="font-size: 30pt" th:if="${#authentication.principal == 'anonymousUser' || #authentication.principal.nickname != memberDTO.nickname}">[[${memberDTO.nickname}]] 님이 작성한 답변</h1>
+      <h1 style="font-size: 30pt" th:unless="${#authentication.principal == 'anonymousUser' || #authentication.principal.nickname != memberDTO.nickname}">내가 작성한 답변</h1>
+      <hr>
+    </div>
+  </div>
+
+  <!-- 게시글 목록 -->
+  <ul class="board-list p-3">
+    <li class="board-container mb-4" th:each="answerList:${answerList.dtoList}">
+      <a href="#" class="view-link">
+        <div class="board">
+          <h3 class="board-title pt-3 pb-3">
+            [[${answerList.title}]]
+          </h3>
+          <p class="board-content pt-3 pb-3">[[${answerList.content}]]</p>
+          <div class="board-footer d-flex justify-content-between pt-3 pb-3">
+            <div class="footer-left">
+              <span class="writer">
+                  [[${answerList.writer}]]
+              </span>
+            </div>
+            <div>
+              <span class="addDate" th:text="${#temporals.format(answerList.addDate, 'yyyy-MM-dd HH:mm')}">
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
+  <!--/* 페이징 start */-->
+  <div class="pt-1">
+    <div class="d-flex justify-content-center mb-3">
+      <ul class="pagination flex-wrap">
+        <li class="page-item" th:if="${answerList.prev}">
+          <a class="page-link" th:data-num="${answerList.start - 1}">이전</a>
+        </li>
+        <th:block th:each="i: ${#numbers.sequence(answerList.start, answerList.end)}">
+          <li th:if="${i != 0}" th:class="${answerList.page == i} ? 'page-item active' : 'page-item'">
+            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+          </li>
+        </th:block>
+        <li class="page-item" th:if="${answerList.next}">
+          <a class="page-link" th:data-num="${answerList.end + 1}">다음</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!--/* 페이징 end */-->
+
+</div>
+</body>
+
+<script layout:fragment="script" th:inline="javascript">
+
+  const pageNums = document.querySelectorAll('.page-link'); // 페이지번호
+  const nickname = [[${nickname}]]
+  // 페이지번호 클릭
+  pageNums.forEach(pageNum => {
+    pageNum.addEventListener('click', function (){
+      const page = pageNum.getAttribute('data-num');
+      location.href =`/mypage/menteeBoardList/qnanswerBoard?nickname=${nickname}&page=${page}`;
+    })
+  })
+
+</script>
+</html>
