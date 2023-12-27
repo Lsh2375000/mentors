@@ -198,7 +198,8 @@ public class MemberController {
     public String menteeModifyPost(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, MenteeDTO menteeDTO, MemberDTO memberDTO) {
         log.info("mentee Modify POST() ....");
         log.info( "닉네임 확인 " + memberSecurityDTO.getNickname());
-
+        log.info(memberDTO);
+        log.info(menteeDTO);
 
         memberService.modifyMember(memberDTO);
         menteeDTO.setMemberId(memberSecurityDTO.getMemberId());
