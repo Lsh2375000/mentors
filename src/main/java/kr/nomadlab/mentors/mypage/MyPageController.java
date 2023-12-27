@@ -243,13 +243,14 @@ public class MyPageController {
         exchangeDto.setMno(member.getMno());
         exchangeDto.setCoin(member.getCoin());
         exchangeDto.setAmount(member.getCoin()*1000);
-        exchangeService.insertExchange(exchangeDto);
         PayInfoDto payInfoDto = PayInfoDto.builder()
                 .price(member.getCoin())
                 .mentorMno(member.getMno())
                 .mbNo(0L)
                 .build();
-        payInfoService.savePayInfo( 0L,payInfoDto); //0은 관리자
+        Long payInfoNo = payInfoService.savePayInfo( 0L,payInfoDto); //0은 관리자
+        exchangeDto.setExNo(payInfoNo);
+        exchangeService.insertExchange(exchangeDto);
         memberService.exchangeCoin(member.getMno());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

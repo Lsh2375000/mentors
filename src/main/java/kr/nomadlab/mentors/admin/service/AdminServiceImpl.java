@@ -2,7 +2,10 @@ package kr.nomadlab.mentors.admin.service;
 
 import kr.nomadlab.mentors.admin.domain.AdminVO;
 import kr.nomadlab.mentors.admin.dto.AdminDTO;
+import kr.nomadlab.mentors.admin.dto.AdminExSearchDTO;
 import kr.nomadlab.mentors.admin.mapper.AdminMapper;
+import kr.nomadlab.mentors.exChange.dto.ExchangeDto;
+import kr.nomadlab.mentors.exChange.vo.ExchangeVO;
 import kr.nomadlab.mentors.member.domain.MentorApplyVO;
 import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +56,42 @@ public class AdminServiceImpl implements AdminService{
         });
 
         return dtoList;
+    }
+
+    @Override
+    public List<ExchangeDto> adminExchangeSearch(AdminExSearchDTO adminExSearchDTO) {
+        List<ExchangeVO> exchangeVOList = adminMapper.getExSearchAll(adminExSearchDTO);
+        List<ExchangeDto> exchangeDtoList = new ArrayList<>();
+        exchangeVOList.forEach(exchangeVO -> {
+            ExchangeDto exchangeDto = modelMapper.map(exchangeVO, ExchangeDto.class);
+            exchangeDtoList.add(exchangeDto);
+        });
+
+        return exchangeDtoList;
+    }
+
+    @Override
+    public List<ExchangeDto> adminExchangedSearch(AdminExSearchDTO adminExSearchDTO) {
+        List<ExchangeVO> exchangeVOList = adminMapper.getExedSearchAll(adminExSearchDTO);
+        List<ExchangeDto> exchangeDtoList = new ArrayList<>();
+        exchangeVOList.forEach(exchangeVO -> {
+            ExchangeDto exchangeDto = modelMapper.map(exchangeVO, ExchangeDto.class);
+            exchangeDtoList.add(exchangeDto);
+        });
+
+        return exchangeDtoList;
+    }
+
+    @Override
+    public ExchangeDto adminExchange(Long exNo) {
+        ExchangeVO exchangeVO = adminMapper.getExchangeInfo(exNo);
+        ExchangeDto exchangeDto = modelMapper.map(exchangeVO, ExchangeDto.class);
+
+        return exchangeDto;
+    }
+
+    @Override
+    public void completeExchange(Long exNo) {
+        adminMapper.exchangeComplete(exNo);
     }
 }

@@ -1,0 +1,131 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminInc.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin ExchangedList</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <!--        검색 창-->
+  <div class="row content">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Search</h5>
+          <form action="/admin/exchangedList" method="get">
+            <div class="mb-3">
+              <input type="checkbox" name="types" value="mno"/>회원번호
+              <input type="checkbox" name="types" value="memberName"/>이름
+              <input type="checkbox" name="types" value="bank"/>은행
+              <input type="text" placeholder="검색어를 입력해주세요." readonly style="text-align: right; border: none; outline: none"/>
+              <input type="text" name="keyword" class="form-control">
+            </div>
+            <div class="input-group mb-3 amountDiv">
+              <input type="number" name="up" class="form-control"> ~
+              <input type="number" name="down" class="form-control">
+            </div>
+            <div class="input-group mb-3 dueDateDiv">
+              <input type="date" name="from" class="form-control">
+              <input type="date" name="to" class="form-control">
+            </div>
+            <div class="input-group mb-3">
+              <div class="float-end">
+                <button class="btn btn-primary searchBtn" type="button">Search</button>
+                <button class="btn btn-info clearBtn" type="reset">Clear</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 검색창 끝 -->
+  <div class="row content">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+            <tr>
+              <nav class="left-side-menu">
+                <ul class="exCompleted">
+                  <li><a href="/admin/exchange" class="selected">환전 대기</a></li>
+                  <li><a href="/admin/exchanged" class="selected">화전 완료</a></li>
+                </ul>
+              </nav>
+            </tr>
+            <tr>
+              <th scope="col">회원번호</th>
+              <th scope="col">이름</th>
+              <th scope="col">은행</th>
+              <th scope="col">계좌번호</th>
+              <th scope="col">금액</th>
+              <th scope="col">환전날짜</th>
+            </tr>
+            </thead>
+            <tbody class="exchangedList">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="/js/admin/admin.js"></script>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function(){
+    printList('', '', '', '','', '');
+
+    const searchBtn = document.querySelector('.searchBtn');
+    const typesId = document.querySelectorAll('input[name=types]');
+
+    const keyword = document.querySelector('input[name=keyword]');
+    const up = document.querySelector('input[name=up]');
+    const down = document.querySelector('input[name=down]');
+    const from = document.querySelector('input[name=from]');
+    const to = document.querySelector('input[name=to]');
+    const searchResult = document.querySelector("tbody");
+
+
+
+    searchBtn.addEventListener('click', function () {
+      const checkedId = [];
+
+      for (let i = 0; i < typesId.length; i++) {
+        if (typesId[i].checked === true) {
+          checkedId.push(typesId[i].value);
+        }
+      }
+      console.log(checkedId);
+      printList(checkedId, keyword.value, parseInt(up.value), parseInt(down.value), from.value, to.value)
+
+    });
+
+
+
+    function printList(checkId, keyword, up, down, from, to){
+      getExchangedList(checkId, keyword, up, down, from, to).then(data => {
+        let str = ''
+        data.forEach(exchange => {
+          formatAmount = exchange.amount;
+          let formattedAmount = new Intl.NumberFormat('ko-KR').format(formatAmount);
+          str += `<tr>
+                                <td>${exchange.mno}</td>
+                                <td>${exchange.memberName}</td>
+                                <td>${exchange.bank}</td>
+                                <td>${exchange.accountNum}</td>
+                                <td>`+formattedAmount+`</td>
+                                <td>${exchange.completeDate[0]}-${exchange.completeDate[1]}-${exchange.completeDate[2]}</td>
+                            </tr>`;
+        });
+        searchResult.innerHTML = str;
+      });
+    }
+  });
+</script>
+</body>
+</html>

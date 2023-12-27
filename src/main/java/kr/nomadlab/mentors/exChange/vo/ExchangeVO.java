@@ -2,6 +2,8 @@ package kr.nomadlab.mentors.exChange.vo;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -16,4 +18,6 @@ public class ExchangeVO {
     private int coin;
     private int amount;
     private boolean isComplete;
+    private LocalDateTime addDate;
+    private LocalDateTime completeDate;
 }

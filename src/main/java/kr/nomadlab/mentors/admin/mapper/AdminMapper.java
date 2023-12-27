@@ -1,6 +1,8 @@
 package kr.nomadlab.mentors.admin.mapper;
 
 import kr.nomadlab.mentors.admin.domain.AdminVO;
+import kr.nomadlab.mentors.admin.dto.AdminExSearchDTO;
+import kr.nomadlab.mentors.exChange.vo.ExchangeVO;
 import kr.nomadlab.mentors.member.domain.MemberVO;
 import kr.nomadlab.mentors.member.domain.MentorApplyVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,4 +20,11 @@ public interface AdminMapper {
     List<MentorApplyVO> getApplyList();
 
 
+    List<ExchangeVO> getExSearchAll(AdminExSearchDTO adminExSearchDTO);
+
+    List<ExchangeVO> getExedSearchAll(AdminExSearchDTO adminExSearchDTO);
+
+    ExchangeVO getExchangeInfo(Long exNo);
+
+    void exchangeComplete(Long exNo);
 }

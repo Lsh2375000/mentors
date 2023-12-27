@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.payInfo.mapper.PayInfoMapper">
-    <insert id="insertPayInfo">
+    <insert id="insertPayInfo" useGeneratedKeys="true" keyProperty="payInfoNo">
         INSERT INTO `payInfo` (`mbNo`, `mentorMno`, `menteeMno`, `price`, `isComplete`, `completeDate`, `addDate`)
         values (#{mbNo}, #{mentorMno}, #{menteeMno}, #{price}, false, #{completeDate} ,now())
     </insert>

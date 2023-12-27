@@ -49,11 +49,10 @@ public class MainController {
         String paidFree = pageRequestDTO.getPaidFree();
 
         if(memberSecurityDTO != null){
-            Long mno = memberSecurityDTO.getMno();
-            boolean isMentoring = mainService.isMentoring(mno);
-            model.addAttribute("isMentoring", isMentoring);
-            log.info("멘토링 여부 /? " + isMentoring);
-
+            if(memberSecurityDTO.getAuthorities().toArray()[0].toString().equals("ROLE_MENTOR")) {
+                MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+                model.addAttribute("mentorDTO", mentorDTO);
+            }
         }
         // 방문자 등록
         VisitorDTO visitorDTO = new VisitorDTO();
@@ -100,6 +99,7 @@ public class MainController {
         String roomId = chatService.createChatRoom(memberSecurityDTO.getMno(), mainDTO.getTitle(), mainDTO.getMaxPeople()).getRoomId();
         mainDTO.setRoomId(roomId);
         mainService.register(mainDTO);
+        mainService.trueIsMentoring(memberSecurityDTO.getMno());
 
         return "redirect:/main";
     }

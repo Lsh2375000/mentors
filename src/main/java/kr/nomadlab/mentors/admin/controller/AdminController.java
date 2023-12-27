@@ -1,5 +1,7 @@
 package kr.nomadlab.mentors.admin.controller;
 
+import jakarta.validation.Valid;
+import kr.nomadlab.mentors.admin.dto.AdminExSearchDTO;
 import kr.nomadlab.mentors.admin.dto.AdminTypeDTO;
 import kr.nomadlab.mentors.admin.service.AdminService;
 import kr.nomadlab.mentors.admin.service.CoinStatsService;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -243,9 +246,25 @@ public class AdminController {
     }
 
 
-    @GetMapping("/exchangeList")
-    public void exchangeList(){ // 환전 신청 처리 페이지
-        
+    @GetMapping("/exchange")
+    public void exchangeList(@Valid AdminExSearchDTO adminExSearchDTO, BindingResult bindingResult, Model model){
+        log.info(adminExSearchDTO);
+        if(bindingResult.hasErrors()){
+            adminExSearchDTO =AdminExSearchDTO.builder().build();
+        }
+        log.info("this is payments exchange");
+        log.info(adminService.adminExchangeSearch(adminExSearchDTO));
+        model.addAttribute("adminSearchDTO", adminService.adminExchangeSearch(adminExSearchDTO));
+    }
+    @GetMapping("/exchanged")
+    public void exchangedList(@Valid AdminExSearchDTO adminExSearchDTO, BindingResult bindingResult, Model model){
+        log.info(adminExSearchDTO);
+        if(bindingResult.hasErrors()){
+            adminExSearchDTO =AdminExSearchDTO.builder().build();
+        }
+        log.info("this is payments exchange");
+        log.info(adminService.adminExchangeSearch(adminExSearchDTO));
+        model.addAttribute("adminSearchDTO", adminService.adminExchangedSearch(adminExSearchDTO));
     }
 
 

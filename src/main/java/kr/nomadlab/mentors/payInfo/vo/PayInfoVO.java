@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 public class PayInfoVO {
+    private Long payInfoNo;
     private Long mbNo;
     private Long mentorMno;
     private Long menteeMno;
