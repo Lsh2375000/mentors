@@ -13,7 +13,7 @@ import java.util.List;
 @ToString
 public class QuestionVO {
     private Long qno; // 질문 고유번호
-    private String memberId; // 회원 아이디
+    private Long mno; // 회원 아이디
     private String writer; // 회원 닉네임
     private String title; // 질문 제목
     private String content; // 질문 내용

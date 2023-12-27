@@ -163,6 +163,8 @@ public class MemberController {
         MemberDTO memberDTO = memberService.getOne(memberSecurityDTO.getMemberId());
         log.info(memberDTO);
         model.addAttribute("memberDTO", memberDTO);
+
+
         MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
         if(menteeDTO.getDevLanguage()!=null){
             List<String> devList = List.of(menteeDTO.getDevLanguage().split(","));

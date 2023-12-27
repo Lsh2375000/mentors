@@ -7,11 +7,13 @@ import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.board.service.BoardService;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
+import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.question.dto.QuestionDTO;
 import kr.nomadlab.mentors.question.dto.QuestionTagDTO;
 import kr.nomadlab.mentors.question.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,7 +62,9 @@ public class QuestionController {
     }
 
     @PostMapping("/register")
-    public String registerPOST(QuestionDTO questionDTO, @RequestParam("hashTags") String[] hashTags){ // 게시글 등록
+    public String registerPOST(QuestionDTO questionDTO,
+                               @RequestParam("hashTags") String[] hashTags,
+                               @AuthenticationPrincipal MemberSecurityDTO member){ // 게시글 등록
         log.info("/question/register(POST)...");
         log.info(questionDTO);
 
@@ -75,7 +79,7 @@ public class QuestionController {
             log.info("No Hash Tags provided.");
         }
 
-        questionDTO.setMemberId("testId");
+        questionDTO.setMno(member.getMno());
         
         questionService.registerQuestion(questionDTO);
 

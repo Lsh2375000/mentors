@@ -21,14 +21,14 @@
         .post-footer a { margin-right: 10px; }
     </style>
 
-    <div class="post-container">
+    <div class="post-container" th:with="member=${#authentication.principal}">
         <form action="/project/register" method="post" name="frmRegister" enctype="multipart/form-data">
             <div class="post-header">
                 <h1><input type="text" name="title" class="form-control" placeholder="제목을 입력하세요"></h1>
                 <div class="tag-wrap">
                     <input type="text" name="hashTag" class="form-control" placeholder="태그를 설정하세요 (최대 10개)">
                 </div>
-                <input type="hidden" name="writer" th:value="test5678"> <!-- 시큐리티로 로그인된 사용자 정보 전달 -->
+                <input type="hidden" name="writer" th:value="${member.nickname}"> <!-- 시큐리티로 로그인된 사용자 정보 전달 -->
             </div>
             <hr>
             <div class="post-body">

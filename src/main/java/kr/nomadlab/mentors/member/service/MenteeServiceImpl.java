@@ -55,9 +55,9 @@ public class MenteeServiceImpl implements MenteeService{
     }
 
     @Override
-    public MenteeDTO getOneByMno(Long mno) {
+    public MenteeDTO getByMno(Long mno) {
         log.info("service getOneByMno() ...");
-        MenteeVO menteeVO = menteeMapper.selectOneByMno(mno);
+        MenteeVO menteeVO = menteeMapper.getByMno(mno);
         MenteeDTO menteeDTO = modelMapper.map(menteeVO, MenteeDTO.class);
         return menteeDTO;
     }
@@ -85,7 +85,7 @@ public class MenteeServiceImpl implements MenteeService{
     }
 
     @Override
-    public Long getApplyMno(Long mno) {
+    public Long getApplyByMno(Long mno) {
         Long applyMno = menteeMapper.getApplyMno(mno);
         return applyMno;
     }

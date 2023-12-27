@@ -46,7 +46,7 @@
         .hide { display: none; }
     </style>
 
-    <main th:with="link = ${pageRequestDTO.getLink()}">
+    <main th:with="link = ${pageRequestDTO.getLink()}, member=${#authentication.principal}">
 
         <!-- 게시글 섹션 -->
         <section class="view-container">
@@ -69,10 +69,11 @@
                         <a th:href="|@{/project/list}?${link}|" class="text-decoration-none">이전</a>
                     </button>
                     <button type="button" id="likeBtn">좋아요</button>
-                    <button type="button">
+                    <button type="button" th:class="${member != 'anonymousUser' && member.mno == question.mno} ? '' : 'hide'">
                         <a th:href="|@{/project/modify(projectNo=${project.projectNo})}&${link}|">수정</a>
                     </button>
-                    <button type="submit" id="removeBtn">삭제</button>
+                    <button type="submit" id="removeBtn"
+                            th:class="${member != 'anonymousUser' && member.mno == question.mno} ? '' : 'hide'">삭제</button>
                 </form>
             </div>
 
@@ -81,7 +82,8 @@
         <!-- 댓글 섹션 -->
         <section class="comment-container">
             <h3>댓글 <span class="comment-count">0</span></h3>
-            <input type="text" id="comment-input" name="content" class="form-control" placeholder="댓글을 작성해보세요">
+            <input type="text" id="comment-input" name="content" class="form-control" placeholder="댓글을 작성해보세요"
+                   th:disabled="${member == 'anonymousUser'}">
             <ul class="comment-list">
 
             </ul>
@@ -101,7 +103,9 @@
     document.addEventListener('DOMContentLoaded', function () {
         const projectNo = [[${project.projectNo}]];
         const likeList = [[${project.likeList}]];
-        const mno = 2; // 회원 고유번호 테스트
+        const auth = [[${#authentication.principal}]];
+        const mno = auth !== 'anonymousUser' ? auth.mno : 0; // 회원 고유번호 테스트
+        const nickname = auth !== 'anonymousUser' ? auth.nickname : '';
         let pjlNo = 0; // 좋아요 고유번호를 담을 변수
         let isLike = false; // 좋아요 유무 확인
 
@@ -114,8 +118,13 @@
             e.preventDefault();
             e.stopPropagation();
 
-            const projectLikeDTO = { projectNo: projectNo, mno: 2 }; // 좋아요 정보를 담을 객체
+            const projectLikeDTO = { projectNo: projectNo, mno: mno }; // 좋아요 정보를 담을 객체
             console.log(likeList);
+
+            if (auth === 'anonymousUser') { // 로그인 안한경우
+                alert('로그인을 해주세요.');
+                return;
+            }
 
             if (isLike) { // 좋아요를 한경우
                 const result = await removeLike(pjlNo);
@@ -189,7 +198,7 @@
                                     <h6><a href="#">${comment.writer}</a></h6>
                                     <span>${dateFomatter}</span>
                                     <span>${!comment.cmEdtNot ? ' · 수정됨' : ''}</span>
-                                    <span class="edit-btn-area">
+                                    <span class="edit-btn-area ${comment.mno !== mno ? 'hide' : ''}">
                                         <button class="mod-comment-btn">수정</button>
                                         <button class="remove-comment-btn">삭제</button>
                                     </span>
@@ -214,7 +223,7 @@
                                     <a href="#" style="font-weight: 600;">${reply.writer}</a>
                                     <span>&nbsp;·&nbsp;</span>
                                     <span>${dateFomatter}</span>
-                                    <span class="edit-btn-area">
+                                    <span class="edit-btn-area ${comment.mno !== mno ? 'hide' : ''}">
                                         <button class="remove-reply-btn">삭제</button>
                                     </span>
                                 </div>
@@ -345,6 +354,12 @@
             // 대댓글 등록 버튼 전체 목록
             document.querySelectorAll('.reg-reply-btn').forEach(registerButton => {
                 registerButton.addEventListener('click', function (e) {
+
+                    if (auth === 'anonymousUser') { // 로그인을 안한 경우
+                        alert('로그인을 해주세요.');
+                        return;
+                    }
+
                     const inputElement = this.closest('.comment').querySelector('.reply-input'); // 대댓글 입력창
 
                     inputElement.classList.toggle('hide');
@@ -396,10 +411,10 @@
 
                 // 매개변수로 전달할 객체
                 const replyObj = {
-                    mno: 1, // 임시 회원 번호
+                    mno: mno, // 임시 회원 번호
                     projectNo: projectNo,
                     content: content.value,
-                    writer: 'testNick' // 임시 닉네임
+                    writer: nickname // 임시 닉네임
                 };
 
                 if (comment != null) { // 댓글이 존재하는 경우
