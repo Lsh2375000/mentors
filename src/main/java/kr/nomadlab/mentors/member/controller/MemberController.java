@@ -94,21 +94,21 @@ public class MemberController {
         return memberSecurityDTO;
     }
     @PostMapping("/socialRegister")
-    public String socialRegisterPOST(MenteeDTO menteeDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String passwd) {
+    public String socialRegisterPOST(MemberDTO memberDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, String devLanguage) {
         log.info("socialRegister POST.....");
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String socialPw = passwordEncoder.encode(passwd);
-        menteeDTO.setMemberId(memberSecurityDTO.getMemberId());
-        menteeService.add(menteeDTO);
+        memberDTO.setPasswd(passwordEncoder.encode(memberDTO.getPasswd()));
+        memberDTO.setMemberId(memberSecurityDTO.getMemberId());
+        memberDTO.setSocial(true);
+        Long mno = memberService.add(memberDTO);
 
-        MemberDTO memberDTO = MemberDTO.builder()
-                .memberId(menteeDTO.getMemberId())
-                .passwd(socialPw)
-                .del(false)
-                .social(false)
-                .nickname(menteeDTO.getNickname())
+        MenteeDTO menteeDTO = MenteeDTO.builder()
+                .mno(mno)
+                .memberId(memberDTO.getMemberId())
+                .nickname(memberDTO.getNickname())
+                .devLanguage(devLanguage)
                 .build();
-        memberService.add(memberDTO);
+        menteeService.add(menteeDTO);
 
         return "redirect:/member/login";
     }

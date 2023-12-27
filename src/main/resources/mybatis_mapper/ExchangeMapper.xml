@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.exChange.mapper.ExchangeMapper">
     <insert id="insertExchange">
-        INSERT INTO `exchange` (`mno`, `memberName`, `bank`, `accountNum`, `coin`, `amount`, isComplete)
-        values (#{mno}, #{memberName}, #{bank}, #{accountNum}, #{coin}, #{amount}, #{isComplete})
+        INSERT INTO `exchange` (`exNo`, `mno`, `memberName`, `bank`, `accountNum`, `coin`, `amount`, isComplete, addDate, completeDate)
+        values (#{exNo} ,#{mno}, #{memberName}, #{bank}, #{accountNum}, #{coin}, #{amount}, #{isComplete}, now(), #{completeDate})
     </insert>
 </mapper>

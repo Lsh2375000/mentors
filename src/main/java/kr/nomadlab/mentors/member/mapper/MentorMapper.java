@@ -11,7 +11,9 @@ public interface MentorMapper {
     void insert(MentorVO mentorVO); // 멘토 회원등록
 
     List<MentorVO> selectAll(); // 전체 멘토 회원조회
-    List<MentorVO> listByRanking(); // 랭킹순 멘토 목록
+    List<MentorVO> listByRanking1(); // 랭킹순 멘토 목록
+    List<MentorVO> listByRanking2(); // 랭킹순 멘토 목록
+    List<MentorVO> listByRanking3(); // 랭킹순 멘토 목록
     MentorVO selectOne(String memberId); // 특정 멘토 회원 정보 가져오기
 
     void update(MentorVO mentorVO); // 멘토 회원 수정
@@ -21,5 +23,5 @@ public interface MentorMapper {
 
     void updatePw(String passwd ,String memberId); // 비밀번호 수정
 
-
+    void introWrite(String intro, Long mno);
 }

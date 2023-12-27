@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.payInfo.mapper.PayInfoMapper">
-    <insert id="insertPayInfo">
+    <insert id="insertPayInfo" parameterType="kr.nomadlab.mentors.payInfo.vo.PayInfoVO" keyColumn="payInfoNo" useGeneratedKeys="true" keyProperty="payInfoNo">
         INSERT INTO `payInfo` (`mbNo`, `mentorMno`, `menteeMno`, `price`, `isComplete`, `completeDate`, `addDate`)
         values (#{mbNo}, #{mentorMno}, #{menteeMno}, #{price}, false, #{completeDate} ,now())
     </insert>
@@ -34,8 +34,8 @@
         LIMIT #{skip}, #{size}
     </select>
     <select id="getCount" resultType="int">
-        SELECT COUNT(*)
+        SELECT COUNT(DISTINCT CASE WHEN mbNo = 0 THEN payInfoNo ELSE mbNo END)
         FROM `payInfo`
-        where mentorMno = #{mno} and price != 0
+        WHERE mentorMno = #{mno} AND price != 0
     </select>
 </mapper>

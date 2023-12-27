@@ -90,15 +90,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     Arrays.asList(new SimpleGrantedAuthority("ROLE_"))
             );
             memberSecurityDTO.setProps(params);
+
+            log.info("회원 : " +  memberSecurityDTO);
+
             return memberSecurityDTO;
         }
         else {
             log.info("social login");
+
+
             Set<MemberRole> roles = member.getRoleSet();
             Set<MemberRole> newRoles = new HashSet<>();
-            for(int i=0; i<roles.size(); i++){
-                MemberRole test = MemberRole.values()[i];
-                newRoles.add(test);
+            if ((Integer)roles.toArray()[0] == 1) {
+                MemberRole memberRole = MemberRole.values()[1];
+                newRoles.add(memberRole);
             }
             member.setRoleSet(newRoles);
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
@@ -115,6 +120,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                             .map(memberRole -> new SimpleGrantedAuthority("ROLE_" + memberRole.name()))
                             .collect(Collectors.toList())
             );
+            log.info(memberSecurityDTO.getAuthorities());
+            log.info("소셜로그인" + memberSecurityDTO);
             return memberSecurityDTO;
         }
     }

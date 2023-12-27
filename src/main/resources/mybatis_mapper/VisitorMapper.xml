@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.admin.mapper.VisitorMapper">
+    <!--    방문자 통계-->
+
+<!--    로그인 / 비로그인 사용자 통계-->
+    <sql id="isLogin">
+        <choose>
+            <when test="isLogin == 'true'">
+                and `isLogin` = true
+            </when>
+            <when test="isLogin == 'false'">
+                and `isLogin` = false
+            </when>
+        </choose>
+    </sql>
+
+<!--    총 방문자 수-->
+    <select id="visitorCnt" resultType="int">
+        select count(vNo) from visitor
+    </select>
+<!--    방문자 등록-->
+    <insert id="insertVisitor">
+        insert into `visitor` (visitDate, isLogin, sessionId) values (now(), #{isLogin}, #{sessionId});
+    </insert>
+<!--    중복 세션 확인-->
+    <select id="isSameId" resultType="boolean">
+        select count(vNo) from visitor where sessionId = #{sessionId};
+    </select>
+    <!--일 별 구분-->
+    <select id="daily_5" resultType="int">
+        <![CDATA[
+            SELECT COUNT(vNo) FROM visitor
+            WHERE visitDate = DATE_ADD(CURDATE(), INTERVAL -5 DAY)
+            AND visitDate < CURDATE()
+        ]]><if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="daily_4" resultType="int">
+        <![CDATA[
+        SELECT COUNT(vNo) FROM visitor
+        WHERE visitDate = DATE_ADD(CURDATE(), INTERVAL -4 DAY)
+          AND visitDate < CURDATE()
+        ]]><if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="daily_3" resultType="int">
+        <![CDATA[
+        SELECT COUNT(vNo) FROM visitor
+        WHERE visitDate = DATE_ADD(CURDATE(), INTERVAL -3 DAY)
+          AND visitDate < CURDATE()
+        ]]><if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="daily_2" resultType="int">
+        <![CDATA[
+        SELECT COUNT(vNo) FROM visitor
+        WHERE visitDate = DATE_ADD(CURDATE(), INTERVAL -2 DAY)
+          AND visitDate < CURDATE()
+        ]]><if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="daily_1" resultType="int">
+        <![CDATA[
+        SELECT COUNT(vNo) FROM visitor
+        WHERE visitDate = DATE_ADD(CURDATE(), INTERVAL -1 DAY)
+          AND visitDate < CURDATE()
+        ]]><if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="dailyD_day" resultType="int">
+        <![CDATA[
+        SELECT COUNT(vNo) FROM visitor
+        WHERE visitDate = CURDATE()
+        ]]><if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+
+<!--    주간별 통계-->
+    <select id="thisWeek" resultType="int">
+        <![CDATA[
+        SELECT count(vNo) FROM visitor
+        WHERE visitDate >= SUBDATE(CURDATE(), WEEKDAY(CURDATE()))
+          AND visitDate <= CURDATE()
+        ]]> <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="week_1" resultType="int">
+        <![CDATA[
+        SELECT count(vNo) FROM visitor
+        WHERE visitDate >= SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 1 WEEK)
+          AND visitDate < SUBDATE(CURDATE(), WEEKDAY(CURDATE()))
+        ]]> <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="week_2" resultType="int">
+        <![CDATA[
+        SELECT count(vNo) FROM visitor
+        WHERE visitDate >= SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 2 WEEK)
+          AND visitDate < SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 1 WEEK)
+        ]]> <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="week_3" resultType="int">
+        <![CDATA[
+        SELECT count(vNo) FROM visitor
+        WHERE visitDate >= SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 3 WEEK)
+          AND visitDate < SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 2 WEEK)
+        ]]> <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="week_4" resultType="int">
+        <![CDATA[
+        SELECT count(vNo) FROM visitor
+        WHERE visitDate >= SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 4 WEEK)
+          AND visitDate < SUBDATE(SUBDATE(CURDATE(), WEEKDAY(CURDATE())), INTERVAL 3 WEEK)
+        ]]> <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+
+<!--    월 별 통계-->
+    <select id="thisMonth" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(NOW()) AND MONTH(visitDate) = MONTH(NOW())
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_1" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_2" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 2 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 2 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_3" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 3 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 3 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_4" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 4 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 4 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_5" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 5 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 5 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_6" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 6 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 6 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_7" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 7 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 7 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_8" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 8 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 8 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_9" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 9 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 9 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_10" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 10 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 10 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_11" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 11 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 11 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="month_12" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURRENT_DATE - INTERVAL 12 MONTH)
+          AND MONTH(visitDate) = MONTH(CURRENT_DATE - INTERVAL 12 MONTH)
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+
+<!--    연도별 통계-->
+    <select id="thisYear" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURDATE())
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="year_1" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURDATE()) -1
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="year_2" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURDATE()) -2
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="year_3" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURDATE()) -3
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="year_4" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURDATE()) -4
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+    <select id="year_5" resultType="int">
+        SELECT count(vNo) FROM visitor
+        WHERE YEAR(visitDate) = YEAR(CURDATE()) -5
+        <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+    </select>
+
+<!--    특정 날짜 구하기-->
+    <select id="byDate_m3" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = DATE_SUB(#{date}, INTERVAL 3 DAY)
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+    <select id="byDate_m2" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = DATE_SUB(#{date}, INTERVAL 2 DAY)
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+    <select id="byDate_m1" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = DATE_SUB(#{date}, INTERVAL 1 DAY)
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+    <select id="byDate" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = #{date}
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+    <select id="byDate_p1" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = DATE_ADD(#{date}, INTERVAL 1 DAY)
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+    <select id="byDate_p2" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = DATE_ADD(#{date}, INTERVAL 2 DAY)
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+    <select id="byDate_p3" resultType="int">
+        <if test="date != null">
+            SELECT count(vNo) FROM visitor WHERE visitDate = DATE_ADD(#{date}, INTERVAL 3 DAY)
+            <if test="isLogin != null and isLogin != 'all'"><include refid="isLogin"/></if>
+        </if>
+    </select>
+</mapper>

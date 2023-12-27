@@ -1,0 +1,266 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/myPageInc.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 소개</title>
+</head>
+<style layout:fragment="style">
+    .col { /*프로필 본문 목록 영역*/
+        font-family: 'Orbit', sans-serif;
+    }
+
+    .contentDiv { /*본문의 각 영역 div*/
+        width: 1250px;
+        height: 400px;
+        border-bottom: 1px solid #cdd1d4;
+        margin-top: 30px;
+    }
+
+    .contentTitle { /* 본문의 각 영역 제목*/
+        text-align: left;
+        font-weight: bold;
+        font-size: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .contentBody { /* 본문의 내용 영역 */
+        padding-top: 30px;
+        height: 400px;
+    }
+
+    .emptyDiv{
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding-top: 30px;
+    }
+    .emptyContent { /*본문 내용이 비어있을 때 출력되는 span*/
+        font-size: 25px;
+        margin-bottom: 15px;
+    }
+    .emptyContent2 {
+        font-size: 18px;
+        color: #b4b4b4;
+    }
+    .introModalBtn {
+        text-decoration: none;
+        color: black;
+        font-size: 18px;
+        padding: 10px 15px;
+        background-color: white;
+        border: 1px solid #c9c9c9;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+    .introText{
+        font-size: 20px;
+    }
+</style>
+<div layout:fragment="content">
+    <div class="row mt-3">
+        <div class="col">
+            <div class="contentDiv">
+                <div class="contentTitle">
+                    <span>소개</span>
+                    <th:block th:if="${#authentication.principal != 'anonymousUser' &&
+                     #authentication.principal.getNickname() == memberDTO.nickname}">
+                        <button th:if="${mentorDTO.intro == null}" class="introModalBtn">작성하기</button>
+                        <button th:unless="${mentorDTO.intro == null}" class="introModalBtn">수정하기</button>
+                    </th:block>
+                </div>
+                <div class="contentBody">
+                    <span id="introVal" class="introText" th:if="${mentorDTO.intro != null}" th:utext="${mentorDTO.intro}"></span>
+                    <th:block th:if="${mentorDTO.intro == null}">
+                        <div class="emptyDiv">
+                            <span class="emptyContent">소개글이 비어있어요.</span>
+                            <span class="emptyContent2" th:if="${#authentication.principal != 'anonymousUser' &&
+                            #authentication.principal.getNickname == memberDTO.nickname}">
+                                나의 기술 스택, 포트폴리오, 깃허브 주소 등으로 꾸며보세요.
+                            </span>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--나의 소개 작성 에디터 모달창-->
+    <form name="frmIntro" id="frmIntro" action="/mypage/mentorIntro" method="post" enctype="multipart/form-data">
+        <div class="modal" id="introModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width: 800px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title">나의 소개</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="introClose" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="intro" id="content" cols="50" rows="5" class="form-control" placeholder="content"
+                                  style="width: 100%; height: 600px;"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="introRegisterBtn"> 등록하기 </button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Modal -->
+    </form>
+    <!--소개 작성 모달 끝-->
+
+    <!--회원 탈퇴 모달창 form 태그-->
+    <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">
+        <div class="modal" id="qmpwModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">회원 탈퇴</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="qcloseModal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="pwModal">
+                            <label>비밀번호 입력</label>
+                            <input name="mpwChk" type="password" class="form-control" id="qmpwChk">
+                            <span id="qmpwCheck" class="qchkTxt" ></span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="quitMemberBtn" disabled> 회원 탈퇴 </button>
+                    </div>
+                </div>
+            </div>
+        </div><!--End Modal-->
+    </form>
+    <script src="/js/checkAxios.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios@0.26.0/dist/axios.min.js"></script>
+    <script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
+    <script type="text/javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const frmIntro = document.getElementById('frmIntro'); // 소개 에디터 폼
+            const introModal = new bootstrap.Modal(document.getElementById('introModal')); // 소개 에디터 모달창
+            const introClose = document.getElementById('introClose'); // 소개 에디터 모달 끄기 버튼
+            const introModalBtns = document.querySelectorAll('.introModalBtn'); // 소개 에디터 모달 켜기 버튼
+            const contentTextarea = document.getElementById('content');
+            let introVal = '[[${mentorDTO.intro}]]';
+            console.log('[[${mentorDTO.intro}]]' === '');
+
+            introModalBtns.forEach(introModalBtn => {
+                if (introVal === '') {
+                    introModalBtn.addEventListener('click', function () { // 소개 에디터 켜기 이벤트 값이 없을 때
+                        const iframe = document.getElementById('content_iframe');
+                        const srcUrl = iframe.getAttribute('src');
+                        iframe.setAttribute('src', srcUrl);
+                        introModal.show();
+                    });
+                } else if (introVal !== '') {
+                    introModalBtn.addEventListener('click', function () { // 값이 있을 때
+                        const iframe = document.getElementById('content_iframe');
+                        const srcUrl = iframe.getAttribute('src');
+                        iframe.setAttribute('src', srcUrl);
+                        contentTextarea.innerHTML = introVal;
+                        introModal.show();
+                    });
+                }
+            });
+
+                introClose.addEventListener('click', function () {
+                    frmIntro.reset();
+                });
+
+                let oEditors = [];
+
+                nhn.husky.EZCreator.createInIFrame({
+                    oAppRef: oEditors,
+                    elPlaceHolder: "content", // id가 content인 요소를 지정.
+                    sSkinURI: "/smarteditor2/SmartEditor2Skin.html",
+                    fCreator: "createSEditor2"
+                });
+
+                const btnSubmit = document.getElementById('introRegisterBtn');
+
+                // 엔터키 submit 방지
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                    }
+                }, true);
+
+                // 등록 버튼 클릭시 이벤트
+                btnSubmit.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
+
+                    frmIntro.submit();
+                });
+
+        });
+    </script>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+
+
+
+
+
+    const frmQuitPw = document.getElementById('frmQuitPw'); // 비밀번호 확인 폼
+    const qmpwModal = new bootstrap.Modal(document.getElementById('qmpwModal')); // 회원 탈퇴 모달창
+    const qcloseModal = document.getElementById('qcloseModal'); // 모달창 닫기 버튼
+
+    const privacyModifyBtn = document.getElementById('privacyModify'); // 회원 탈퇴 모달창 버튼
+    const qmpwChk = document.getElementById('qmpwChk'); // 입력한 현재 비밀번호
+    const quitMemberBtn = document.getElementById('quitMemberBtn'); // 모달창에서 회원 탈퇴 버튼
+
+
+    privacyModifyBtn.addEventListener('click', function (e) { // 회원탈퇴 모달창 이벤트
+        qmpwModal.show();
+    });
+
+    qcloseModal.addEventListener('click', function (e) { // 모달창 닫기 이벤트
+        frmQuitPw.reset();
+    });
+
+    qmpwChk.addEventListener('focusout', async function () { // 비밀번호를 입력하면
+        const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
+        const qmpwCheck = document.getElementById('qmpwCheck'); // 현재 비밀번호 일치여부 텍스트
+        const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+        if (result) {
+            qmpwCheck.innerHTML = '현재 비밀번호와 일치합니다.'
+            qmpwCheck.style.color = '#5c6ff1';
+            qmpwChk.readonly = true; // 현재 비밀번호가 일치하면
+            quitMemberBtn.disabled = false; // 회원 탈퇴 버튼 활성화
+        } else {
+            qmpwCheck.innerHTML = '현재 비밀번호와 일치하지 않습니다.'; // 비밀번호 일치하지 않으면 회원 탈퇴 불가
+            qmpwCheck.style.color = '#f64e4e';
+            quitMemberBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+        }
+    });
+
+    quitMemberBtn.addEventListener('click', async function (e) {
+        const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
+        const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
+
+        if (result === false || qmpwChk.value === ''.trim()){
+            alert('현재 비밀번호가 일치하지 않습니다.');
+            e.preventDefault();
+            e.stopPropagation();
+        } else if (result) {
+            if (confirm('정말 회원 탈퇴 하시겠습니까?')) {
+                // console.log(mpwChk.value);
+                // console.log(frmQuitPw);
+                frmQuitPw.submit();
+            }
+
+        }
+
+    });
+
+</script>
+</html>

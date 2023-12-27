@@ -33,6 +33,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -119,10 +122,10 @@ public class MyPageController {
 
     /*멘티 프로필 끝*/
 
-    /*자기 소개 시작*/
-    @GetMapping("/intro")
-    public void introduceGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname ) {
-        log.info("introduceGET() ...");
+    /*멘토 자기 소개 시작*/
+    @GetMapping("/mentorIntro")
+    public void mentorIntroGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname ) {
+        log.info("mentorIntroGET() ...");
 
         MemberDTO memberDTO = memberService.getProfileNickname(nickname);
         log.info("자기소개 memberDTO : " + memberDTO);
@@ -133,8 +136,7 @@ public class MyPageController {
         model.addAttribute("memberRole", memberRole);
 
         // 마이페이지 자기소개 페이지
-        if (memberSecurityDTO != null) { // 로그인 하고 자기 소개 페이지로 갔을 때
-            if (memberSecurityDTO.getAuthorities().toArray()[0].toString().equals("ROLE_MENTOR")) {
+        if (memberSecurityDTO != null && memberSecurityDTO.getNickname().equals(memberDTO.getNickname())) { // 로그인 하고 자기 소개 페이지로 갔을 때
                 log.info("멘토 유저 마이페이지 자기소개 진입");
                 /*멘토 로그인*/
                 MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
@@ -144,14 +146,10 @@ public class MyPageController {
                 log.info("멘티 자기소개 수강평 수");
                 model.addAttribute("reviewCnt", reviewCnt);
 
-            } else if (memberSecurityDTO.getAuthorities().toArray()[0].toString().equals("ROLE_MENTEE")) {
-                log.info("멘티 유저 마이페이지 자기소개 진입");
-                /*멘티 로그인*/
-                enterMenteePage(model, memberSecurityDTO); // 회원정보, 멘티정보 들고옴
-                int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
-                log.info("멘티 자기소개 수강평 수");
-                model.addAttribute("reviewCnt", reviewCnt);
-            }
+        } else if (memberSecurityDTO != null && !(memberSecurityDTO.getNickname().equals(memberDTO.getNickname()))) {
+            log.info("로그인하고 다른 멘토유저 프로필");
+            enterMentorProfile(model, memberDTO.getNickname());
+
         } else if (memberSecurityDTO == null){ // 로그인 안하고 유저의 자기소개 들어갔을 때
             log.info("비로그인 유저 프로필 진입");
             anonymousUserEnter(model, nickname);
@@ -159,7 +157,84 @@ public class MyPageController {
 
 
     }
-    /*자기 소개 끝*/
+
+    @PostMapping("/mentorIntro")
+    public String mentorIntroPOST(String intro, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO) {
+        log.info("mentorIntroPOST()...");
+
+        log.info("intro : " + intro + "작성한 멤버 mno : " + memberSecurityDTO.getMno());
+        mentorService.introWrite(intro, memberSecurityDTO.getMno());
+
+        String encodedNickname = null;
+        try {
+            encodedNickname = URLEncoder.encode(memberSecurityDTO.getNickname(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            // 예외 처리 필요
+            e.printStackTrace();
+        }
+
+        return "redirect:/mypage/mentorIntro?nickname="+encodedNickname;
+    }
+
+    /* 멘토 자기 소개 끝*/
+    /* 멘티 자기 소개 시작*/
+    @GetMapping("/menteeIntro")
+    public void menteeIntroGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname) {
+        log.info("menteeIntroGET()...");
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("자기소개 memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        log.info("자기소개 회원 롤 : " + memberRole);
+        model.addAttribute("memberRole", memberRole);
+
+        // 마이페이지 자기소개 페이지
+        if (memberSecurityDTO != null && memberSecurityDTO.getNickname().equals(memberDTO.getNickname())) {
+            // 로그인 하고 자기 소개 페이지로 갔을 때
+            if (memberSecurityDTO.getAuthorities().toArray()[0].toString().equals("ROLE_MENTEE")) {
+                log.info("멘티 유저 마이페이지 자기소개 진입");
+                /*멘티 로그인*/
+                MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+                model.addAttribute("menteeDTO", menteeDTO);
+
+                int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+                log.info("멘티 자기소개 수강평 수");
+                model.addAttribute("reviewCnt", reviewCnt);
+            }
+        } // 프로필 자기소개 페이지
+        else if (memberSecurityDTO != null && !(memberSecurityDTO.getNickname().equals(memberDTO.getNickname()))) {
+            if (memberRole == 1) {
+                log.info("로그인하고 다른 멘티유저 프로필");
+                enterMenteeProfile(model, memberDTO.getNickname());
+            }
+
+        } else if (memberSecurityDTO == null){ // 로그인 안하고 유저의 자기소개 들어갔을 때
+            log.info("비로그인 유저 프로필 진입");
+            anonymousUserEnter(model, nickname);
+        }
+    }
+
+    @PostMapping("/menteeIntro")
+    public String menteeIntroPOST(String intro, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO) {
+        log.info("menteeIntroPOST()...");
+
+        log.info("intro : " + intro + "작성한 멤버 mno : " + memberSecurityDTO.getMno());
+        menteeService.introWrite(intro, memberSecurityDTO.getMno());
+
+        String encodedNickname = null;
+        try {
+            encodedNickname = URLEncoder.encode(memberSecurityDTO.getNickname(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            // 예외 처리 필요
+            e.printStackTrace();
+        }
+
+
+        return "redirect:/mypage/menteeIntro?nickname="+encodedNickname;
+    }
+
+    /* 멘티 자기 소개 끝*/
 
 
 
@@ -243,13 +318,14 @@ public class MyPageController {
         exchangeDto.setMno(member.getMno());
         exchangeDto.setCoin(member.getCoin());
         exchangeDto.setAmount(member.getCoin()*1000);
-        exchangeService.insertExchange(exchangeDto);
         PayInfoDto payInfoDto = PayInfoDto.builder()
                 .price(member.getCoin())
                 .mentorMno(member.getMno())
                 .mbNo(0L)
                 .build();
-        payInfoService.savePayInfo( 0L,payInfoDto); //0은 관리자
+        Long payInfoNo = payInfoService.savePayInfo( 0L,payInfoDto); //0은 관리자
+        exchangeDto.setExNo(payInfoNo);
+        exchangeService.insertExchange(exchangeDto);
         memberService.exchangeCoin(member.getMno());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -310,6 +386,9 @@ public class MyPageController {
         int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
         model.addAttribute("memberRole", memberRole);
 
+        int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
         MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
         log.info("mentorDTO: " + mentorDTO);
         model.addAttribute("mentorDTO", mentorDTO);
@@ -320,6 +399,12 @@ public class MyPageController {
         MemberDTO memberDTO = memberService.getProfileNickname(memberSecurityDTO.getNickname());
         log.info("memberDTO: " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+
+        int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
 
         MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
         log.info("mentorDTO: " + menteeDTO);
@@ -332,9 +417,33 @@ public class MyPageController {
         log.info("memberDTO : " + memberDTO);
         model.addAttribute("memberDTO", memberDTO);
 
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+
+        int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+
         MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
         log.info("mentorDTO : " + mentorDTO);
         model.addAttribute("mentorDTO", mentorDTO);
+    }
+    private void enterMenteeProfile(Model model, String nickname) {
+        // (나를 제외한)멘티 프로필에 들어갈때 해당 멘티의 닉네임을 가져와서 처리
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+
+        int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+
+        MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+        log.info("menteeDTO : " + menteeDTO);
+        model.addAttribute("menteeDTO", menteeDTO);
     }
 
     private void anonymousUserEnter(Model model, String nickname) {

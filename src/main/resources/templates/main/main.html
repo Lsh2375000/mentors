@@ -241,47 +241,51 @@
 <!--        멘토 랭킹 배너-->
 <div layout:fragment="banner">
     <div class="d-flex justify-content-evenly w-75" style="margin: 0 auto; padding-top: 50px;">
-        <div class="mentorRank" th:each="mentor:${mentorList}">
-            <div class="text-center ranking" th:if="${mentor.ranking == 1}">
+        <div class="mentorRank" th:each="mentor1:${mentorList1}">
+            <div class="text-center ranking" th:if="${mentor1.ranking == 1}">
                 <div>
                     <i class="fa-solid fa-crown" style="color: #ffd700;"></i><br>
-                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a>
+                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor1.nickname})}" style="border-bottom: 2px solid black;">[[${mentor1.nickname}]]</a>
                 </div>
                 <div>
-                    <span th:each="language : ${#strings.arraySplit(mentor.devLanguage, ',')}">
+                    <span th:each="language : ${#strings.arraySplit(mentor1.devLanguage, ',')}">
                         <span class="mentorLan" th:text="${language}"></span>
                     </span>
                 </div>
                 <div class="card_score">
-                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                    <a th:onclick="|reviewListBtn(${mentor1.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor1.score}]]</a>
                 </div>
             </div>
-            <div class="text-center ranking" th:if="${mentor.ranking == 2}">
+        </div>
+        <div class="mentorRank" th:each="mentor2:${mentorList2}">
+            <div class="text-center ranking" th:if="${mentor2.ranking == 2}">
                 <div>
                     <i class="fa-solid fa-crown" style="color: #c0c0c0;"></i><br>
-                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a>
+                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor2.nickname})}" style="border-bottom: 2px solid black;">[[${mentor2.nickname}]]</a>
                 </div>
                 <div>
-                    <span th:each="language : ${#strings.arraySplit(mentor.devLanguage, ',')}">
+                    <span th:each="language : ${#strings.arraySplit(mentor2.devLanguage, ',')}">
                         <span class="mentorLan" th:text="${language}"></span>
                     </span>
                 </div>
                 <div class="card_score">
-                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                    <a th:onclick="|reviewListBtn(${mentor2.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor2.score}]]</a>
                 </div>
             </div>
-            <div class="text-center ranking" th:if="${mentor.ranking == 3}">
+        </div>
+        <div class="mentorRank" th:each="mentor3:${mentorList3}">
+            <div class="text-center ranking" th:if="${mentor3.ranking == 3}">
                 <div>
                     <i class="fa-solid fa-crown" style="color: #b87333;"></i><br>
-                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor.nickname})}" style="border-bottom: 2px solid black;">[[${mentor.nickname}]]</a>
+                    <a th:href="@{/mypage/mentorProfile(nickname=${mentor3.nickname})}" style="border-bottom: 2px solid black;">[[${mentor3.nickname}]]</a>
                 </div>
                 <div>
-                    <span th:each="language : ${#strings.arraySplit(mentor.devLanguage, ',')}">
+                    <span th:each="language : ${#strings.arraySplit(mentor3.devLanguage, ',')}">
                         <span class="mentorLan" th:text="${language}"></span>
                     </span>
                 </div>
                 <div class="card_score">
-                    <a th:onclick="|reviewListBtn(${mentor.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor.score}]]</a>
+                    <a th:onclick="|reviewListBtn(${mentor3.mno})|"><i class="fa-solid fa-star" style="color: #ff0000;"></i>[[${mentor3.score}]]</a>
                 </div>
             </div>
         </div>
@@ -291,7 +295,7 @@
     <div layout:fragment="content">
 <!--        멘토로 로그인한 사람만 보이게-->
         <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}">
-            <th:block sec:authorize="hasRole('ROLE_MENTOR')" th:if="${isMentoring == false}"> <!--멘토 로그인시-->
+            <th:block sec:authorize="hasRole('ROLE_MENTOR')" th:if="${mentorDTO.isMentoring == false}"> <!--멘토 로그인시-->
                 <button type="button" class="writeBtn"><a href="/main/write">멘토링 작성</a></button>
             </th:block>
         </th:block>
@@ -592,6 +596,9 @@
                 }
                 passMessage(messageObj).then(data => {
                     alert('신청완료되었습니다.\n 마이페이지에서 확인하세요');
+                    let coinValue = document.querySelector('.getCoin');
+                    const coin = parseInt(coinValue.textContent);
+                    coinValue.textContent = coin-price;
                 })
             })
             //여기에 채팅방
@@ -634,6 +641,7 @@
 
         })
     }
+
     // 채팅방 입장
     async function enterChat(chatObj){
         await axios.post(`/main/chat`,chatObj);

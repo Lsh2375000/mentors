@@ -28,6 +28,12 @@ public interface MainService {
     // 채팅방 현재인원 업데이트
     void updateCurPeople(String roomId);
 
+    //글 작성시 isMentoring true
+    void trueIsMentoring(Long mno);
+
+    //수업 종료시 isMentoring false
+    void falseIsMentoring(Long mno);
+
     // 마이페이지 멘토링목록 출력
     PageResponseDTO<MainDTO> myPageList(PageRequestDTO pageRequestDTO, Long mno);
 

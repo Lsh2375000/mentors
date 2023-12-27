@@ -27,6 +27,10 @@ public interface MainMapper {
 
     void updateScore(Long mno); // 멘토의 score를 main에 업데이트
 
+    void trueIsMentoring(Long mno); //글 작성시 isMentoring True
+
+    void falseIsMentoring(Long mno); //수업 종료시 isMentoring False
+
 
 
     List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("sort")String sort, @Param("mno") Long mno); // 멘토의 마이페이지 멘토링 목록 리스트 출력

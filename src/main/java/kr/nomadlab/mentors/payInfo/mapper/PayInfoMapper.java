@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface PayInfoMapper {
-    void insertPayInfo(PayInfoVO payInfoVO);
+    Long insertPayInfo(PayInfoVO payInfoVO);
 
     List<PayInfoVO> checkDate();
 
