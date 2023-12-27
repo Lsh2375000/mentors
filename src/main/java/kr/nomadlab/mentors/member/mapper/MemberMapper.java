@@ -38,4 +38,5 @@ public interface MemberMapper {
 
     void exchangeCoin(Long mno);
 
+    String getNickName(Long mno);
 }

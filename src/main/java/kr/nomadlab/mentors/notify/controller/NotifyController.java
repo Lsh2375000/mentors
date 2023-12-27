@@ -31,7 +31,7 @@ public class NotifyController {
     public ResponseEntity<String> passNotify(@AuthenticationPrincipal MemberSecurityDTO member, @RequestBody NotifyDto notifyDto){
         log.info("this is repository/passNotify");
         log.info(notifyDto);
-        notifyService.passNotify(notifyDto, member);
+        notifyService.passNotify(notifyDto, member.getMno());
 
         return ResponseEntity.ok("Request passMessage successfully");
     }
