@@ -144,6 +144,11 @@ public class MemberController {
         log.info(memberDTO);
         model.addAttribute("memberDTO", memberDTO);
         MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+        if(mentorDTO.getDevLanguage()!=null){
+            List<String> devList = List.of(mentorDTO.getDevLanguage().split(","));
+            model.addAttribute("devList", devList);
+            log.info(devList);
+        }
         model.addAttribute("mentorDTO", mentorDTO);
 
     }
