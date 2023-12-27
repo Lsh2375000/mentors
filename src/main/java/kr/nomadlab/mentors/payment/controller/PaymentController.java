@@ -48,6 +48,7 @@ public class PaymentController {
             CoinStatsDTO coinStatsDTO = new CoinStatsDTO();
             coinStatsDTO.setAmount(amount/1000);
             coinStatsService.insertCoinStats(coinStatsDTO);
+
             return "payments/success";
         }
         catch (CustomLogicException e) {

@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.admin.controller;
 
 import kr.nomadlab.mentors.admin.dto.AdminTypeDTO;
 import kr.nomadlab.mentors.admin.service.AdminService;
+import kr.nomadlab.mentors.admin.service.CoinStatsService;
 import kr.nomadlab.mentors.admin.service.VisitorService;
 import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,12 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final VisitorService visitorService;
-
+    private final CoinStatsService coinStatsService;
 
     @GetMapping("/stats")
     public void adminStats(Model model, AdminTypeDTO adminTypeDTO){// 통계 페이지
         log.info("period? "+ adminTypeDTO.getPeriod());
+        // 방문자 통계
         // 일별정렬
         if(adminTypeDTO.getPeriod().equals("daily")){
             log.info("일별정렬");
@@ -116,12 +118,109 @@ public class AdminController {
             model.addAttribute("byDate_p3", byDate_p3);
         }
 
+        // 코인 통계
+        // 일별정렬
+        if(adminTypeDTO.getCoinPeriod().equals("daily")){
+            log.info("코인일별정렬");
+            int cd_5 = coinStatsService.daily_5(adminTypeDTO);
+            int cd_4 = coinStatsService.daily_4(adminTypeDTO);
+            int cd_3 = coinStatsService.daily_3(adminTypeDTO);
+            int cd_2 = coinStatsService.daily_2(adminTypeDTO);
+            int cd_1 = coinStatsService.daily_1(adminTypeDTO);
+            int cd_day = coinStatsService.dailyD_day(adminTypeDTO);
+            model.addAttribute("cd_5", cd_5);
+            model.addAttribute("cd_4", cd_4);
+            model.addAttribute("cd_3", cd_3);
+            model.addAttribute("cd_2", cd_2);
+            model.addAttribute("cd_1", cd_1);
+            model.addAttribute("cd_day", cd_day);
+        } else if(adminTypeDTO.getCoinPeriod().equals("weekly")){
+            // 주간별 정렬
+            log.info("코인 주간별 정렬");
+            int cw_4 = coinStatsService.week_4(adminTypeDTO);
+            int cw_3 = coinStatsService.week_3(adminTypeDTO);
+            int cw_2 = coinStatsService.week_2(adminTypeDTO);
+            int cw_1 = coinStatsService.week_1(adminTypeDTO);
+            int cthisWeek = coinStatsService.thisWeek(adminTypeDTO);
+            model.addAttribute("cw_4", cw_4);
+            model.addAttribute("cw_3", cw_3);
+            model.addAttribute("cw_2", cw_2);
+            model.addAttribute("cw_1", cw_1);
+            model.addAttribute("cthisWeek", cthisWeek);
+        } else if(adminTypeDTO.getCoinPeriod().equals("monthly")){
+            // 월 별 정렬
+            log.info("코인 월별 정렬");
+            int cm_12 = coinStatsService.month_12(adminTypeDTO);
+            int cm_11 = coinStatsService.month_11(adminTypeDTO);
+            int cm_10 = coinStatsService.month_10(adminTypeDTO);
+            int cm_9 = coinStatsService.month_9(adminTypeDTO);
+            int cm_8 = coinStatsService.month_8(adminTypeDTO);
+            int cm_7 = coinStatsService.month_7(adminTypeDTO);
+            int cm_6 = coinStatsService.month_6(adminTypeDTO);
+            int cm_5 = coinStatsService.month_5(adminTypeDTO);
+            int cm_4 = coinStatsService.month_4(adminTypeDTO);
+            int cm_3 = coinStatsService.month_3(adminTypeDTO);
+            int cm_2 = coinStatsService.month_2(adminTypeDTO);
+            int cm_1 = coinStatsService.month_1(adminTypeDTO);
+            int cthisMonth = coinStatsService.thisMonth(adminTypeDTO);
+            model.addAttribute("cm_12", cm_12);
+            model.addAttribute("cm_11", cm_11);
+            model.addAttribute("cm_10", cm_10);
+            model.addAttribute("cm_9", cm_9);
+            model.addAttribute("cm_8", cm_8);
+            model.addAttribute("cm_7", cm_7);
+            model.addAttribute("cm_6", cm_6);
+            model.addAttribute("cm_5", cm_5);
+            model.addAttribute("cm_4", cm_4);
+            model.addAttribute("cm_3", cm_3);
+            model.addAttribute("cm_2", cm_2);
+            model.addAttribute("cm_1", cm_1);
+            model.addAttribute("cthisMonth", cthisMonth);
+        }else if(adminTypeDTO.getCoinPeriod().equals("yearly")){
+            // 연도별 정렬
+            log.info("코인 연도별 정렬");
+            int cy_5 = coinStatsService.year_5(adminTypeDTO);
+            int cy_4 = coinStatsService.year_4(adminTypeDTO);
+            int cy_3 = coinStatsService.year_3(adminTypeDTO);
+            int cy_2 = coinStatsService.year_2(adminTypeDTO);
+            int cy_1 = coinStatsService.year_1(adminTypeDTO);
+            int cthisYear = coinStatsService.thisYear(adminTypeDTO);
+            model.addAttribute("cy_5", cy_5);
+            model.addAttribute("cy_4", cy_4);
+            model.addAttribute("cy_3", cy_3);
+            model.addAttribute("cy_2", cy_2);
+            model.addAttribute("cy_1", cy_1);
+            model.addAttribute("cthisYear", cthisYear);
+        }else if(adminTypeDTO.getCoinDate() != null){
+            log.info("코인 특정 날짜 검색");
+            int cbyDate_m3 = coinStatsService.byDate_m3(adminTypeDTO);
+            int cbyDate_m2 = coinStatsService.byDate_m2(adminTypeDTO);
+            int cbyDate_m1 = coinStatsService.byDate_m1(adminTypeDTO);
+            int cbyDate = coinStatsService.byDate(adminTypeDTO);
+            int cbyDate_p1 = coinStatsService.byDate_p1(adminTypeDTO);
+            int cbyDate_p2 = coinStatsService.byDate_p2(adminTypeDTO);
+            int cbyDate_p3 = coinStatsService.byDate_p3(adminTypeDTO);
+            model.addAttribute("cbyDate_m3", cbyDate_m3);
+            model.addAttribute("cbyDate_m2", cbyDate_m2);
+            model.addAttribute("cbyDate_m1", cbyDate_m1);
+            model.addAttribute("cbyDate", cbyDate);
+            model.addAttribute("cbyDate_p1", cbyDate_p1);
+            model.addAttribute("cbyDate_p2", cbyDate_p2);
+            model.addAttribute("cbyDate_p3", cbyDate_p3);
+        }
+
+        // 방문자
         int total = visitorService.totalVisitorCnt();
         model.addAttribute("total", total); // 총 방문자 수
-        
         model.addAttribute("date", adminTypeDTO.getDate()); // 특정 날짜
         model.addAttribute("isLogin", adminTypeDTO.getIsLogin()); // 로그인여부
         model.addAttribute("period", adminTypeDTO.getPeriod()); // 기간별 조건
+
+        // 코인
+        int coinTotal = coinStatsService.totalCoin();
+        model.addAttribute("coinTotal", coinTotal); // 총 충전갯수
+        model.addAttribute("coinDate", adminTypeDTO.getCoinDate()); // 코인 특정날짜
+        model.addAttribute("coinPeriod", adminTypeDTO.getCoinPeriod()); //코인 기간별 조건
 
     }
 
