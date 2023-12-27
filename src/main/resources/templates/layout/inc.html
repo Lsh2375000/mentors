@@ -81,7 +81,7 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">팀 프로젝트</a></li>
-        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/qboard/list">Q&A 게시판</a></li>
+        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/question/list">Q&A 게시판</a></li>
         <th:block th:if="${#authentication.principal == 'anonymousUser' || #authentication.principal.getPasswd() == '1111'}"> <!-- 비회원 -->
           <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/member/login">로그인</a></li>
           <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/member/agreement">회원가입</a></li>
@@ -184,14 +184,18 @@
     border: 1px solid #999;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
   }
 
   .chat-header {
     height: fit-content;
     padding: 10px;
+    padding-top: 30px;
     color: #000000;
     text-align: center;
     font-size: 18px;
+
+    position: relative;
   }
 
   .chat-body {
@@ -269,12 +273,14 @@
   }
 
   .close-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
     font-size: 20px;
-    color: #fff;
+    color: #6c757d;
     cursor: pointer;
+    z-index: 9;
+
+    position: absolute;
+    top: 0;
+    right: 10px;
   }
 
   .show-modal { display: block; }
@@ -309,7 +315,7 @@
 
   /* Style the chat list container */
   .chat-list {
-    width: 25%;
+    width: 400px;
     height: 60vh;
     overflow-y: auto;
     border: 1px solid #ddd;
@@ -317,11 +323,11 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #FFFFFF;
     z-index: 9999;
+    display: none;
 
     position: fixed;
     bottom: 20%;
     left: 25px;
-
   }
 
   .chat-list h5 {
@@ -371,10 +377,19 @@
     padding: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
+    display: none;
 
     position: absolute;
-    top: 40px;
+    top: 10%;
     right: 0;
+  }
+
+  .side-bars {
+    cursor: pointer;
+
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
   }
 
   /* 참여회원 목록 스타일 */
@@ -412,17 +427,15 @@
   <aside class="chat-side">
     <h5>대화상대</h5>
     <ul class="chat-member-list">
-      <li>회원1(방장)</li>
-      <li>회원2</li>
-      <li>회원3</li>
     </ul>
     <button class="chat-leave-btn">채팅방 나가기</button>
   </aside>
-
+  <span class="close-button">
+    <i class="fa-solid fa-xmark"></i>
+  </span>
   <div class="chat-header">
     <span class="room-name"></span>
-    <span>메뉴</span>
-    <span class="close-button">x</span>
+    <span class="side-bars"><i class="fa-solid fa-bars"></i></span>
   </div>
   <div class="chat-body">
 
@@ -442,78 +455,116 @@
   <div class="chat-list-inner"></div>
 </div>
 
-<button class="button trigger">채팅</button>
+<button class="button trigger">
+  <i class="fa-solid fa-comment-dots fa-xl"></i>
+</button>
+
+<script th:inline="javascript">
+
+  // 나머지 코드는 이전과 동일하게 유지됩니다.
+
+</script>
+
 
 <script th:inline="javascript">
 
   // 채팅 기능 구현
 
-  function printChatList(chatList) { // 채팅방 목록 출력
-    if(chatList != null) {
-      $('.chat-list-inner').html("");
-
-      for (const chat of chatList) {
-        var times = chat.lastMessageTime;
-        var sendTime = new Date(times[0], times[1], times[2], times[3], times[4]);
-        var options = { hour: "numeric", minute: "numeric" };
-
-        $('.chat-list-inner').append(
-                `<div id="${chat.roomId}" class="chat-item">
-                    <div class="chat-item-header">
-                       <div>
-                           <span class="chat-name">${chat.name}</span>
-                           <span class="current-members">${chat.currentMembers}</span>
-                       </div>
-                       <span class="date">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
-                    </div>
-                    <p>${chat.lastMessage}</p>
-                 </div>`
-        );
-
-        roomIds.push(chat.roomId);
-      }
-
-      // 클릭 이벤트 바인딩
-      $('.chat-item').on('click', async function() {
-        // 채팅 메세지 초기화
-        $(".chat-body").html("");
-
-        // 입장할 roomId 저장
-        currentRoomId = $(this).attr('id');
-        console.log('Current Room ID: ' + currentRoomId);
-
-        // 여기에 클릭 이벤트에 대한 추가적인 로직을 작성하세요.
-        var result = await getRoomMessages(currentRoomId); // DB에서 채팅 메세지 목록 조회
-        var room = result.room; // 채팅방 정보
-        var chatMembers = result.chatMembers; // 채팅방 참여 회원 목록
-
-        $('.room-name').text(room.name); // 채팅방 이름 추가
-
-        loadChat(result.messages); // 이전 채팅목록 출력
-
-        stompClient.send("/pub/chat/enter", {},
-                JSON.stringify({
-                  'roomId': currentRoomId,
-                  'sender': sender
-                }));
-        $(".chat-input").val('');
-        $('.chat-modal').show();
-      });
-    }
-  }
-
   var stompClient = null;
   var roomIds = [];
   var currentRoomId = null;
+  var subscriptions = [];
   var chatUser = [[${#authentication.principal}]];
   var mno = 0;
   var sender = null;
+
+  function printChatList(chatList) {
+    if (chatList != null) {
+      // 기존 채팅 목록을 초기화
+      $('.chat-list-inner').html("");
+
+      // 각 채팅방에 대해 반복
+      for (const chat of chatList) {
+        const sendTime = new Date(...chat.lastMessageTime);
+        const options = { hour: "numeric", minute: "numeric" };
+
+        // 채팅방 아이템 생성
+        const chatItem = $(`
+          <div id="${chat.roomId}" class="chat-item">
+            <div class="chat-item-header">
+              <div>
+                <span class="chat-name">${chat.name}</span>
+                <span class="current-members">${chat.currentMembers}</span>
+              </div>
+              <span class="date">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+            </div>
+            <p>${chat.lastMessage}</p>
+          </div>
+        `);
+
+        // 채팅방 아이템에 클릭 이벤트 추가
+        chatItem.click(function() {
+          handleChatItemClick(chat);
+        });
+
+        // 채팅 목록에 아이템 추가
+        $('.chat-list-inner').append(chatItem);
+        roomIds.push(chat.roomId);
+      }
+    }
+  }
+
+  async function handleChatItemClick(chat) {
+    $(".chat-body").html("");
+    currentRoomId = chat.roomId;
+    console.log('Current Room ID: ' + currentRoomId);
+
+    // 선택한 채팅방에 대한 정보 가져오기
+    const result = await getRoomMessages(currentRoomId);
+    const room = result.room;
+    const chatMembers = result.chatMembers;
+
+    // 채팅방 정보 표시
+    $('.room-name').text(room.name);
+
+    // 이전 채팅 로드
+    displayChatMessages(result.messages);
+
+    // 참여 회원 목록 표시
+    displayChatMembers(chatMembers);
+
+    // Stomp를 통해 채팅방 입장 알림 전송
+    stompClient.send("/pub/chat/enter", {},
+            JSON.stringify({
+              'roomId': currentRoomId,
+              'sender': sender
+            }));
+
+    // 채팅 입력란 초기화 및 모달 표시
+    $(".chat-input").val('');
+    $('.chat-modal').show();
+    scrollToBottom();
+  }
+
+  function displayChatMembers(chatMembers) {
+    console.log('chatMembers: ', chatMembers);
+    // 참여 회원 목록 초기화
+    $('.chat-member-list').html("");
+
+    // 각 참여 회원에 대해 반복
+    for (const member of chatMembers) {
+      $('.chat-member-list').append(
+              `<li>${member.nickname} ${member.role === 'LEADER' ? '(방장)' : ''}</li>`
+      );
+    }
+  }
+
 
   function setConnected(connected) { // 연결 상태 설정
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
-      $("#conversation").show();
+      // $("#conversation").show();
     }
     else {
       closeChat(); // 채팅방 나가기
@@ -522,61 +573,80 @@
     $(".chat-input").html("");
   }
 
-  function isUserLoggedIn() {
-    // 로그인 상태를 확인하는 로직을 추가
-    // 예: 사용자 정보가 존재하는지, 토큰이 유효한지 등을 체크
+  function isUserLoggedIn() { // 사용자가 로그인 상태인지
     return chatUser !== 'anonymousUser'; // auth가 사용자 정보를 담고 있는 변수일 경우
   }
 
   function connect() {
-    if (isUserLoggedIn()) {
-      // 사용자가 로그인되어 있다면 Stomp 연결 수행
-      var socket = new SockJS("/stomp/chat");
-      stompClient = Stomp.over(socket);
-      stompClient.connect({}, async function (frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-
-        // 로그인한 회원 고유번호 및 닉네임 저장
-        mno = chatUser.mno;
-        sender = chatUser.nickname;
-
-        // 채팅 목록 가져오기
-        const result = await getRooms(mno);
-        console.log(result);
-
-        // 채팅 목록 화면에 출력
-        printChatList(result.chatList);
-
-        // 구독
-        for (const roomId of roomIds) {
-          stompClient.subscribe('/sub/chat/room/' + roomId, function (chatMessage) {
-            var messages = JSON.parse(chatMessage.body);
-            var userList = messages.userList;
-            var sendTime = new Date(messages.sendTime);
-            var options = { hour: "numeric", minute: "numeric" };
-
-            console.log(messages);
-            console.log(userList);
-            console.log(userList.indexOf(sender));
-            if (userList.indexOf(sender) > -1 && currentRoomId === messages.roomId) {
-              showChat(messages);
-            }
-
-            // 특정 조건을 만족하는 태그 선택
-            var room = $('.chat-item').filter(function() {
-              return $(this).attr('id') === messages.roomId;
-            });
-
-            room.find('.date').text(sendTime.toLocaleTimeString('ko-KR', options));
-            room.find('p').text(messages.message);
-            room.prependTo('.chat-list-inner');
-          });
-        }
-      });
-    } else {
+    if (!isUserLoggedIn()) {
       console.log('User is not logged in. Stomp connection aborted.');
+      return;
     }
+
+    // 사용자가 로그인되어 있다면 Stomp 연결 수행
+    const socket = new SockJS("/stomp/chat");
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, async function (frame) {
+      setConnected(true);
+      console.log('Connected: ' + frame);
+
+      // 로그인한 회원 고유번호 및 닉네임 저장
+      mno = chatUser.mno;
+      sender = chatUser.nickname;
+
+      // 채팅 목록 가져오기
+      const result = await getRooms(mno);
+      console.log(result);
+
+      // 채팅 목록 화면에 출력
+      printChatList(result.chatList);
+
+      // 구독
+      subscriptions = roomIds.map(roomId => {
+        const subscription = stompClient.subscribe('/sub/chat/room/' + roomId, function (chatMessage) {
+          handleChatMessage(JSON.parse(chatMessage.body));
+        });
+
+        return subscription;
+      });
+
+      console.log(subscriptions);
+    });
+  }
+
+  function handleChatMessage(messages) {
+    const sendTime = new Date(messages.sendTime);
+    const options = { hour: "numeric", minute: "numeric" };
+
+    console.log(messages);
+    console.log(messages.userList);
+    console.log(messages.userList.indexOf(sender));
+    console.log(currentRoomId);
+
+    // 현재 채팅방에 유저가 있고, 메시지가 현재 방에 속한 경우에만 메시지를 표시
+    if (messages.userList.indexOf(sender) > -1 && currentRoomId === messages.roomId) {
+      appendChatMessage(messages);
+      scrollToBottom();
+    }
+
+    if (messages.state === 1) { // 참여자 중 채팅방에서 나간경우
+
+      getMembers(messages.roomId)
+              .then(result => {
+                console.log('result: ', result);
+                displayChatMembers(result.chatMembers);
+              })
+              .catch(e => console.log(e));
+    }
+
+    // 특정 조건을 만족하는 태그 선택
+    const room = $(`.chat-item[id='${messages.roomId}']`);
+
+    // 채팅방 정보 갱신
+    room.find('.date').text(sendTime.toLocaleTimeString('ko-KR', options));
+    room.find('p').text(messages.message);
+    room.prependTo('.chat-list-inner');
   }
 
   function disconnect() { // stomp 연결 해제
@@ -587,75 +657,97 @@
     console.log("Disconnected");
   }
 
-  //html 에서 입력값, roomId 를 받아서 Controller 로 전달
   function sendChat() {
-    if ($(".chat-input").val() != "") {
+    const inputMessage = $(".chat-input").val();
+    if (inputMessage.trim() !== "") {
       stompClient.send("/pub/chat/message", {},
               JSON.stringify({
                 'roomId': currentRoomId,
                 'mno': mno,
                 'sender': sender,
-                'message' : $(".chat-input").val()
+                'message' : inputMessage
               }));
       $(".chat-input").val('');
     }
   }
 
-  //저장된 채팅 불러오기
-  function loadChat(chatList){
-    if(chatList != null) {
-      for(const chat of chatList) {
-        var times = chat.sendTime;
-        var sendTime = new Date(times[0], times[1], times[2], times[3], times[4]);
-        var options = { hour: "numeric", minute: "numeric" };
+  function appendChatMessage(chatMessage) {
+    let sendTime;
 
-        if (chat.sender === sender) {
-          $(".chat-body").append(
-                  `<div class="content sender">
-                            <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
-                            <span class="message send">${chat.message}</span>
-                         </div>`
-          );
-        } else {
-          $(".chat-body").append(
-                  `<div class="receive-wrap">
-                            <div class="receiver">${chat.sender}</div>
-                            <p class="content">
-                                <span class="message">${chat.message}</span>
-                                <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
-                            </p>
-                        </div>`
-          );
-        }
-      }
+    if (Array.isArray(chatMessage.sendTime)) {
+      // 배열로 전달된 경우
+      sendTime = new Date(...chatMessage.sendTime);
+    } else {
+      // 그냥 날짜로 전달된 경우
+      sendTime = new Date(chatMessage.sendTime);
     }
-    $('.chat-body').scrollTop($('.chat-body')[0].scrollHeight); // 채팅이 많아질시에 자동 스크롤
+
+    const options = { hour: "numeric", minute: "numeric" };
+    const formattedTime = sendTime.toLocaleTimeString('ko-KR', options);
+
+    const messageElement = chatMessage.sender === sender
+            ? `<div class="content sender">
+         <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+         <span class="message send">${chatMessage.message}</span>
+       </div>`
+            : `<div class="receive-wrap">
+         <div class="receiver">${chatMessage.sender}</div>
+         <p class="content">
+           <span class="message">${chatMessage.message}</span>
+           <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
+         </p>
+       </div>`;
+
+    $(".chat-body").append(messageElement);
   }
 
-  //보낸 채팅 보기
-  function showChat(chatMessage) {
-    var sendTime = new Date(chatMessage.sendTime);
-    var options = { hour: "numeric", minute: "numeric" };
-
-    if (chatMessage.sender === sender) {
-      $(".chat-body").append(
-              `<div class="content sender">
-                    <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
-                    <span class="message send">${chatMessage.message}</span>
-                </div>`
-      );
-    } else {
-      $(".chat-body").append(
-              `<div class="receive-wrap">
-                    <div class="receiver">${chatMessage.sender}</div>
-                    <p class="content">
-                        <span class="message">${chatMessage.message}</span>
-                        <span class="send-time">${sendTime.toLocaleTimeString('ko-KR', options)}</span>
-                    </p>
-                </div>`
-      );
+  // loadChat 함수와 showChat 함수를 대체
+  function displayChatMessages(chatMessages) {
+    console.log(chatMessages);
+    console.log(chatMessages.length);
+    if (chatMessages && chatMessages.length > 0) {
+      console.log('displayChatMessages: ', chatMessages);
+      for (const chatMessage of chatMessages) {
+        appendChatMessage(chatMessage);
+      }
+      scrollToBottom();
     }
+  }
+
+  function scrollToBottom() {
     $('.chat-body').scrollTop($('.chat-body')[0].scrollHeight);
+  }
+
+  async function leaveChat() {
+    const confirmation = confirm("채팅방을 나가면 채팅목록에서 삭제됩니다. \n정말 나가시겠습니까?");
+    if (confirmation) {
+      stompClient.send("/pub/chat/leave", {},
+              JSON.stringify({
+                'roomId': currentRoomId,
+                'sender': sender,
+                'mno': mno
+              }));
+
+      // 모달 닫기
+      closeChatModal();
+
+      // 구독 취소
+      const index = roomIds.indexOf(currentRoomId);
+      subscriptions[index].unsubscribe();
+
+      // 채팅 목록 가져오기
+      const result = await getRooms(mno);
+      console.log(result);
+
+      // 채팅 목록 화면에 출력
+      printChatList(result.chatList);
+    }
+  }
+
+  function closeChatModal() {
+    // 모달 닫기
+    $('.chat-modal').hide();
+    $('.chat-side').hide();
   }
 
   function closeChat() { // 채팅방 닫기
@@ -669,25 +761,14 @@
     $('.chat-modal').hide();
   }
 
-  async function leaveChat() { // 채팅방 나가기
-    stompClient.send("/pub/chat/leave", {},
-            JSON.stringify({
-              'roomId': currentRoomId,
-              'sender': sender,
-              'mno': mno
-            }));
-
-    // 채팅 목록 가져오기
-    const result = await getRooms(mno);
-    console.log(result);
-
-    // 채팅 목록 화면에 출력
-    printChatList(result.chatList);
-  }
-
   // 모달 토글
   function toggleModal() {
     $('.chat-list').toggle();
+  }
+
+  // 사이드 메뉴 토글
+  function toggleSide() {
+    $('.chat-side').toggle();
   }
 
   $(function () {
@@ -699,6 +780,8 @@
     $( ".chat-send-btn" ).click(function() { sendChat(); });
     $( ".trigger"). click(function () { toggleModal()});
     $( ".close-button").click(function () { closeChat(); });
+    $(".side-bars").click(function () { toggleSide() });
+    $(".chat-leave-btn").click(function () { leaveChat()});
   });
 </script>
 <script>
