@@ -102,7 +102,7 @@ public class MyPageController {
     /*멘토 프로필 끝*/
     /*멘티 프로필 시작*/
     @GetMapping("/menteeProfile")
-    public void menteeMyPageGET(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname) { // 멘티 마이페이지 GET
+    public void menteeMyPageGET(PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname) { // 멘티 마이페이지 GET
         log.info("menteeProfile GET...");
 
         /*공통으로 담을 값*/
@@ -117,6 +117,8 @@ public class MyPageController {
         model.addAttribute("memberRole", memberRole);
         /*공통으로 담을 값*/
 
+        PageResponseDTO<AnswerDTO> answerList = null;
+        pageRequestDTO.setSize(5);
         if(memberSecurityDTO != null) {
             if (memberSecurityDTO.getNickname().equals(nickname)) {
                 log.info("멘티 로그인해서 멘티 마이페이지");
@@ -126,6 +128,10 @@ public class MyPageController {
 
                 Long getApplyMno = menteeService.getApplyByMno(menteeDTO.getMno());
                 log.info("이거는 됨 ? " + getApplyMno);
+
+                answerList = answerService.getMyAnswerList(menteeDTO.getMno(), pageRequestDTO);
+                model.addAttribute("answerList", answerList);
+
                 if (getApplyMno == null) {
                     model.addAttribute("isMentorApply", true);
 
@@ -136,10 +142,16 @@ public class MyPageController {
             } else {
                 MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
                 model.addAttribute("menteeDTO", menteeDTO);
+
+                answerList = answerService.getMyAnswerList(menteeDTO.getMno(), pageRequestDTO);
+                model.addAttribute("answerList", answerList);
             }
         } else if (memberSecurityDTO == null) {
             MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
             model.addAttribute("menteeDTO", menteeDTO);
+
+            answerList = answerService.getMyAnswerList(menteeDTO.getMno(), pageRequestDTO);
+            model.addAttribute("answerList", answerList);
         }
 
     }
