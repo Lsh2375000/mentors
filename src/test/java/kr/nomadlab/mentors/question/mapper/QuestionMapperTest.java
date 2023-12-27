@@ -18,7 +18,7 @@ class QuestionMapperTest {
 
     @Test
     void selectMyQuestionList() {
-        Long mno = 1L;
+        Long mno = 23L;
         List<QuestionVO> questionVOList = questionMapper.selectMyQuestionList(mno, 0, 10);
         questionVOList.forEach(log::info);
     }
