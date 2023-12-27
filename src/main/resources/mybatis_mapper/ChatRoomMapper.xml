@@ -44,13 +44,6 @@
             cr.roomId
         ORDER BY
             lastMessageTime DESC;
-
---         SELECT cr.*, (COUNT(cl.clNo) - 1) AS currentMembers,
---         FROM chatRoom AS cr
---         LEFT JOIN chatList AS cl ON cr.roomId = cl.roomId
---         LEFT JOIN chatMessages AS cm ON cr.roomId = cm.roomId
---         WHERE cr.roomId IN (SELECT roomId FROM chatList WHERE mno = #{mno})
---         GROUP BY cr.roomId
     </select>
 
     <!-- 채팅방 조회 -->
