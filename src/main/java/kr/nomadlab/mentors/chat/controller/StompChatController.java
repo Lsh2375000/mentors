@@ -30,6 +30,8 @@ public class StompChatController {
     public void enter(ChatMessageDTO message) {
         List<String> liveUser = new ArrayList<>();
         message.setMessage(message.getSender() + "님이 채팅방에 참여하였습니다.");
+        message.setSendTime(LocalDateTime.now());
+
         log.info("sender---------");
         log.info(message.getSender());
 
@@ -51,7 +53,8 @@ public class StompChatController {
 
     @MessageMapping(value = "/chat/close")
     public void close(ChatMessageDTO message){
-        message.setMessage(message.getSender() + "님이 채팅방에 나가셨습니다.");
+        message.setMessage(message.getSender() + "님이 채팅을 닫으셨습니다.");
+        message.setSendTime(LocalDateTime.now());
 
         List<String> liveUser = new ArrayList<>();
         map.remove(message.getSender());
@@ -65,13 +68,15 @@ public class StompChatController {
         log.info(liveUser);
 
         message.setUserList(liveUser);
-        message.setState(1); // 퇴장시
+        message.setState(0);
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
     @MessageMapping(value = "/chat/leave")
     public void leave(ChatMessageDTO message){
+        message.setSendTime(LocalDateTime.now());
         message.setMessage(message.getSender() + "님이 채팅방에 나가셨습니다.");
+        chatService.sendMessage(message); // 채팅 저장
         chatService.removeChatMember(message.getRoomId(), message.getMno()); // 채팅방 회원정보 삭제
 
         List<String> liveUser = new ArrayList<>();

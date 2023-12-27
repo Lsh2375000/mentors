@@ -40,6 +40,7 @@
         .active { font-weight: 700 !important; color: #1b1c1d !important;}
         .active::marker { color: #0abe94; }
         .board-list-header a { color: #000000; }
+        .board-title span { background-color: #adb5bd; color: #FFFFFF; border-radius: 1rem; font-size: 14px; padding: 5px 10px; }
         .board-list { border-top: 1px solid #dee2e6; padding-left: 0 !important; }
         .board-container { border-bottom: 1px solid #dee2e6; padding: 18px; box-sizing: border-box; }
         .board-container:hover { background-color: #f8f9fa; }
@@ -53,6 +54,7 @@
         .footer-right { display: flex; }
         /*.footer-right dt { visibility: hidden; }*/
         .footer-right dd { margin: 0 5px;}
+        .complete { background-color: #0abe94 !important; }
     </style>
 
     <!-- 메인 -->
@@ -60,15 +62,14 @@
         <!-- 왼쪽 사이드 메뉴 -->
         <nav class="left-side-menu">
             <ul class="menu">
-                <li><a href="/board/list" class="selected">팀프로젝트소개</a></li>
-                <li><a href="/project/list">팀프로젝트모집</a></li>
+                <li><a href="/question/list" class="selected">QNA 게시판</a></li>
             </ul>
         </nav>
 
         <section>
             <!-- 검색 입력 창 -->
             <div class="row mt-3">
-                <form action="/board/list" method="get" name="frmSearch">
+                <form action="/question/list" method="get" name="frmSearch">
                     <div class="search-container">
                         <div class="search-item">
                             <div class="search-input">
@@ -99,16 +100,16 @@
                     <li th:class="${pageRequestDTO.sort == 'new' ? 'active' : ''}">
                         <a data-sort="new">최신순</a>
                     </li>
-                    <li th:class="${pageRequestDTO.sort == 'reply' ? 'active' : ''}">
-                        <a data-sort="reply">댓글많은순</a>
+                    <li th:class="${pageRequestDTO.sort == 'answer' ? 'active' : ''}">
+                        <a data-sort="answer">답변많은순</a>
                     </li>
-                    <li th:class="${pageRequestDTO.sort == 'like' ? 'active' : ''}">
-                        <a data-sort="like">좋아요순</a>
+                    <li th:class="${pageRequestDTO.sort == 'vote' ? 'active' : ''}">
+                        <a data-sort="vote">추천순</a>
                     </li>
                 </ul>
 
                 <div th:with="link = ${pageRequestDTO.getLink()}">
-                    <a th:href="|@{/board/register}?${link}|">
+                    <a th:href="|@{/question/register}?${link}|">
                         <button type="button" class="btn btn-secondary">글쓰기</button>
                     </a>
                 </div>
@@ -117,9 +118,10 @@
             <!-- 게시글 목록 -->
             <ul class="board-list" th:with="link = ${pageRequestDTO.getLink()}">
                 <li class="board-container" th:each="dto, status:${responseDTO.dtoList}">
-                    <a th:href="|@{/board/view(boardNo=${dto.boardNo})}&${link}|" class="view-link">
+                    <a th:href="|@{/question/view(qno=${dto.qno})}&${link}|" class="view-link">
                         <div class="board">
                             <h3 class="board-title">
+                                <span th:class="${dto.isComplete} ? 'complete' : ''">[[${dto.isComplete ? '해결됨' : '미해결'}]]</span>
                                 [[${dto.title}]]
                             </h3>
                             <p class="board-content">내용</p>
@@ -138,11 +140,11 @@
                                 </div>
                                 <dl class="footer-right">
                                     <dt>좋아요</dt>
-                                    <dd>[[${dto.likeCount}]]</dd>
+                                    <dd>[[${dto.voteCount}]]</dd>
                                     <dt>조회수</dt>
                                     <dd>[[${dto.hit}]]</dd>
                                     <dt>댓글수</dt>
-                                    <dd>[[${dto.replyCount}]]</dd>
+                                    <dd>[[${dto.answerCount}]]</dd>
                                 </dl>
                             </div>
                         </div>
@@ -240,7 +242,7 @@
         document.querySelector(".clearBtn").addEventListener("click", function (e){
             e.preventDefault();
 
-            self.location='/board/list';
+            self.location='/question/list';
         }, false)
 
         let hashTags = []; // 태그 임시저장 배열

@@ -1,12 +1,10 @@
 package kr.nomadlab.mentors.chat.controller;
 
 import kr.nomadlab.mentors.chat.service.ChatService;
-import kr.nomadlab.mentors.common.PageResponseDTO;
-import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/api/chat") // 적절한 요청 경로를 지정해주세요
 @RequiredArgsConstructor
 @Log4j2
-public class ChatController {
+public class ChatRoomController {
 
     private final ChatService chatService;
 
@@ -44,6 +42,18 @@ public class ChatController {
         Map<String, Object> response = new HashMap<>();
 
         response.put("chatList", chatService.getRoomList(mno));
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 채팅 참여자 목록 조회
+    @GetMapping("/members")
+    public ResponseEntity<Map<String, Object>> getMembers(@RequestParam("roomId") String roomId) {
+        log.info("# All Chat Members");
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("chatMembers", chatService.getChatMembers(roomId));
 
         return ResponseEntity.ok(response);
     }

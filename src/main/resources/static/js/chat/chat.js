@@ -19,6 +19,21 @@ async function getRooms(mno) {
         return response.data;
     } catch (error) {
         console.error('Error while fetching chat rooms:', error);
-        throw error; // You can handle the error based on your application's requirements.
+        throw error;
+    }
+}
+
+// 채팅방 참여자 목록 조회
+async function getMembers(roomId) {
+    try {
+        console.log('roomId', roomId);
+        const response = await axios.get('/api/chat/members', { params: { roomId: roomId } });
+
+        console.log(response);
+
+        return response.data;
+    } catch (error) {
+        console.error('Error while fetching chat members:', error);
+        throw error;
     }
 }

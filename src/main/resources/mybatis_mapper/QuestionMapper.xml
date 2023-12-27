@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.nomadlab.mentors.question.mapper.QuestionMapper">
+
+    <!-- BoardVO에 대한 resultMap 설정 -->
+    <resultMap id="questionResultMap" type="kr.nomadlab.mentors.question.domain.QuestionVO">
+        <id property="qno" column="qno" />
+        <result property="memberId" column="memberId" />
+        <result property="writer" column="writer" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="hit" column="hit" />
+        <result property="addDate" column="addDate" />
+        <!-- boardReply, boardLike에 대한 매핑 -->
+        <result property="answerCount" column="answerCount" />
+        <result property="voteCount" column="voteCount" />
+        <!-- HashTag에 대한 매핑 -->
+        <collection property="tagVOList" column="qno" ofType="kr.nomadlab.mentors.question.domain.QuestionTagVO"
+                    select="selectTagList" />
+    </resultMap>
+
+    <select id="selectTagList" resultType="kr.nomadlab.mentors.question.domain.QuestionTagVO" >
+        SELECT *
+        FROM `questionTag` AS `qt`
+        WHERE `qt`.`qno` = #{qno}
+    </select>
+
+    <!-- 게시글 전체 조회 -->
+    <select id="selectQuestionList" resultMap="questionResultMap">
+        SELECT
+        `q`.*,
+        COUNT(DISTINCT `a`.`ano`) AS answerCount,
+        COUNT(DISTINCT `v`.`vno`) AS voteCount
+        FROM `question` AS `q`
+        LEFT JOIN `answer` AS `a` ON `q`.`qno` = `a`.`qno`
+        LEFT JOIN `qnaVote` AS `v` ON `q`.`qno` = `v`.`qno`
+        LEFT JOIN `questionTag` AS `qt` ON `q`.`qno` = `qt`.`qno`
+        <include refid="search"/>
+        GROUP BY `q`.`qno`
+        ORDER BY
+        <!-- 정렬 조건 -->
+        <choose>
+            <when test="sort == 'answer'">answerCount</when>
+            <when test="sort == 'vote'">voteCount</when>
+            <!-- 추가적인 컬럼이 있으면 위와 같이 추가 -->
+            <otherwise>q.qno</otherwise>
+        </choose>
+        <!-- 여기까지 -->
+        DESC LIMIT #{skip}, #{size}
+    </select>
+
+    <sql id="search">
+        <where>
+            <if test="types != null and types.length > 0">
+                <foreach collection="types" item="type" open="(" close=")" separator=" OR">
+                    <if test="type == 't'.toString()">
+                        `q`.`title` like concat('%', #{keyword}, '%')
+                    </if>
+                    <if test="type == 'w'.toString()">
+                        `q`.`writer` like concat('%', #{keyword}, '%')
+                    </if>
+                    <if test="type == 'c'.toString()">
+                        `q`.`content` like concat('%', #{keyword}, '%')
+                    </if>
+                </foreach>
+            </if>
+
+            <if test="hashTags != null and hashTags.length > 0">
+                <foreach collection="hashTags" item="hashTag" open=" AND (" close=")" separator=" OR ">
+                    `qt`.`tagName` = #{hashTag}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertQuestion" parameterType="kr.nomadlab.mentors.question.domain.QuestionVO" useGeneratedKeys="true" keyProperty="qno">
+        INSERT INTO `question` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`, `isComplete`)
+        VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW(), false)
+    </insert>
+
+    <!-- 상위 10개 태그 조회 -->
+    <select id="selectTopTagList" resultType="kr.nomadlab.mentors.question.dto.QuestionTagDTO">
+        SELECT tagName, COUNT(tagName) AS tagCount
+        FROM questionTag
+        GROUP BY tagName
+        ORDER BY tagCount DESC
+        LIMIT 10;
+    </select>
+
+    <!-- 태그 등록 -->
+    <insert id="insertTag">
+        INSERT INTO `questionTag` (`qno`, `tagName`) VALUES (#{qno}, #{tagName})
+    </insert>
+
+    <!-- 태그 삭제 -->
+    <delete id="deleteTag">
+        DELETE FROM `questionTag` WHERE `qno` = #{qno}
+    </delete>
+
+    <!-- 게시글 수정 -->
+    <update id="updateQuestion">
+        update `question` set `title` = #{title}, `content` = #{content}
+        where `qno` = #{qno}
+    </update>
+
+    <!-- 조회수 업데이트 -->
+    <update id="updateHit">
+        update `question` set `hit` = `hit` + 1 where `qno` = #{qno}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteQuestion">
+        delete from `question` where `qno` = #{qno}
+    </delete>
+
+    <!-- 게시글 조회 -->
+    <select id="selectQuestion" resultMap="questionResultMap">
+        SELECT *
+        FROM `question`
+        WHERE `qno` = #{qno}
+    </select>
+
+    <!-- 게시글 추천 추가 -->
+    <insert id="insertVote" parameterType="kr.nomadlab.mentors.question.domain.QNAVoteVO" useGeneratedKeys="true" keyProperty="vno">
+        INSERT INTO `qnaVote`(`qno`, `mno`) VALUES (#{qno}, #{mno})
+    </insert>
+
+    <!-- 게시글 추천 삭제 -->
+    <delete id="deleteVote">
+        delete from `qnaVote` where `vno` = #{vno}
+    </delete>
+
+    <!-- 좋아요 조회 -->
+    <select id="selectVoteList" resultType="kr.nomadlab.mentors.question.domain.QNAVoteVO">
+        SELECT * FROM `qnaVote` WHERE `qno` = #{qno}
+    </select>
+
+    <!--게시물 갯수-->
+    <select id="getCount" resultType="int">
+        SELECT COUNT(DISTINCT `q`.`qno`)
+        FROM `question` AS `q`
+        LEFT JOIN `questionTag` AS `qt` ON `q`.`qno` = `qt`.`qno`
+        <include refid="search" />
+    </select>
+
+    <!-- 질문 해결 상태로 변경 -->
+    <update id="updateComplete">
+        update `question` set `isComplete` = true where `qno` = #{qno};
+    </update>
+
+</mapper>

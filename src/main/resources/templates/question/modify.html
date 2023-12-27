@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/inc.html}" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Board Modify</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <style>
+        * { margin: 0; padding: 0; }
+        ul, li { list-style: none; padding-left: 0; }
+        a { text-decoration: none; }
+
+        .post-container { background-color: #FFFFFF; padding: 100px 0; }
+        .post-container .form-control { border: none; outline: none; font-size: 26px; }
+        .post-container .tag-wrap { display: flex; flex-wrap: wrap; align-items: center; }
+        .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 0 10px 10px 0;
+            font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
+        .remove-btn { margin-left: 5px; }
+        .post-container input[name=hashTag] { font-size: 18px; }
+        .post-container .form-control:focus { border: none;  box-shadow: none; }
+        .post-body { min-height: 600px; }
+        .post-footer { display: flex; justify-content: flex-end; }
+        .post-footer a { margin-right: 10px; }
+    </style>
+
+    <div class="post-container">
+        <form action="/question/modify" method="post" name="frmModify" enctype="multipart/form-data">
+            <input type="hidden" name="qno" th:value="${question.qno}">
+            <h1><input type="text" class="form-control" name="title" th:value="${question.title}"></h1>
+            <div class="tag-wrap">
+                <div class="tag-style" th:each="tag:${question.tagList}">
+                    <span>[[${tag.tagName}]]</span>
+                    <span>✕</span>
+                </div>
+                <input type="text" name="hashTag" class="form-control" placeholder="태그를 설정하세요 (최대 10개)">
+            </div>
+            <div class="post-header">
+                <input type="hidden" name="writer" th:value="${writer}"> <!-- 시큐리티로 로그인된 사용자 정보 전달 -->
+            </div>
+            <hr>
+            <div class="post-body">
+                <textarea name="content" id="content" cols="50" rows="5" class="form-control" placeholder="content"
+                          style="width: 100%; height: 600px;">[[${question.content}]]</textarea>
+            </div>
+            <div class="post-footer">
+                <a th:href="@{/question/view(qno=${question.qno})}">
+                    <button type="button" class="btn btn-secondary">취소</button>
+                </a>
+                <button type="submit" id="submitBtn" class="btn btn-primary">등록</button>
+            </div>
+        </form>
+        <script type="text/javascript" src="/smarteditor2/js/HuskyEZCreator.js" charset="utf-8"></script>
+    </div>
+
+    <script src="/js/question/question.js"></script>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+
+    <!-- 네이버 에디터 설정 -->
+    document.addEventListener('DOMContentLoaded', function () {
+        let oEditors = [];
+
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: "content", // id가 content인 요소를 지정.
+            sSkinURI: "/smarteditor2/SmartEditor2Skin.html",
+            fCreator: "createSEditor2"
+        });
+
+        const btnSubmit = document.getElementById('submitBtn');
+        const frmModify = document.querySelector('form[name=frmModify]');
+
+        // 엔터키 submit 방지
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        }, true);
+
+        // 등록 버튼 클릭시 이벤트
+        btnSubmit.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
+
+            if (!frmModify.title.value) {
+                alert("제목을 입력해주세요.");
+                return;
+            }
+
+            // 해쉬태그 수정 요청
+            const result = modifyTag(qno, tagList);
+            console.log(result);
+
+            frmModify.submit();
+        });
+
+        const tagWrap = document.querySelector('.tag-wrap'); // 태그를 넣을 영역
+        const qno = [[${question.qno}]];
+        let tagList = [[${question.tagList}]]; // 태그 임시저장 목록
+        console.log(tagList);
+
+        // 태그 삭제 이벤트 등록
+        document.querySelectorAll('.tag-style').forEach(tag => {
+            tag.addEventListener('click', removeTag);
+        });
+
+        // 해쉬태그 입력 이벤트
+        document.querySelector('input[name=hashTag]').addEventListener('keyup', function (e) {
+            console.log(e.key);
+
+            const hashTag = e.target;
+
+            if (hashTag.value.trim() !== '' && e.key === 'Enter') { // 내용 존재, Enter키 입력시 태그 추가
+
+                const tagName = hashTag.value.trim(); // 입력한 태그 명
+
+                let index = tagList.findIndex(tag => tag.tagName === tagName);
+                if (index !== -1) { // 중복 태그 방지
+
+                    alert('태그는 중복이 안됩니다.');
+
+                    hashTag.value = '';
+                    hashTag.focus();
+
+                    return;
+                }
+
+                if (tagList.length >= 10) { // 해시태그가 10개 이상이면
+                    hashTag.value = '';
+                    alert('해시태그는 최대 10개까지 입력할 수 있습니다.');
+                }
+                else {
+                    // 해쉬 태그 생성
+                    const divElement = document.createElement('div');
+                    divElement.innerHTML = `<span>${tagName}</span>
+                                            <span class="remove-btn">✕</span>`;
+                    divElement.classList.add('tag-style');
+                    divElement.addEventListener('click', removeTag); // 삭제 이벤트 등록
+                    tagWrap.insertBefore(divElement, hashTag); // 태그 삽입
+
+                    const tagObj = { qno: qno, tagName: tagName };
+                    tagList.push(tagObj); // 배열에 태그 추가
+                    console.log(tagList);
+
+                    hashTag.value = '';
+                    hashTag.focus();
+                }
+            }
+        });
+
+        function removeTag(e) { // 태그 삭제 함수
+            const tagNameNode = this.firstElementChild; // 첫번째 자식 노드
+            console.log(tagNameNode.textContent);
+
+            // 일치하는 태그 제외하고 새로운 배열 생성
+            tagList = tagList.filter(tag => tag.tagName !== tagNameNode.textContent);
+            console.log('tagArr: ', tagList); // 태그를 담은 배열 확인
+
+            this.remove();
+        }
+    });
+
+    const errors = [[${errors}]]
+    console.log(errors)
+
+    let errorMsg = ''
+
+    if(errors){
+        for(let i = 0; i < errors.length; i++){
+            errorMsg += `${errors[i].field}은(는) ${errors[i].code} \n`
+        }
+        history.replaceState({}, null, null)
+        alert(errorMsg)
+    }
+</script>
+</body>
+</html>
