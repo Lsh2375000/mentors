@@ -26,4 +26,10 @@ public interface AnswerMapper {
    void deleteAnswer(Long ano); // 답변 삭제
    
    void updateSelect(Long ano); // 답변 채택 상태로 변경
+
+   List<AnswerVO> selectMyAnswerList(@Param("mno") Long mno,
+                           @Param("skip") int skip,
+                           @Param("size") int size);
+
+   int getMyCount(Long mno); // 나의 답변 총 갯수
 }

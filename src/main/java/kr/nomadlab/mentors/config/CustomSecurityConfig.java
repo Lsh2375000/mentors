@@ -76,6 +76,7 @@ public class CustomSecurityConfig {
     public SecurityFilterChain filterChainMemberAdmin(HttpSecurity httpSecurity) throws Exception {
         log.info("---------------------Configuration MEMBER ADMIN-----------------------");
         httpSecurity.securityMatcher("/admin/**");
+
         httpSecurity.authorizeHttpRequests(requests -> {
            requests.requestMatchers("/admin/login").permitAll();
            requests.anyRequest().hasRole("ADMIN");

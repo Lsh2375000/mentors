@@ -89,4 +89,19 @@ public class AnswerServiceImpl implements AnswerService {
         answerMapper.updateSelect(ano); // 답변 채택 상태로 변경
         questionMapper.updateComplete(qno);
     }
+
+    @Override
+    public PageResponseDTO<AnswerDTO> getMyAnswerList(Long mno, PageRequestDTO pageRequestDTO) {
+        List<AnswerVO> voList = answerMapper.selectMyAnswerList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
+        List<AnswerDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(answerVO -> dtoList.add(modelMapper.map(answerVO, AnswerDTO.class)));
+        int total = answerMapper.getMyCount(mno);
+
+        return PageResponseDTO.<AnswerDTO>withAll()
+                .dtoList(dtoList)
+                .total(total)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+    }
 }

@@ -69,7 +69,7 @@ public class BoardController {
             log.info("No Hash Tags provided.");
         }
 
-        boardDTO.setMemberId("testId");
+        boardDTO.setMno(1L);
         
         boardService.registerBoard(boardDTO);
 

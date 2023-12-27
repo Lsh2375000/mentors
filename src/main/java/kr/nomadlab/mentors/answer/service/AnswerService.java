@@ -4,6 +4,8 @@ import kr.nomadlab.mentors.answer.dto.AnswerDTO;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 
+import java.util.List;
+
 public interface AnswerService {
 
     Long registerAnswer(AnswerDTO answerDTO); // 답변 등록
@@ -18,4 +20,6 @@ public interface AnswerService {
     PageResponseDTO<AnswerDTO> getAnswerList(Long qno, PageRequestDTO pageRequestDTO);
 
     void modifySelect(Long qno, Long ano); // 답변 채택 상태로 변경
+
+    PageResponseDTO<AnswerDTO> getMyAnswerList(Long mno, PageRequestDTO pageRequestDTO); // 본인이 작성한 답변 목록 조회
 }

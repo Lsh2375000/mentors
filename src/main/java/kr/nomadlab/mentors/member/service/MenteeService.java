@@ -1,6 +1,7 @@
 package kr.nomadlab.mentors.member.service;
 
 import kr.nomadlab.mentors.member.dto.MenteeDTO;
+import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface MenteeService {
 
     void introWrite(String intro, Long mno); // 멘티 자기소개 작성 및 수정
 
+    Long getApplyMno(Long mno);
 }

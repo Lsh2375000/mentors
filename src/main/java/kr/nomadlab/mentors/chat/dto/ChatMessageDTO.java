@@ -19,4 +19,6 @@ public class ChatMessageDTO {
     private LocalDateTime sendTime; // 채팅 보낸 시간
     private List<String> userList; // 유저목록 표시할 리스트
     private Integer state; // 보낸사람의 접속상태 : 0 접속, 1 퇴장
+
+    private Long mbNo; // 멘토링 고유번호
 }

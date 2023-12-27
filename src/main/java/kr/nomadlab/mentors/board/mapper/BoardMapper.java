@@ -6,6 +6,7 @@ import kr.nomadlab.mentors.board.domain.HashTagVO;
 import kr.nomadlab.mentors.board.dto.HashTagDTO;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -40,5 +41,7 @@ public interface BoardMapper {
     void insertTag(HashTagVO hashTagVO); // 태그 추가
 
     void deleteTag(Long boardNo); // 태그 삭제
+    
+    List<BoardVO> selectMyBoardList(@Param("mno") Long mno, @Param("skip") Integer skip, @Param("size") Integer size); // 본인 게시글 목록 조회
 
 }

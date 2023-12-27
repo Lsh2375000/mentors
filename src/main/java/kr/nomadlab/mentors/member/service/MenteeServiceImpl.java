@@ -4,6 +4,7 @@ package kr.nomadlab.mentors.member.service;
 import kr.nomadlab.mentors.member.domain.MenteeVO;
 import kr.nomadlab.mentors.member.dto.MemberDTO;
 import kr.nomadlab.mentors.member.dto.MenteeDTO;
+import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 import kr.nomadlab.mentors.member.mapper.MemberMapper;
 import kr.nomadlab.mentors.member.mapper.MenteeMapper;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +82,12 @@ public class MenteeServiceImpl implements MenteeService{
     @Override
     public void introWrite(String intro, Long mno) {
         menteeMapper.introWrite(intro, mno);
+    }
+
+    @Override
+    public Long getApplyMno(Long mno) {
+        Long applyMno = menteeMapper.getApplyMno(mno);
+        return applyMno;
     }
 
 }
