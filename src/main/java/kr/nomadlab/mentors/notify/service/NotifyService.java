@@ -14,5 +14,5 @@ public interface NotifyService {
 
     List<NotifyDto> getNotReadNotify(Long mno);
 
-    void passNotify(NotifyDto notifyDto, MemberSecurityDTO member);
+    void passNotify(NotifyDto notifyDto, Long mno);
 }

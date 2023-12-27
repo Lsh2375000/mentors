@@ -88,7 +88,9 @@
         update `member` set coin = 0 where `mno`= #{mno}
     </update>
 
-
+    <select id="getNickName" resultType="string">
+        select nickName from `member` where mno = #{mno}
+    </select>
 
 
 </mapper>

@@ -7,11 +7,14 @@ import kr.nomadlab.mentors.admin.dto.AdminTypeDTO;
 import kr.nomadlab.mentors.admin.service.AdminService;
 import kr.nomadlab.mentors.admin.service.CoinStatsService;
 import kr.nomadlab.mentors.admin.service.VisitorService;
+import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.member.dto.MenteeDTO;
 import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 import kr.nomadlab.mentors.member.dto.MentorDTO;
 import kr.nomadlab.mentors.member.service.MenteeService;
 import kr.nomadlab.mentors.member.service.MentorService;
+import kr.nomadlab.mentors.notify.dto.NotifyDto;
+import kr.nomadlab.mentors.notify.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -30,6 +33,8 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final VisitorService visitorService;
+
+    private final NotifyService notifyService;
 
     private final MenteeService menteeService;
     private final MentorService mentorService;
@@ -275,8 +280,11 @@ public class AdminController {
                 .build();
         mentorService.add(mentorDTO);
         // 4. 가져온 모든 정보를 멘토 테이블로 모두 옮겨준다.
+        NotifyDto notifyDto = NotifyDto.builder()
+                .types("mentorApply")
+                .build();
 
-
+        notifyService.passNotify(notifyDto, mno);
 
         adminService.removeApplyOne(mno);
         menteeService.remove(menteeDTO.getMemberId());
