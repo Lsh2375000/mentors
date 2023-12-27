@@ -52,7 +52,6 @@
 <div layout:fragment="content">
 
   <form name="frmModify" id="frmModify" action="/member/mentorModify" method="post" class="form-horizontal" enctype="multipart/form-data">
-
     <!--이메일 아이디 시작-->
     <div class="form-group row" style="margin-top: 20px;">
       <label class="col-sm-2 control-label">이메일</label>
@@ -62,6 +61,7 @@
     </div>
     <!--이메일 아이디 끝-->
 
+    <input name="memberId" th:value="${#authentication.principal.getMemberId}" hidden>
     <!--비밀번호 시작-->
     <div class="form-group row">
       <label class="col-sm-2 control-label">비밀번호 변경</label>
@@ -73,7 +73,7 @@
 
     <!--주소 시작-->
     <div class="form-group row">
-      <label class="col-sm-2 control-label">주소 수정</label>
+      <label class="col-sm-2 control-label">주소</label>
       <div class="col-10">
         <table>
           <tr style="display: flex;">
@@ -137,7 +137,7 @@
 
     <!--프로그래밍 언어 시작-->
     <div class="form-group row">
-      <label class="col-sm-2 control-label">관심 프로그래밍 언어</label>
+      <label class="col-sm-2 control-label">전공 언어</label>
       <div class="col-sm-5">
         Java<input type="checkbox" name="devLanguage" value="Java" th:checked="${devList.contains('Java')}" class="form-check-input">
         Python<input type="checkbox" name="devLanguage" value="Phython" th:checked="${devList.contains('Phython')}" class="form-check-input">
@@ -151,15 +151,6 @@
       </div>
     </div>
     <!--프로그래밍 언어 끝-->
-
-    <!--멘토 소개 시작-->
-    <div class="form-group row">
-      <label class="col-sm-2 control-label">멘토 소개</label>
-      <div class="col-sm-5">
-        <textarea name="intro" cols="100" rows="10" class="form-control" id="intro" th:value="${mentorDTO.intro}"></textarea>
-      </div>
-    </div>
-    <!--멘토 소개 끝-->
 
     <div class="form-group row">
       <div class="col-sm-offset-2 col-sm-10">
@@ -200,31 +191,6 @@
           <div class="modal-footer">
             <button type="reset" class="btn btn-secondary"> 초기화 </button>
             <button type="button" class="btn btn-primary" id="editPwBtn" disabled> 비밀번호 변경 </button>
-          </div>
-        </div>
-      </div>
-    </div><!--End Modal-->
-  </form>
-  <!--회원 탈퇴 모달창 form 태그-->
-  <form name="frmQuitPw" id="frmQuitPw" action="/member/quit" method="post">
-    <div class="modal" id="qmpwModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">회원 탈퇴</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" id="qcloseModal" aria-label="Close"></button>
-          </div>
-
-          <div class="modal-body">
-            <div class="pwModal">
-              <label>비밀번호 입력</label>
-              <input name="mpwChk" type="password" class="form-control" id="qmpwChk">
-              <span id="qmpwCheck" class="qchkTxt" ></span>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="quitMemberBtn" disabled> 회원 탈퇴 </button>
           </div>
         </div>
       </div>
@@ -382,59 +348,6 @@
   });
 //--------------------------------------------------------------------
 
-  const frmQuitPw = document.getElementById('frmQuitPw'); // 비밀번호 수정 form 태그
-  const qmpwModal = new bootstrap.Modal(document.getElementById('qmpwModal')); // 회원 탈퇴 모달창 모달창
-  const qcloseModal = document.getElementById('qcloseModal'); // 모달창 닫기 버튼
-
-  const privacyModifyBtn = document.getElementById('privacyModify'); // 회원 탈퇴 버튼
-  const qmpwChk = document.getElementById('qmpwChk'); // 입력한 현재 비밀번호
-  const quitMemberBtn = document.getElementById('quitMemberBtn'); // 모달창에서 회원 탈퇴 버튼
-
-
-  privacyModifyBtn.addEventListener('click', function (e) { // 회원탈퇴 모달창 이벤트
-    qmpwModal.show();
-  });
-
-  qcloseModal.addEventListener('click', function (e) { // 모달창 닫기 이벤트
-    frmQuitPw.reset();
-  });
-
-  qmpwChk.addEventListener('focusout', async function () { // 비밀번호를 입력하면
-    const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
-    const qmpwCheck = document.getElementById('qmpwCheck'); // 현재 비밀번호 일치여부 텍스트
-    const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
-    if (result) {
-      qmpwCheck.innerHTML = '현재 비밀번호와 일치합니다.'
-      qmpwCheck.style.color = '#5c6ff1';
-      qmpwChk.readonly = true; // 현재 비밀번호가 일치하면
-      quitMemberBtn.disabled = false; // 회원 탈퇴 버튼 활성화
-    } else {
-      qmpwCheck.innerHTML = '현재 비밀번호와 일치하지 않습니다.'; // 비밀번호 일치하지 않으면 회원 탈퇴 불가
-      qmpwCheck.style.color = '#f64e4e';
-      quitMemberBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-      });
-    }
-  });
-
-  quitMemberBtn.addEventListener('click', async function (e) {
-    const inputPwVal = qmpwChk.value; // 입력한 현재 비밀번호 값
-    const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
-
-    if (result === false || qmpwChk.value === ''.trim()){
-      alert('현재 비밀번호가 일치하지 않습니다.');
-      e.preventDefault();
-      e.stopPropagation();
-    } else if (result) {
-      if (confirm('정말 회원 탈퇴 하시겠습니까?')) {
-        // console.log(mpwChk.value);
-        // console.log(frmQuitPw);
-        frmQuitPw.submit();
-      }
-
-    }
-
-  });
 
 
 </script>

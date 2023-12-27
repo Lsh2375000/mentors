@@ -119,10 +119,12 @@ public class MyPageController {
 
         if(memberSecurityDTO != null) {
             if (memberSecurityDTO.getNickname().equals(nickname)) {
+                log.info("멘티 로그인해서 멘티 마이페이지");
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
-                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+
+                Long getApplyMno = menteeService.getApplyByMno(menteeDTO.getMno());
                 log.info("이거는 됨 ? " + getApplyMno);
                 if (getApplyMno == null) {
                     model.addAttribute("isMentorApply", true);
@@ -419,7 +421,7 @@ public class MyPageController {
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
-                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+                Long getApplyMno = menteeService.getApplyByMno(memberSecurityDTO.getMno());
                 log.info("이거는 됨 ? " + getApplyMno);
 
                 introList = boardService.getMyBoardList(menteeDTO.getMno(), pageRequestDTO);
@@ -474,10 +476,12 @@ public class MyPageController {
         if(memberSecurityDTO != null) {
             if (memberSecurityDTO.getNickname().equals(nickname)) {
                 log.info("멘티 로그인하고 내가 쓴글 진입");
+
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
-                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+
+                Long getApplyMno = menteeService.getApplyByMno(memberSecurityDTO.getMno());
                 log.info("이거는 됨 ? " + getApplyMno);
 
                 hireList = projectService.getMyProjectList(menteeDTO.getMno(), pageRequestDTO);
@@ -535,7 +539,7 @@ public class MyPageController {
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
-                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+                Long getApplyMno = menteeService.getApplyByMno(memberSecurityDTO.getMno());
                 log.info("이거는 됨 ? " + getApplyMno);
 
                 questionList = questionService.getMyQuestionList(menteeDTO.getMno(), pageRequestDTO);
@@ -591,7 +595,8 @@ public class MyPageController {
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
-                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+
+                Long getApplyMno = menteeService.getApplyByMno(memberSecurityDTO.getMno());
                 log.info("이거는 됨 ? " + getApplyMno);
 
                 answerList = answerService.getMyAnswerList(menteeDTO.getMno(), pageRequestDTO);

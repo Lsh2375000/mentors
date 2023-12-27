@@ -16,7 +16,7 @@
         select * from `mentee` where `memberId` = #{memberId};
     </select>
 
-    <select id="selectOneByMno" resultType="kr.nomadlab.mentors.member.domain.MenteeVO">
+    <select id="getByMno" resultType="kr.nomadlab.mentors.member.domain.MenteeVO">
         select *
         from `mentee`
         where `mno` = ${mno};
