@@ -97,7 +97,7 @@
             </div>
             <div class="contentDiv">
                 <div class="contentTitle">
-                    <span>내가 쓴 글</span>
+                    <span>작성한 답변</span>
                     <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getNickname() == memberDTO.nickname}">
                         <button class="goBtn">커뮤니티 둘러보기</button> <!--멘토로그인해서 마이페이지 들어왔을 때 출력-->
                     </th:block>
