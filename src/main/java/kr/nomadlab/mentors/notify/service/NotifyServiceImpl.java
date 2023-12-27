@@ -65,6 +65,9 @@ public class NotifyServiceImpl implements NotifyService{
         if(notifyDto.getTypes().equals("mentoring")){
             message = member.getNickname() + "님이 멘토링을 신청하셨습니다.";
         }
+        if(notifyDto.getTypes().equals("mentorApply")){
+            message = "멘토가 되었습니다.";
+        }
         NotifyVO notifyVO = NotifyVO.builder()
                 .receiverMno(notifyDto.getReceiverMno())
                 .sendMno(member.getMno())
