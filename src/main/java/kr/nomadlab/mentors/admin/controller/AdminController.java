@@ -6,7 +6,11 @@ import kr.nomadlab.mentors.admin.dto.AdminTypeDTO;
 import kr.nomadlab.mentors.admin.service.AdminService;
 import kr.nomadlab.mentors.admin.service.CoinStatsService;
 import kr.nomadlab.mentors.admin.service.VisitorService;
+import kr.nomadlab.mentors.member.dto.MenteeDTO;
 import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
+import kr.nomadlab.mentors.member.dto.MentorDTO;
+import kr.nomadlab.mentors.member.service.MenteeService;
+import kr.nomadlab.mentors.member.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -25,6 +29,10 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final VisitorService visitorService;
+
+    private final MenteeService menteeService;
+    private final MentorService mentorService;
+
     private final CoinStatsService coinStatsService;
 
     @GetMapping("/stats")
@@ -235,12 +243,41 @@ public class AdminController {
 
     @GetMapping("/mentorApply")
     public void mentorApplyGET(Model model) {
+        log.info("mentorApplyGET()...");
         List<MentorApplyDTO> mentorApplyDTO = adminService.getApplyList();
         model.addAttribute("dtoList", mentorApplyDTO);
     }
 
     @PostMapping("/mentorApply")
-    public String mentorApplyPOST(Model model) {
+    public String mentorApplyPOST(Long mno) {
+        log.info("mentorApplyPOST()...");
+        log.info("mno : " + mno);
+        MenteeDTO menteeDTO = menteeService.getOneByMno(mno);
+        // 1. 해당 mno의 멘티정보를 가져온다
+
+        MentorApplyDTO mentorApplyDTO = adminService.getApplyOne(mno);
+        // 2. 해당 mno의 멘토 신청 정보를 가져온다
+
+        adminService.changeRole(menteeDTO.getMemberId());
+        // 3. 해당 mno의 role을 변경해준다
+
+        MentorDTO mentorDTO = MentorDTO.builder()
+                .mno(menteeDTO.getMno())
+                .memberId(menteeDTO.getMemberId())
+                .nickname(menteeDTO.getNickname())
+                .devLanguage(mentorApplyDTO.getDevLanguage())
+                .fileNames(mentorApplyDTO.getFileNames())
+                .univName(mentorApplyDTO.getUnivName())
+                .major(mentorApplyDTO.getMajor())
+                .build();
+        mentorService.add(mentorDTO);
+        // 4. 가져온 모든 정보를 멘토 테이블로 모두 옮겨준다.
+
+
+
+        adminService.removeApplyOne(mno);
+        menteeService.remove(menteeDTO.getMemberId());
+        // 마지막으로 멘티의 정보와 신청정보를 삭제한다.
 
         return "redirect:/admin/mentorApply";
     }

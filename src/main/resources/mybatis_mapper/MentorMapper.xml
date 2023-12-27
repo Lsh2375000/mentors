@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.nomadlab.mentors.member.mapper.MentorMapper">
     <insert id="insert">
-        INSERT INTO `mentor` (`mno` ,`memberId`, `region`, `nickname`, `devLanguage`, `fileNames`, `intro`, `rating`, `univName`, `major`)
-        VALUES (#{mno}, #{memberId}, #{region},  #{nickname}, #{devLanguage}, #{fileNames}, #{intro},  #{rating}, #{univName}, #{major})
+        INSERT INTO `mentor` (`mno` ,`memberId`, `nickname`, `devLanguage`, `fileNames`, `intro`, `univName`, `major`)
+        VALUES (#{mno}, #{memberId},  #{nickname}, #{devLanguage}, #{fileNames}, #{intro}, #{univName}, #{major})
     </insert>
     
     <select id="selectAll" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
@@ -30,5 +30,10 @@
         DELETE FROM `mentor` WHERE `memberId` = #{memberId}
     </delete>
 
+    <insert id="introWrite">
+        update `mentor`
+        set `intro` = #{intro}
+        where `mno` = #{mno}
+    </insert>
 
 </mapper>

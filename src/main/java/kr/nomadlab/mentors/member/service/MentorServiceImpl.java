@@ -30,28 +30,9 @@ public class MentorServiceImpl implements MentorService{
     private String uploadPath;
 
     @Override
-    public void add(MentorDTO mentorDTO, List<MultipartFile> files) {
+    public void add(MentorDTO mentorDTO) { // 멘티의 멘토 등록
         log.info("MentorService add()...");
-        log.info(files);
-        if (files.size() > 0) {
-            StringBuilder str = new StringBuilder();
-            for(MultipartFile file : files) {
-                String uuid = UUID.randomUUID().toString();
-                Path savePath = Paths.get(uploadPath, uuid + "_" + file.getOriginalFilename());
-                str.append(uuid).append("_").append(file.getOriginalFilename()).append("|");
-                try {
-                    file.transferTo(savePath);
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
-            mentorDTO.setFileNames(str.toString());
-            log.info("입력된 첨부파일 : " + str.toString());
-        }
-
         MentorVO mentorVO = modelMapper.map(mentorDTO, MentorVO.class);
-        Integer role_set = 0; // ROLE_MENTOR로 저장
-        memberMapper.addMemberRole(mentorVO.getMemberId(), role_set);
         mentorMapper.insert(mentorVO);
     }
 
@@ -121,6 +102,11 @@ public class MentorServiceImpl implements MentorService{
     public void remove(String memberId) {
         log.info("MentorService remove()....");
         mentorMapper.delete(memberId);
+    }
+
+    @Override
+    public void introWrite(String intro, Long mno) {
+        mentorMapper.introWrite(intro, mno);
     }
 
 

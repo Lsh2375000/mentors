@@ -94,4 +94,21 @@ public class AdminServiceImpl implements AdminService{
     public void completeExchange(Long exNo) {
         adminMapper.exchangeComplete(exNo);
     }
+
+    @Override
+    public MentorApplyDTO getApplyOne(Long mno) {
+        MentorApplyVO mentorApplyVO = adminMapper.getApplyOne(mno);
+        MentorApplyDTO mentorApplyDTO = modelMapper.map(mentorApplyVO, MentorApplyDTO.class);
+        return mentorApplyDTO;
+    }
+
+    @Override
+    public void removeApplyOne(Long mno) {
+        adminMapper.removeApplyOne(mno);
+    }
+
+    @Override
+    public void changeRole(String memberId) { // 멘티 회원 ROLE 변경
+        adminMapper.changeRole(memberId);
+    }
 }

@@ -53,6 +53,14 @@ public class MenteeServiceImpl implements MenteeService{
         return menteeDTO;
     }
 
+    @Override
+    public MenteeDTO getOneByMno(Long mno) {
+        log.info("service getOneByMno() ...");
+        MenteeVO menteeVO = menteeMapper.selectOneByMno(mno);
+        MenteeDTO menteeDTO = modelMapper.map(menteeVO, MenteeDTO.class);
+        return menteeDTO;
+    }
+
 
     @Override
     public void modify(MenteeDTO menteeDTO) {
@@ -68,6 +76,11 @@ public class MenteeServiceImpl implements MenteeService{
     public void remove(String memberId) {
         log.info("service remove()....");
         menteeMapper.delete(memberId);
+    }
+
+    @Override
+    public void introWrite(String intro, Long mno) {
+        menteeMapper.introWrite(intro, mno);
     }
 
 }

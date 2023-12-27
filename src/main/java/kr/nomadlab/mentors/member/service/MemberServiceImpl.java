@@ -117,9 +117,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDTO getProfileNickname(String nickname) {
+        // 프로필 들어갔을 때 해당 닉네임을 가진 유저의 정보가져옴
         MemberVO memberVO = memberMapper.getMemberNickname(nickname);
         log.info(memberVO);
-
         MemberDTO memberDTO = modelMapper.map(memberVO, MemberDTO.class);
         log.info(memberDTO);
 
@@ -131,7 +131,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int getMemberRole(String memberId) {
+    public int getMemberRole(String memberId) { // 해당 아이디의 ROLE을 가져옴
         return memberMapper.getMemberRole(memberId);
     }
 

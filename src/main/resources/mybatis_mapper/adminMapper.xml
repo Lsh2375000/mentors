@@ -37,6 +37,24 @@
         select * from `mentorApply`
     </select>
 
+    <select id="getApplyOne" resultType="kr.nomadlab.mentors.member.domain.MentorApplyVO">
+        select *
+        from `mentorApply`
+        where `mno` = #{mno};
+    </select>
+
+    <delete id="removeApplyOne">
+        delete from `mentorApply` where `mno` = #{mno}
+    </delete>
+
+
+    <update id="changeRole">
+        update `member_role_set`
+        set `role_set` = 0
+        where `memberId` = #{memberId};
+    </update>
+
+
     <sql id="exSearch">
         <where>
             <if test="types != null and types.length > 0">
