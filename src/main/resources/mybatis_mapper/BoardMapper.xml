@@ -155,11 +155,17 @@
         FROM `board` AS `b`
         LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
         LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
-        LEFT JOIN `hashTag` AS `ht` ON `b`.`boardNo` = `ht`.`boardNo`
         WHERE `b`.`mno` = #{mno}
         GROUP BY `b`.`boardNo`
         ORDER BY
         `b`.`boardNo` DESC LIMIT #{skip}, #{size}
+    </select>
+
+    <!-- 본인 게시물 갯수-->
+    <select id="getMyCount" resultType="int">
+        SELECT COUNT(`boardNo`)
+        FROM `board`
+        WHERE `mno` = #{mno};
     </select>
 
 </mapper>

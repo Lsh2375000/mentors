@@ -21,6 +21,7 @@ public class AnswerVO {
     private LocalDateTime addDate; // 답변 작성 날짜
     private boolean cmEdtNot; // 답변 수정 유무
     private boolean isSelect; // 답변 채택 유무
+    private String title; // 질문 제목
 
     private List<AnswerVO> children = new ArrayList<>();
 }

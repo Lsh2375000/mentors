@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @SpringBootTest
 @Log4j2
 public class BoardServiceTest {
@@ -56,5 +58,12 @@ public class BoardServiceTest {
                 .build();
         PageResponseDTO<BoardDTO> pageResponseDTO = boardService.getBoardList(pageRequestDTO);
         log.info(pageResponseDTO);
+    }
+
+    @Test
+    void getMyBoardListTest() { // 내가 작성한 게시글 목록 테스트
+        Long mno = 1L;
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().build();
+        PageResponseDTO<BoardDTO> boardDTOList = boardService.getMyBoardList(mno, pageRequestDTO);
     }
 }

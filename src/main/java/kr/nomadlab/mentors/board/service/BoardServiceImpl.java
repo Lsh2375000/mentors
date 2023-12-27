@@ -139,4 +139,28 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
+    @Override
+    public PageResponseDTO<BoardDTO> getMyBoardList(Long mno, PageRequestDTO pageRequestDTO) {
+        List<BoardVO> voList = boardMapper.selectMyBoardList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
+        List<BoardDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(boardVO -> {
+            BoardDTO boardDTO = modelMapper.map(boardVO, BoardDTO.class);
+
+            if (boardVO.getTagVOList().size() > 0) { // 태그 목록이 존재하는 경우
+                List<HashTagDTO> tagList = new ArrayList<>(); // 해시 태그 목록을 담을 리스트 객체
+                boardVO.getTagVOList().forEach(hashTagVO -> tagList.add(modelMapper.map(hashTagVO, HashTagDTO.class)));
+                boardDTO.setTagList(tagList);
+            }
+
+            dtoList.add(boardDTO);
+        });
+
+        int total = boardMapper.getMyCount(mno);
+
+        return PageResponseDTO.<BoardDTO>withAll()
+                .dtoList(dtoList)
+                .total(total)
+                .pageRequestDTO(pageRequestDTO).build();
+    }
 }
