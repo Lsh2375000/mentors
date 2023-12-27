@@ -151,4 +151,26 @@
         update `question` set `isComplete` = true where `qno` = #{qno};
     </update>
 
+    <!-- 본인 질문 전체 조회 -->
+    <select id="selectMyQuestionList" resultMap="questionResultMap">
+        SELECT
+        `q`.*,
+        COUNT(DISTINCT `a`.`ano`) AS answerCount,
+        COUNT(DISTINCT `v`.`vno`) AS voteCount
+        FROM `question` AS `q`
+        LEFT JOIN `answer` AS `a` ON `q`.`qno` = `a`.`qno`
+        LEFT JOIN `qnaVote` AS `v` ON `q`.`qno` = `v`.`qno`
+        LEFT JOIN `questionTag` AS `qt` ON `q`.`qno` = `qt`.`qno`
+        WHERE `q`.`mno` = #{mno}
+        GROUP BY `q`.`qno`
+        ORDER BY `q`.`qno` DESC LIMIT #{skip}, #{size}
+    </select>
+
+    <!-- 본인 질문 갯수-->
+    <select id="getMyCount" resultType="int">
+        SELECT COUNT(`qno`)
+        FROM `question`
+        WHERE `mno` = #{mno}
+    </select>
+
 </mapper>

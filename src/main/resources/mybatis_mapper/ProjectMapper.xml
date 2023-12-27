@@ -7,7 +7,7 @@
     <!-- ProjectVO에 대한 resultMap 설정 -->
     <resultMap id="projectResultMap" type="kr.nomadlab.mentors.project.domain.ProjectVO">
         <id property="projectNo" column="projectNo" />
-        <result property="memberId" column="memberId" />
+        <result property="mno" column="mno" />
         <result property="writer" column="writer" />
         <result property="title" column="title" />
         <result property="content" column="content" />
@@ -51,6 +51,23 @@
         DESC LIMIT #{skip}, #{size}
     </select>
 
+    <!-- 본인 게시글 전체 조회 -->
+    <select id="selectMyProjectList" resultMap="projectResultMap">
+        SELECT
+        `p`.*,
+        COUNT(DISTINCT `pr`.`pjrNo`) AS replyCount,
+        COUNT(DISTINCT `pjl`.`pjlNo`) AS likeCount
+        FROM `project` AS `p`
+        LEFT JOIN `projectReply` AS `pr` ON `p`.`projectNo` = `pr`.`projectNo`
+        LEFT JOIN `projectLike` AS `pjl` ON `p`.`projectNo` = `pjl`.`projectNo`
+        LEFT JOIN `projectTag` AS `pt` ON `p`.`projectNo` = `pt`.`projectNo`
+        WHERE `p`.`mno` = #{mno}
+        GROUP BY `p`.`projectNo`
+        ORDER BY
+        `p`.`projectNo`
+        DESC LIMIT #{skip}, #{size}
+    </select>
+
     <sql id="search">
         <where>
             <if test="types != null and types.length > 0">
@@ -77,8 +94,8 @@
 
     <!-- 게시글 등록 -->
     <insert id="insertProject" parameterType="kr.nomadlab.mentors.project.domain.ProjectVO" useGeneratedKeys="true" keyProperty="projectNo">
-        INSERT INTO `project` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
-        VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
+        INSERT INTO `project` (`mno`, `writer`, `title`, `content`,  `hit`, `addDate`)
+        VALUES (#{mno}, #{writer}, #{title}, #{content}, 0, NOW())
     </insert>
 
     <!-- 상위 10개 태그 조회 -->
@@ -144,6 +161,13 @@
         FROM `project` AS `p`
         LEFT JOIN `projectTag` AS `pt` ON `p`.`projectNo` = `pt`.`projectNo`
         <include refid="search" />
+    </select>
+
+    <!--게시물 갯수-->
+    <select id="getMyCount" resultType="int">
+        SELECT COUNT(`p`.`projectNo`)
+        FROM `project` AS `p`
+        WHERE `p`.`mno` = #{mno}
     </select>
 
 </mapper>

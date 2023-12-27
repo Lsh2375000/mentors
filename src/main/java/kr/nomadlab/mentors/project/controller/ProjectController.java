@@ -75,7 +75,7 @@ public class ProjectController {
             log.info("No Hash Tags provided.");
         }
 
-        projectDTO.setMemberId("testId");
+        projectDTO.setMno(1L);
         
         projectService.registerProject(projectDTO);
 

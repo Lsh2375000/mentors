@@ -141,4 +141,29 @@ public class ProjectServiceImpl implements ProjectService {
             tagList.forEach(this::addHashTag); // 수정한 태그 목록 DB에 추가
         }
     }
+
+    @Override
+    public PageResponseDTO<ProjectDTO> getMyProjectList(Long mno, PageRequestDTO pageRequestDTO) {
+        List<ProjectVO> voList = projectMapper.selectMyProjectList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
+        List<ProjectDTO> dtoList = new ArrayList<>();
+
+        voList.forEach(projectVO -> {
+            ProjectDTO projectDTO = modelMapper.map(projectVO, ProjectDTO.class);
+
+            if (projectVO.getTagVOList().size() > 0) { // 태그 목록이 존재하는 경우
+                List<ProjectTagDTO> tagList = new ArrayList<>(); // 해시 태그 목록을 담을 리스트 객체
+                projectVO.getTagVOList().forEach(hashTagVO -> tagList.add(modelMapper.map(hashTagVO, ProjectTagDTO.class)));
+                projectDTO.setTagList(tagList);
+            }
+
+            dtoList.add(projectDTO);
+        });
+
+        int total = projectMapper.getMyCount(mno);
+
+        return PageResponseDTO.<ProjectDTO>withAll()
+                .dtoList(dtoList)
+                .total(total)
+                .pageRequestDTO(pageRequestDTO).build();
+    }
 }

@@ -30,4 +30,6 @@ public interface QuestionService {
     void addQuestionTag(QuestionTagDTO questionTagDTO); // 태그 추가
 
     void modifyQuestionTag(Long qno, List<QuestionTagDTO> tagList); // 태그 수정
+
+    PageResponseDTO<QuestionDTO> getMyQuestionList(Long mno, PageRequestDTO pageRequestDTO); // 질문 목록 조회
 }

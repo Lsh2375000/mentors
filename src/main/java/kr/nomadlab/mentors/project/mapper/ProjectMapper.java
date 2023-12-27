@@ -10,6 +10,7 @@ import kr.nomadlab.mentors.project.domain.ProjectTagVO;
 import kr.nomadlab.mentors.project.domain.ProjectVO;
 import kr.nomadlab.mentors.project.dto.ProjectTagDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -45,4 +46,9 @@ public interface ProjectMapper {
 
     void deleteTag(Long projectNo); // 태그 삭제
 
+    List<ProjectVO> selectMyProjectList(@Param("mno") Long mno,
+                                        @Param("skip") int skip,
+                                        @Param("size") int size); // 게시글 전체 조회
+
+    int getMyCount(Long mno); // 본인 게시글 총 갯수
 }
