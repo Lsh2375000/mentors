@@ -91,7 +91,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public PageResponseDTO<AnswerDTO> getMyAnswerList(Long mno, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<AnswerDTO> getMyAnswerList(Long mno, PageRequestDTO pageRequestDTO) { // 내가 작성한 답변 목록 조회
         List<AnswerVO> voList = answerMapper.selectMyAnswerList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
         List<AnswerDTO> dtoList = new ArrayList<>();
 

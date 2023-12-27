@@ -27,6 +27,7 @@ public class AnswerDTO {
     private boolean cmEdtNot = true; // 답변 수정 유무
     @Builder.Default
     private boolean isSelect = false; // 답변 채택 유무
+    private String title; // 질문 제목
 
     private List<AnswerDTO> children = new ArrayList<>();
 }

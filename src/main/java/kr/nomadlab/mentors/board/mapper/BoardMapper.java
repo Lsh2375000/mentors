@@ -42,6 +42,8 @@ public interface BoardMapper {
 
     void deleteTag(Long boardNo); // 태그 삭제
     
-    List<BoardVO> selectMyBoardList(@Param("mno") Long mno, @Param("skip") Integer skip, @Param("size") Integer size); // 본인 게시글 목록 조회
+    List<BoardVO> selectMyBoardList(@Param("mno") Long mno, @Param("skip") int skip, @Param("size") int size); // 본인 게시글 목록 조회
+
+    int getMyCount(Long mno); // 내가쓴 게시글 총 갯수
 
 }

@@ -38,19 +38,17 @@
 
     <!-- 본인 답변 목록 조회 -->
     <select id="selectMyAnswerList" resultMap="answerList">
---         SELECT * FROM `answer`
---         WHERE `mno` = ? AND `ano` = `parentNo`
---         ORDER BY `ano` DESC LIMIT ?, ?;
-
-        SELECT * FROM `answer`
-        WHERE `mno` = #{mno} AND `ano` = `parentNo`
-        ORDER BY `ano` DESC
-            LIMIT #{skip}, #{size};
+        SELECT `a`.*, `q`.title
+        FROM `answer` AS `a`
+        LEFT JOIN `question` AS `q` ON `a`.`qno` = `q`.`qno`
+        WHERE `a`.`mno` = #{mno} AND `a`.`ano` = `a`.`parentNo`
+        ORDER BY `a`.`ano` DESC
+        LIMIT #{skip}, #{size}
     </select>
 
     <insert id="insertAnswer" parameterType="kr.nomadlab.mentors.answer.domain.AnswerVO" useGeneratedKeys="true" keyProperty="ano">
         insert into `answer`(`ano`, `parentNo`, `mno`, `qno`, `content`, `writer`, `addDate`, cmEdtNot, isSelect)
-        values (#{ano}, #{parentNo}, #{mno}, #{qno}, #{content}, #{writer}, NOW(), #{cmEdtNot}, #{isSelect})
+        values (#{ano}, #{parentNo}, #{mno}, #{qno} , #{content}, #{writer}, NOW(), #{cmEdtNot}, #{isSelect})
     </insert>
 
     <!-- 부모 댓글 번호 업데이트 -->

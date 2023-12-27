@@ -31,4 +31,5 @@ public interface BoardService {
 
     void modifyHashTag(Long boardNo, List<HashTagDTO> tagList); // 해쉬태그 수정
 
+    PageResponseDTO<BoardDTO> getMyBoardList(Long mno, PageRequestDTO pageRequestDTO); // 본인이 작성한 게시글 목록 조회
 }
