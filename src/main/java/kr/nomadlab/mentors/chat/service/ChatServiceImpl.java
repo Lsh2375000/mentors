@@ -6,6 +6,7 @@ import kr.nomadlab.mentors.chat.dto.ChatRoomDTO;
 import kr.nomadlab.mentors.chat.mapper.ChatMessageMapper;
 import kr.nomadlab.mentors.chat.mapper.ChatRoomMapper;
 import kr.nomadlab.mentors.main.mapper.MainMapper;
+import kr.nomadlab.mentors.member.mapper.MemberMapper;
 import kr.nomadlab.mentors.payInfo.mapper.PayInfoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,7 @@ public class ChatServiceImpl implements ChatService{
     private final ChatMessageMapper chatMessageMapper;
     private final MainMapper mainMapper;
     private final PayInfoMapper payInfoMapper;
+    private final MemberMapper memberMapper;
 
     // 보낸 메세지
     public ChatMessageDTO sendMessage(ChatMessageDTO messageDTO) {

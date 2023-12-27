@@ -7,7 +7,7 @@
     <!-- BoardVO에 대한 resultMap 설정 -->
     <resultMap id="boardResultMap" type="kr.nomadlab.mentors.board.domain.BoardVO">
         <id property="boardNo" column="boardNo" />
-        <result property="memberId" column="memberId" />
+        <result property="mno" column="mno" />
         <result property="writer" column="writer" />
         <result property="title" column="title" />
         <result property="content" column="content" />
@@ -77,8 +77,8 @@
 
     <!-- 게시글 등록 -->
     <insert id="insertBoard" parameterType="kr.nomadlab.mentors.board.domain.BoardVO" useGeneratedKeys="true" keyProperty="boardNo">
-        INSERT INTO `board` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`)
-        VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW())
+        INSERT INTO `board` (`mno`, `writer`, `title`, `content`,  `hit`, `addDate`)
+        VALUES (#{mno}, #{writer}, #{title}, #{content}, 0, NOW())
     </insert>
 
     <!-- 상위 10개 태그 조회 -->
@@ -144,6 +144,22 @@
         FROM `board` AS `b`
         LEFT JOIN `hashTag` AS `ht` ON `b`.`boardNo` = `ht`.`boardNo`
         <include refid="search" />
+    </select>
+
+    <!-- 본인 게시글 전체 조회 -->
+    <select id="selectMyBoardList" resultMap="boardResultMap">
+        SELECT
+        `b`.*,
+        COUNT(DISTINCT `br`.`rno`) AS replyCount,
+        COUNT(DISTINCT `bl`.`blNo`) AS likeCount
+        FROM `board` AS `b`
+        LEFT JOIN `boardReply` AS `br` ON `b`.`boardNo` = `br`.`boardNo`
+        LEFT JOIN `boardLike` AS `bl` ON `b`.`boardNo` = `bl`.`boardNo`
+        LEFT JOIN `hashTag` AS `ht` ON `b`.`boardNo` = `ht`.`boardNo`
+        WHERE `b`.`mno` = #{mno}
+        GROUP BY `b`.`boardNo`
+        ORDER BY
+        `b`.`boardNo` DESC LIMIT #{skip}, #{size}
     </select>
 
 </mapper>

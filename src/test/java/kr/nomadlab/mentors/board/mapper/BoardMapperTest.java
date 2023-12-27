@@ -86,4 +86,11 @@ class BoardMapperTest {
         List<HashTagVO> tagVOList = boardMapper.selectTagList(boardNo);
         tagVOList.forEach(log::info);
     }
+
+    @Test
+    void selectMyBoardListTest() {
+        Long mno = 1L;
+        List<BoardVO> boardVOList = boardMapper.selectMyBoardList(mno, 0, 10);
+        boardVOList.forEach(log::info);
+    }
 }

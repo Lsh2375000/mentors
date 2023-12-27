@@ -17,7 +17,7 @@ public class BoardServiceTest {
     @Test
     void registerBoardTest() { // 게시글 등록 테스트
         BoardDTO boardDTO = BoardDTO.builder()
-                .memberId("test6789")
+                .mno(1L)
                 .writer("닉네임")
                 .title("테스트 제목")
                 .content("테스트 내용")
