@@ -80,13 +80,15 @@
                 console.log(applyBtn.id);
                 mno.value = applyBtn.id;
                 frmApply.submit();
-
-                let messageObj ={
-                    receiverMno : mno.value,
-                    types : "mentorApply",
-                    typesNo : ''
-                }
-                passMessage(messageObj);
+                frmApply.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    let messageObj = {
+                        receiverMno: mno.value,
+                        types: "mentorApply",
+                        typesNo: ''
+                    }
+                    passMessage(messageObj);
+                });
             }
         });
     });
