@@ -112,7 +112,19 @@ public class CustomSecurityConfig {
          http.formLogin(login -> login
                  .loginPage("/member/login")
                  .defaultSuccessUrl("/")
-         );
+         )        .logout(logoutConfig -> {
+             logoutConfig
+                     .logoutUrl("/logout")
+                     .logoutSuccessHandler(
+                             ((request, response, authentication) -> {
+                                 log.info("로그아웃 성공");
+                                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                 response.getWriter().println("로그아웃 성공!!");
+                                 response.sendRedirect("/");
+                             })
+                     );
+         });;
          // CRSF 토큰 비활성화
          http.csrf(AbstractHttpConfigurer::disable);
          http.headers(header -> header

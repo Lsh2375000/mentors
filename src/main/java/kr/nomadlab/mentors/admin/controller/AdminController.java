@@ -153,11 +153,5 @@ public class AdminController {
         
     }
 
-    @GetMapping("/userPage")
-    public String userPage(){ // 사용자 페이지 가기
-        
-        // 어드민 로그아웃 메소드
-        
-        return "redirect:/main";
-    }
+
 }
