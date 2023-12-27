@@ -79,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
 
         MemberVO memberVO = modelMapper.map(memberDTO, MemberVO.class);
         log.info(memberVO);
-        memberMapper.updateMember(memberVO.getPasswd(), memberVO.getNickname(), memberVO.getMemberId());
+        memberMapper.updateMember(memberVO.getPasswd(), memberVO.getNickname(), memberVO.getRegion(), memberVO.getMemberName(), memberVO.getMemberId());
     }
 
     @Override

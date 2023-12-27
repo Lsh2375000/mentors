@@ -116,14 +116,17 @@
 
     <!--프로그래밍 언어 시작-->
     <div class="form-group row">
-      <label class="col-sm-2 control-label">관심 언어</label>
+      <label class="col-sm-2 control-label">관심 프로그래밍 언어</label>
       <div class="col-sm-5">
-        <select name="devLanguage" class="form-select lngName" id="lngName">
-          <option value="JAVA">JAVA</option>
-          <option value="Python">Python</option>
-          <option value="Javascript">Javascript</option>
-          <option value="C#">C#</option>
-        </select>
+        Java<input type="checkbox" name="devLanguage" value="Java" th:checked="${devList.contains('Java')}" class="form-check-input">
+        Python<input type="checkbox" name="devLanguage" value="Phython" th:checked="${devList.contains('Phython')}" class="form-check-input">
+        C<input type="checkbox" name="devLanguage" value="C" th:checked="${devList.contains('C')}" class="form-check-input">
+        C++<input type="checkbox" name="devLanguage" value="C++" th:checked="${devList.contains('C++')}" class="form-check-input">
+        JS<input type="checkbox" name="devLanguage" value="JavaScript" th:checked="${devList.contains('JavaScript')}" class="form-check-input">
+        PHP<input type="checkbox" name="devLanguage" value="PHP" th:checked="${devList.contains('PHP')}" class="form-check-input">
+        Swift<input type="checkbox" name="devLanguage" value="Swift" th:checked="${devList.contains('Swift')}" class="form-check-input">
+        Kotlin<input type="checkbox" name="devLanguage" value="Kotlin" th:checked="${devList.contains('Kotlin')}" class="form-check-input">
+        TypeScript<input type="checkbox" name="devLanguage" value="TypeScript" th:checked="${devList.contains('TypeScript')}" class="form-check-input">
       </div>
     </div>
     <!--프로그래밍 언어 끝-->
