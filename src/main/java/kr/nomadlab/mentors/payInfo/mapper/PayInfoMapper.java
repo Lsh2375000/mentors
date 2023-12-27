@@ -19,7 +19,7 @@ public interface PayInfoMapper {
 
     int getCount(Long mno);
 
-    void returnMenteeCoin(Long mbNo, Long menteeMno); //멘토링 취소시 결제대기db 삭제
+    void returnMenteeCoin(Long menteeMno, Long mbNo); //멘토링 취소시 결제대기db 삭제
 
-    int getOnePayInfo(Long mbNo); // 환불자 찾아서 코인 환전
+    int getOnePayInfo(Long menteeMno, Long mbNo); // 환불자 찾아서 코인 환전
 }

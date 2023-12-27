@@ -38,5 +38,10 @@
         where `mno` = #{mno}
     </insert>
 
+    <select id="getApplyMno" resultType="long">
+        select `mno`
+        from `mentorApply`
+        where `mno` = #{mno}
+    </select>
 
 </mapper>
