@@ -7,7 +7,7 @@
     <!-- BoardVO에 대한 resultMap 설정 -->
     <resultMap id="questionResultMap" type="kr.nomadlab.mentors.question.domain.QuestionVO">
         <id property="qno" column="qno" />
-        <result property="memberId" column="memberId" />
+        <result property="mno" column="mno" />
         <result property="writer" column="writer" />
         <result property="title" column="title" />
         <result property="content" column="content" />
@@ -77,8 +77,8 @@
 
     <!-- 게시글 등록 -->
     <insert id="insertQuestion" parameterType="kr.nomadlab.mentors.question.domain.QuestionVO" useGeneratedKeys="true" keyProperty="qno">
-        INSERT INTO `question` (`memberId`, `writer`, `title`, `content`,  `hit`, `addDate`, `isComplete`)
-        VALUES (#{memberId}, #{writer}, #{title}, #{content}, 0, NOW(), false)
+        INSERT INTO `question` (`mno`, `writer`, `title`, `content`,  `hit`, `addDate`, `isComplete`)
+        VALUES (#{mno}, #{writer}, #{title}, #{content}, 0, NOW(), false)
     </insert>
 
     <!-- 상위 10개 태그 조회 -->
