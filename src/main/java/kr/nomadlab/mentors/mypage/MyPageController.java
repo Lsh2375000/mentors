@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.mypage;
 
 
 
+import kr.nomadlab.mentors.admin.service.AdminService;
 import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.exChange.dto.ExchangeDto;
@@ -10,10 +11,7 @@ import kr.nomadlab.mentors.main.dto.MainDTO;
 import kr.nomadlab.mentors.main.dto.MentorReviewDTO;
 import kr.nomadlab.mentors.main.service.MainService;
 import kr.nomadlab.mentors.main.service.MentorReviewService;
-import kr.nomadlab.mentors.member.dto.MemberDTO;
-import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
-import kr.nomadlab.mentors.member.dto.MenteeDTO;
-import kr.nomadlab.mentors.member.dto.MentorDTO;
+import kr.nomadlab.mentors.member.dto.*;
 
 import kr.nomadlab.mentors.member.service.MemberService;
 import kr.nomadlab.mentors.member.service.MenteeService;
@@ -53,6 +51,8 @@ public class MyPageController {
 
     private final PayInfoService payInfoService;
     private final ExchangeService exchangeService;
+
+    private final AdminService adminService;
 
     /*멘토 프로필 시작*/
     @GetMapping("/mentorProfile")
@@ -109,6 +109,15 @@ public class MyPageController {
                 MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
                 log.info("menteeDTO : " + menteeDTO);
                 model.addAttribute("menteeDTO", menteeDTO);
+                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+                log.info("이거는 됨 ? " + getApplyMno);
+                if (getApplyMno == null) {
+                    model.addAttribute("isMentorApply", true);
+
+                } else if (getApplyMno != null) {
+                    model.addAttribute("isMentorApply", false);
+                }
+
             } else {
                 MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
                 model.addAttribute("menteeDTO", menteeDTO);
@@ -201,6 +210,8 @@ public class MyPageController {
                 int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
                 log.info("멘티 자기소개 수강평 수");
                 model.addAttribute("reviewCnt", reviewCnt);
+
+
             }
         } // 프로필 자기소개 페이지
         else if (memberSecurityDTO != null && !(memberSecurityDTO.getNickname().equals(memberDTO.getNickname()))) {
@@ -371,21 +382,171 @@ public class MyPageController {
     }
 
     @GetMapping("/menteeBoardList")
-    public String myBoardList(){ // 내가 쓴글 (프로젝트소개)
+    public String myBoardList(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname){ // 내가 쓴글 (프로젝트소개)
+        log.info("menteeBoardList GET...");
+        /*공통으로 담을 값*/
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
 
+        int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+        /*공통으로 담을 값*/
+
+        if(memberSecurityDTO != null) {
+            if (memberSecurityDTO.getNickname().equals(nickname)) {
+                log.info("멘티 로그인하고 내가 쓴글 진입");
+                MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+                log.info("menteeDTO : " + menteeDTO);
+                model.addAttribute("menteeDTO", menteeDTO);
+                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+                log.info("이거는 됨 ? " + getApplyMno);
+                if (getApplyMno == null) {
+                    model.addAttribute("isMentorApply", true);
+
+                } else if (getApplyMno != null) {
+                    model.addAttribute("isMentorApply", false);
+                }
+
+            } else {
+                log.info("로그인하고 다른 멘티 유저가 쓴글 진입");
+                MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+                model.addAttribute("menteeDTO", menteeDTO);
+            }
+        } else if (memberSecurityDTO == null) {
+            log.info("로그인 안하고 다른 멘티가 쓴 유저가 쓴글 진입");
+            MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+            model.addAttribute("menteeDTO", menteeDTO);
+        }
         return "/mypage/introBoard";
     }
 
     @GetMapping("/menteeBoardList/hireBoard")
-    public String hireBoard(){ // 내가 쓴글(프로젝트 모집)
+    public String hireBoard(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname){ // 내가 쓴글(프로젝트 모집)
+
+        log.info("menteeBoardList GET...");
+        /*공통으로 담을 값*/
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+        /*공통으로 담을 값*/
+
+        if(memberSecurityDTO != null) {
+            if (memberSecurityDTO.getNickname().equals(nickname)) {
+                log.info("멘티 로그인하고 내가 쓴글 진입");
+                MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+                log.info("menteeDTO : " + menteeDTO);
+                model.addAttribute("menteeDTO", menteeDTO);
+                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+                log.info("이거는 됨 ? " + getApplyMno);
+                if (getApplyMno == null) {
+                    model.addAttribute("isMentorApply", true);
+
+                } else if (getApplyMno != null) {
+                    model.addAttribute("isMentorApply", false);
+                }
+
+            } else {
+                log.info("로그인하고 다른 멘티 유저가 쓴글 진입");
+                MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+                model.addAttribute("menteeDTO", menteeDTO);
+            }
+        } else if (memberSecurityDTO == null) {
+            log.info("로그인 안하고 다른 멘티가 쓴 유저가 쓴글 진입");
+            MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+            model.addAttribute("menteeDTO", menteeDTO);
+        }
 
         return "/mypage/hireBoard";
     }
 
     @GetMapping("/menteeBoardList/qnaBoard")
-    public String qnaBoard(){ // 내가 쓴글 (qna게시판)
+    public String qnaBoard(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname){ // 내가 쓴글 (qna게시판)
+        log.info("menteeBoardList GET...");
+        /*공통으로 담을 값*/
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
 
+        int reviewCnt = mentorReviewService.menteeReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+        /*공통으로 담을 값*/
+
+        if(memberSecurityDTO != null) {
+            if (memberSecurityDTO.getNickname().equals(nickname)) {
+                log.info("멘티 로그인하고 내가 쓴글 진입");
+                MenteeDTO menteeDTO = menteeService.getOne(memberSecurityDTO.getMemberId());
+                log.info("menteeDTO : " + menteeDTO);
+                model.addAttribute("menteeDTO", menteeDTO);
+                Long getApplyMno = menteeService.getApplyMno(memberSecurityDTO.getMno());
+                log.info("이거는 됨 ? " + getApplyMno);
+                if (getApplyMno == null) {
+                    model.addAttribute("isMentorApply", true);
+
+                } else if (getApplyMno != null) {
+                    model.addAttribute("isMentorApply", false);
+                }
+
+            } else {
+                log.info("로그인하고 다른 멘티 유저가 쓴글 진입");
+                MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+                model.addAttribute("menteeDTO", menteeDTO);
+            }
+        } else if (memberSecurityDTO == null) {
+            log.info("로그인 안하고 다른 멘티가 쓴 유저가 쓴글 진입");
+            MenteeDTO menteeDTO = menteeService.getOne(memberDTO.getMemberId());
+            model.addAttribute("menteeDTO", menteeDTO);
+        }
         return "/mypage/qnaBoard";
+    }
+
+    @GetMapping("/mentorBoardList")
+    public String answerBoard(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model, String nickname) {
+        log.info("mentorProfile GET...");
+
+        /*공통으로 담을 값*/
+        MemberDTO memberDTO = memberService.getProfileNickname(nickname);
+        log.info("memberDTO : " + memberDTO);
+        model.addAttribute("memberDTO", memberDTO);
+
+        int reviewCnt = mentorReviewService.mentorReviewCount(memberDTO.getMno());
+        model.addAttribute("reviewCnt", reviewCnt);
+
+        int memberRole = memberService.getMemberRole(memberDTO.getMemberId());
+        model.addAttribute("memberRole", memberRole);
+        /*공통으로 담을 값*/
+
+
+        if (memberSecurityDTO != null) { // 로그인시 가져올 값
+            if (memberSecurityDTO.getNickname().equals(nickname)) { // 로그인하고 해당 프로필의 닉네임이 같으면
+                log.info("멘토 로그인하고 내가쓴글 진입");
+                MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+                log.info("mentorDTO : " + mentorDTO);
+                model.addAttribute("mentorDTO", mentorDTO);
+            } else { // 로그인하고 해당 프로필의 닉네임이 다르면
+                log.info("로그인하고 다른 멘토가 쓴 글 진입");
+                MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
+                model.addAttribute("mentorDTO", mentorDTO);
+            }
+        } else if (memberSecurityDTO == null) { // 비로그인시 가져올 값
+            log.info("로그인 안하고 다른 멘토가 쓴글 진입");
+            MentorDTO mentorDTO = mentorService.getOne(memberDTO.getMemberId());
+            model.addAttribute("mentorDTO", mentorDTO);
+        }
+
+        return "/mypage/answerBoard";
     }
 
     /* 멘티 메인 영역 끝*/

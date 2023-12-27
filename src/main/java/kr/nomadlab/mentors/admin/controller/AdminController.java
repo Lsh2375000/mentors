@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.admin.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.nomadlab.mentors.admin.dto.AdminExSearchDTO;
 import kr.nomadlab.mentors.admin.dto.AdminTypeDTO;
@@ -235,10 +236,12 @@ public class AdminController {
 
     }
 
-    @GetMapping("/login")
-    public void adminLoginGET() {
-        log.info("adminLoginGET....");
 
+
+    @GetMapping("/login")
+    public void adminLoginGET(HttpSession httpSession) {
+        log.info("adminLoginGET....");
+        httpSession.invalidate();
     }
 
     @GetMapping("/mentorApply")

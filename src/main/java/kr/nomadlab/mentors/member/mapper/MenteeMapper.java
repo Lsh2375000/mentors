@@ -1,6 +1,7 @@
 package kr.nomadlab.mentors.member.mapper;
 
 import kr.nomadlab.mentors.member.domain.MenteeVO;
+import kr.nomadlab.mentors.member.domain.MentorApplyVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -24,5 +25,6 @@ public interface MenteeMapper {
 
     void introWrite(String intro, Long mno);
 
+    Long getApplyMno(Long mno);
 
 }
