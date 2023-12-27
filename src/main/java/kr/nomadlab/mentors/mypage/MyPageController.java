@@ -369,6 +369,25 @@ public class MyPageController {
         String sort = pageRequestDTO.getSort();
         return "redirect:/mypage/mainListTee?page="+page+"&size=12&sort="+sort;
     }
+
+    @GetMapping("/menteeBoardList")
+    public String myBoardList(){ // 내가 쓴글 (프로젝트소개)
+
+        return "/mypage/introBoard";
+    }
+
+    @GetMapping("/menteeBoardList/hireBoard")
+    public String hireBoard(){ // 내가 쓴글(프로젝트 모집)
+
+        return "/mypage/hireBoard";
+    }
+
+    @GetMapping("/menteeBoardList/qnaBoard")
+    public String qnaBoard(){ // 내가 쓴글 (qna게시판)
+
+        return "/mypage/qnaBoard";
+    }
+
     /* 멘티 메인 영역 끝*/
     @GetMapping("/paymentsHistory")
     public String paymentHistory(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model){

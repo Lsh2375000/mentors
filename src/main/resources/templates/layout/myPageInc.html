@@ -226,12 +226,14 @@
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${memberDTO.nickname})}">멘토링 목록     ></a>
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentorBoardList">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
             </th:block>
             <th:block th:if="${memberRole == 1}">
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/menteeBoardList">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
             </th:block>
-            <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
+
           </div> <!--End List Group Flush-->
         </th:block>
         <!--비로그인시 멘토, 멘티 유저 프로필 끝-->
@@ -261,12 +263,13 @@
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${memberDTO.nickname})}">멘토링 목록     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentorBoardList">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
               </th:block>
               <th:block th:if="${memberRole == 1}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/menteeBoardList">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
               </th:block>
-              <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
             </div> <!--End List Group Flush-->
           </th:block>
 
@@ -291,7 +294,7 @@
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${#authentication.principal.getNickname()})}">멘토링 목록     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorIntro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/mentorBoardList">내가 쓴 글</a>
               </div> <!--End List Group Flush-->
             </th:block>
           </th:block>
@@ -312,7 +315,7 @@
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTee(nickname=${#authentication.principal.getNickname()})}">멘토링 목록     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeIntro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/menteeBoardList">내가 쓴 글</a>
               </div> <!--End List Group Flush-->
             </th:block>
           </th:block>
