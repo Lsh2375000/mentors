@@ -39,7 +39,9 @@ public class MainController {
     public String main(Model model, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, HttpServletRequest request) {
         pageRequestDTO.setSize(20);
         PageResponseDTO<MainDTO> mainList = mainService.list(pageRequestDTO); // 멘토링 목록
-        List<MentorDTO> mentorDTOList = mentorService.listByRanking(); // 멘토 회원 목록
+        List<MentorDTO> mentorDTOList1 = mentorService.listByRanking1(); // 1등멘토 회원 목록
+        List<MentorDTO> mentorDTOList2 = mentorService.listByRanking2(); // 1등멘토 회원 목록
+        List<MentorDTO> mentorDTOList3 = mentorService.listByRanking3(); // 1등멘토 회원 목록
         log.info("스킵 "+pageRequestDTO.getSkip());
         log.info("사이즈 "+pageRequestDTO.getSize());
 
@@ -73,7 +75,9 @@ public class MainController {
             model.addAttribute("language", language);
         }
 
-        model.addAttribute("mentorList", mentorDTOList);
+        model.addAttribute("mentorList1", mentorDTOList1);
+        model.addAttribute("mentorList2", mentorDTOList2);
+        model.addAttribute("mentorList3", mentorDTOList3);
         model.addAttribute("paidFree", paidFree);
         model.addAttribute("sort", sort);
         model.addAttribute("keyword", keyword);

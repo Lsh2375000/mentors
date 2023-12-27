@@ -11,8 +11,14 @@
     <select id="selectAll" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
         SELECT * FROM `mentor` ORDER BY `mno` DESC;
     </select>
-    <select id="listByRanking" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
-        select * from `mentor` order by `ranking` asc;
+    <select id="listByRanking1" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
+        select * from `mentor` where ranking = 1
+    </select>
+    <select id="listByRanking2" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
+        select * from `mentor` where ranking = 2
+    </select>
+    <select id="listByRanking3" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
+        select * from `mentor` where ranking = 3
     </select>
 
     <select id="selectOne" resultType="kr.nomadlab.mentors.member.domain.MentorVO">
