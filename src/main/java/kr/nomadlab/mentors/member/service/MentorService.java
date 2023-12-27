@@ -10,7 +10,9 @@ public interface MentorService {
     void add(MentorDTO mentorDTO); // 멘토 회원가입
 
     List<MentorDTO> getAll(); // 멘토 목록
-    List<MentorDTO> listByRanking(); // 멘토 랭킹순 목록
+    List<MentorDTO> listByRanking1(); // 멘토 1랭킹순 목록
+    List<MentorDTO> listByRanking2(); // 멘토 2랭킹순 목록
+    List<MentorDTO> listByRanking3(); // 멘토 3랭킹순 목록
 
     MentorDTO getOne(String memberId); // 해당 멘토 정보
 
