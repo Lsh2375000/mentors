@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VisitorTypeDTO {
+public class AdminTypeDTO {
     
     // 통계조건
     

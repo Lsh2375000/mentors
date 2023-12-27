@@ -1,5 +1,7 @@
 package kr.nomadlab.mentors.payment.controller;
 
+import kr.nomadlab.mentors.admin.dto.CoinStatsDTO;
+import kr.nomadlab.mentors.admin.service.CoinStatsService;
 import kr.nomadlab.mentors.exception.CustomLogicException;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.payment.dto.PaymentFailDto;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
+    private final CoinStatsService coinStatsService;
 
     @GetMapping("")
     public String payment(){
@@ -41,6 +44,10 @@ public class PaymentController {
             log.info(paymentSuccessDto);
             model.addAttribute("payments", paymentSuccessDto);
 
+            // 통계 잡기
+            CoinStatsDTO coinStatsDTO = new CoinStatsDTO();
+            coinStatsDTO.setAmount(amount/1000);
+            coinStatsService.insertCoinStats(coinStatsDTO);
             return "payments/success";
         }
         catch (CustomLogicException e) {

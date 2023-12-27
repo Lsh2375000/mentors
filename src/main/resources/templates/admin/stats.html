@@ -46,17 +46,15 @@
     background-color: #eeeeee;
     cursor: pointer;
   }
-
   .visitChart{
     width: 100%;
     height: 300px;
     border: 1px solid black;
     border-radius: 5px;
   }
+
   .coinStats{
-    margin-top: 100px;
-    background-color: #555555;
-    height: 500px;
+
   }
 </style>
 <body>
@@ -98,12 +96,43 @@
       </div>
     </div>
   </div>
-
+  <hr>
   <div class="coinStats">
     <div>
-      <h3>코인 충전 수 통계</h3>
+      <div class="d-flex justify-content-between">
+        <h3>코인 충전 수 통계</h3>
+        <div class="totalBox">
+          <p>총 충전 갯수</p>
+          <span class="total">123</span>개
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex gap-2">
+            <a class="tabBtn" id="coinAllBtn" th:style="${isLogin == 'all' ? 'background-color:#eeeeee;' : ''}">All User</a>
+            <a class="tabBtn" id="coinLoginBtn" th:style="${isLogin == 'true' ? 'background-color:#eeeeee;' : ''}">Login User</a>
+            <a class="tabBtn" id="coinNotLoginBtn" th:style="${isLogin == 'false' ? 'background-color:#eeeeee;' : ''}">Guest</a>
+          </div>
+          <div class="picker">
+            <span id="coinCalendar">
+              <i class="fa-regular fa-calendar" style="font-size: 25pt"></i>
+            </span>
+            <input type="hidden" id="coinDatepicker" placeholder="날짜선택">
+          </div>
+          <select name="periodSelect">
+            <option name="period" value="daily" th:selected="${period == 'daily'}">날짜별</option>
+            <option name="period" value="weekly" th:selected="${period == 'weekly'}">주간별</option>
+            <option name="period" value="monthly" th:selected="${period == 'monthly'}">월별</option>
+            <option name="period" value="yearly" th:selected="${period == 'yearly'}">연도별</option>
+          </select>
+        </div>
+        <div class="coinChart">
+          <canvas id="coinChart"></canvas>
+        </div>
+      </div>
     </div>
   </div>
+
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -111,6 +140,38 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script layout:fragment="script" th:inline="javascript">
 
+    // Get the canvas element
+    var ctx = document.getElementById('coinChart').getContext('2d');
+
+    // Define the data for the chart
+    var coinData = {
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [{
+        label: 'Monthly Sales',
+        data: [10, 25, 15, 30, 20],
+        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color for bars
+        borderColor: 'rgba(75, 192, 192, 1)',     // Border color for bars
+        borderWidth: 1                             // Border width for bars
+      }]
+    };
+
+    // Configure the options for the chart
+    var coinOptions = {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    };
+
+    // Create a bar chart
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: coinData,
+      options: coinOptions
+    });
+
+    //------------------------------------ 방문 자 수---------------------------------------------------
     const calendar = document.getElementById('calendar');
     const datepicker = document.getElementById('datepicker');
 

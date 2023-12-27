@@ -53,6 +53,7 @@ public class MainController {
             boolean isMentoring = mainService.isMentoring(mno);
             model.addAttribute("isMentoring", isMentoring);
             log.info("멘토링 여부 /? " + isMentoring);
+
         }
         // 방문자 등록
         VisitorDTO visitorDTO = new VisitorDTO();
@@ -87,6 +88,9 @@ public class MainController {
     public void write(Model model, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){ // 글쓰기페이지
         Long mno = memberSecurityDTO.getMno();
         int mentoringCnt = mainService.mentoringCnt(mno);
+
+        MentorDTO mentorDTO = mentorService.getOne(memberSecurityDTO.getMemberId());
+        model.addAttribute("mentorDTO", mentorDTO);
 
         model.addAttribute("mentoringCnt", mentoringCnt);
     }
