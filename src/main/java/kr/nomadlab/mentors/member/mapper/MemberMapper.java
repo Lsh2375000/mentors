@@ -27,7 +27,7 @@ public interface MemberMapper {
 
     void deleteMember(String memberId); // 탈퇴한 회원 정보 삭제
     void updateIsDel(String memberId); // 회원 탈퇴(논리적 삭제)
-    void updateCoin(Long mno, int coin); //멤버 코인 구매
+    void updateCoin(Long mno, int coin); //멤버 코인 구매, 멘토링 환불
     void updateMemberRole(String memberId); // 회원 멤버롤 변경(관리자 전용)
 
     void addMentorApply(MentorApplyVO mentorApplyVO); // 멘티의 멘토 신청

@@ -63,7 +63,7 @@ public class ProjectReplyController {
 
 
     @Operation(summary = "Reply Modify", description = "PUT 방식으로 댓글 수정")
-    @PutMapping(value = "/projectReplies/{rno}", consumes = MediaType.APPLICATION_JSON_VALUE) // 댓글 수정
+    @PutMapping(value = "/projectReplies/{pjrNo}", consumes = MediaType.APPLICATION_JSON_VALUE) // 댓글 수정
     public Map<String, Long> modify(@PathVariable("pjrNo") Long pjrNo, @RequestBody ProjectReplyDTO projectReplyDTO){
         log.info("/projectReplies/{pjrNo}(PUT)...");
 
