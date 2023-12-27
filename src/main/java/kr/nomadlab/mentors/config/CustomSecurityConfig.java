@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -56,6 +57,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -81,9 +83,24 @@ public class CustomSecurityConfig {
         });
         httpSecurity.formLogin(config -> {
             config.loginPage("/admin/login");
-            config.defaultSuccessUrl("/admin/mentorApply");
+            config.defaultSuccessUrl("/admin/stats");
+        })
+        .logout(logoutConfig -> {
+            logoutConfig
+                    .logoutUrl("/admin/logout")
+                    .logoutSuccessHandler(
+                            ((request, response, authentication) -> {
+                                log.info("로그아웃 성공");
+                                response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                response.getWriter().println("로그아웃 성공!!");
+                                response.sendRedirect("/admin/login");
+                            })
+                    ).logoutSuccessUrl("admin/login");
         });
         httpSecurity.csrf(crsf -> crsf.disable());
+
+
         return httpSecurity.build();
     }
 

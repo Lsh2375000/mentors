@@ -36,4 +36,5 @@
     <select id="getApplyList" resultType="kr.nomadlab.mentors.member.domain.MentorApplyVO">
         select * from `mentorApply`
     </select>
+
 </mapper>
