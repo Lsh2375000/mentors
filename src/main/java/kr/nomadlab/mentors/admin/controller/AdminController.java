@@ -287,6 +287,7 @@ public class AdminController {
 
         //알림보내기
         NotifyDto notifyDto = NotifyDto.builder()
+                .receiverMno(mno)
                 .types("mentorApply")
                 .build();
 
