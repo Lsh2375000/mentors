@@ -38,4 +38,7 @@
         FROM `payInfo`
         WHERE mentorMno = #{mno} AND price != 0
     </select>
+    <delete id="returnMenteeCoin">
+        delete from `payInfo` where menteeMno = #{menteeMno} and mbNo = #{mbNo}
+    </delete>
 </mapper>
