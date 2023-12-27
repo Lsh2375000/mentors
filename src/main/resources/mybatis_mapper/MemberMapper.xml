@@ -45,7 +45,7 @@
     </select>
 
     <update id="updateMember">
-        update `member` set `moddate` = now(), `nickname` = #{nickname} where `memberId` = #{memberId}
+        update `member` set `moddate` = now(), `nickname` = #{nickname}, `region` = #{region}, `memberName` = #{memberName} where `memberId` = #{memberId}
     </update>
 
     <update id="updatePassword">

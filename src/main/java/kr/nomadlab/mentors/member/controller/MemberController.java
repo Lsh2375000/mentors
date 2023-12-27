@@ -23,6 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,36 +173,46 @@ public class MemberController {
     }
     @PreAuthorize("hasRole('ROLE_MENTOR')")
     @PostMapping("/mentorModify")
-    public String mentorModifyPost(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, MentorDTO mentorDTO, List<MultipartFile> files) {
+    public String mentorModifyPost(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, MentorDTO mentorDTO, List<MultipartFile> files, MemberDTO memberDTO) {
         log.info("mentor Modify POST() ....");
         log.info( "닉네임 확인 " + memberSecurityDTO.getNickname());
         log.info("추가하려는 파일 크기: " + files);
+        log.info("수정한 회원 정보 : " + memberDTO);
 
-        MemberDTO memberDTO = MemberDTO.builder()
-                .nickname(memberSecurityDTO.getNickname())
-                .memberId(memberSecurityDTO.getMemberId())
-                .build();
         memberService.modifyMember(memberDTO);
         mentorDTO.setMemberId(memberSecurityDTO.getMemberId());
         log.info("등록하려는 파일 : " + files);
         mentorService.modify(mentorDTO, files);
-        return "redirect:/mypage/mentor";
+        String encodedNickname = null;
+        try {
+            encodedNickname = URLEncoder.encode(memberSecurityDTO.getNickname(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            // 예외 처리 필요
+            e.printStackTrace();
+        }
+
+        return "redirect:/mypage/mentorProfile?nickname=" + encodedNickname;
     }
     @PreAuthorize("hasRole('ROLE_MENTEE')")
     @PostMapping("/menteeModify")
-    public String menteeModifyPost(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, MenteeDTO menteeDTO) {
+    public String menteeModifyPost(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, MenteeDTO menteeDTO, MemberDTO memberDTO) {
         log.info("mentee Modify POST() ....");
         log.info( "닉네임 확인 " + memberSecurityDTO.getNickname());
 
-        MemberDTO memberDTO = MemberDTO.builder()
-                .nickname(memberSecurityDTO.getNickname())
-                .memberId(memberSecurityDTO.getMemberId())
-                .build();
+
         memberService.modifyMember(memberDTO);
         menteeDTO.setMemberId(memberSecurityDTO.getMemberId());
         menteeService.modify(menteeDTO);
 
-        return "redirect:/mypage/mentee";
+        String encodedNickname = null;
+        try {
+            encodedNickname = URLEncoder.encode(memberSecurityDTO.getNickname(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            // 예외 처리 필요
+            e.printStackTrace();
+        }
+
+        return "redirect:/mypage/menteeProfile?nickname=" + encodedNickname;
     }
     // 비밀번호 수정
     @PostMapping("/passwordEdit")

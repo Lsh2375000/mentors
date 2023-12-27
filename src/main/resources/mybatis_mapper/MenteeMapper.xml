@@ -24,7 +24,7 @@
 
     <update id="update">
         update `mentee`
-        set `name` = #{name}, `nickname` = #{nickname}, `devLanguage` = #{devLanguage}
+        set `nickname` = #{nickname}, `devLanguage` = #{devLanguage}
         where `memberId` = #{memberId}
     </update>
 

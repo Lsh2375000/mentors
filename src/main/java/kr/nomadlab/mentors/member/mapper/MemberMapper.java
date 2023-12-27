@@ -19,7 +19,7 @@ public interface MemberMapper {
 
     MemberVO getMemberNickname(String nickname); // 해당 닉네임을 가진 유저의 정보를 가져옴
 
-    void updateMember(String passwd, String nickname, String memberId); // 해당 이메일의 비밀번호 닉네임 변경
+    void updateMember(String passwd, String nickname, String region, String memberName, String memberId); // 해당 이메일의 비밀번호 닉네임 변경
 
     List<MemberVO> getMemberList(); // 전체 회원 리스트(관리자 전용)
 
