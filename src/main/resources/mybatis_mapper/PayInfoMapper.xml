@@ -41,4 +41,7 @@
     <delete id="returnMenteeCoin">
         delete from `payInfo` where menteeMno = #{menteeMno} and mbNo = #{mbNo}
     </delete>
+    <select id="getOnePayInfo" resultType="int">
+        select price from `payInfo` where mbNo = #{mbNo}
+    </select>
 </mapper>
