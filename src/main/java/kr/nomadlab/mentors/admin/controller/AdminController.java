@@ -280,15 +280,18 @@ public class AdminController {
                 .build();
         mentorService.add(mentorDTO);
         // 4. 가져온 모든 정보를 멘토 테이블로 모두 옮겨준다.
+
+        adminService.removeApplyOne(mno);
+        menteeService.remove(menteeDTO.getMemberId());
+        // 마지막으로 멘티의 정보와 신청정보를 삭제한다.
+
+        //알림보내기
         NotifyDto notifyDto = NotifyDto.builder()
                 .types("mentorApply")
                 .build();
 
         notifyService.passNotify(notifyDto, mno);
 
-        adminService.removeApplyOne(mno);
-        menteeService.remove(menteeDTO.getMemberId());
-        // 마지막으로 멘티의 정보와 신청정보를 삭제한다.
 
         return "redirect:/admin/mentorApply";
     }
