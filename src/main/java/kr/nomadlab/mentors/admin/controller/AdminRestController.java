@@ -56,5 +56,6 @@ public class AdminRestController {
     @PutMapping("/exchange/{exNo}/complete")
     public void completeExchange(@PathVariable Long exNo) {
         adminService.completeExchange(exNo);
+
     }
 }

@@ -27,4 +27,6 @@ public interface AdminMapper {
     ExchangeVO getExchangeInfo(Long exNo);
 
     void exchangeComplete(Long exNo);
+
+    void exPaySuccess(Long payInfoNo); //결제 저장소 환전 완료시 success true
 }

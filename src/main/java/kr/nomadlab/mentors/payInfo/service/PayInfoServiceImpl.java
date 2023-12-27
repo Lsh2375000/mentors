@@ -38,9 +38,10 @@ public class PayInfoServiceImpl implements PayInfoService{
                 .price(payInfoDto.getPrice())
                 .build();
 
-        Long payInfoNo = payInfoMapper.insertPayInfo(payInfoVO);
+        payInfoMapper.insertPayInfo(payInfoVO);
+        log.info("this is payInfo" + payInfoVO.getPayInfoNo());
 
-        return payInfoNo;
+        return payInfoVO.getPayInfoNo();
     }
 
     //00시 00분 00초에 전날 완료된 강의 멘토에게 비타민 보내기
