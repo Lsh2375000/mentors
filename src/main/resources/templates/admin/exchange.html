@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <title>Admin ExchangeList</title>
   <style>
-    .exchangeList{
+    .exchangeList {
       overflow-y: auto;
     }
   </style>
@@ -76,30 +76,32 @@
             </tbody>
           </table>
         </div>
-        <div id="editToggle" style="display: none;">
-          <!-- 수정 폼 내용 -->
-          <form>
-            <!-- 수정 폼의 필드들 추가 -->
-            <input type="hidden" id="exNo" name="exNo" value="" readonly/>
-            <div>
-              <label for="memberName">이름:</label>
-              <input type="text" id="memberName" name="memberName" readonly/>
-            </div>
-            <div>
-              <label for="bank">은행:</label>
-              <input type="text" id="bank" name="bank" readonly/>
-            </div>
-            <div>
-              <label for="accountNum">계좌번호:</label>
-              <input type="text" id="accountNum" name="accountNum" readonly/>
-            </div>
-            <div>
-              <label for="amount">금액:</label>
-              <input type="text" id="amount" name="amount" readonly/>
-            </div>
-            <button type="button" class="exchangeSuccessBtn">완료</button>
-            <button type="button" class="hideEditToggle">취소</button>
-          </form>
+        <div id="editToggle" style="display: none; margin-top: 20px;">
+          <div style="border: 1px solid #ccc; padding: 15px; background-color: #f8f9fa;">
+            <!-- 수정 폼 내용 -->
+            <form>
+              <!-- 수정 폼의 필드들 추가 -->
+              <input type="hidden" id="exNo" name="exNo" value="" readonly/>
+              <div class="mb-3">
+                <label for="memberName" class="form-label">이름:</label>
+                <input type="text" id="memberName" name="memberName" class="form-control" readonly/>
+              </div>
+              <div class="mb-3">
+                <label for="bank" class="form-label">은행:</label>
+                <input type="text" id="bank" name="bank" class="form-control" readonly/>
+              </div>
+              <div class="mb-3">
+                <label for="accountNum" class="form-label">계좌번호:</label>
+                <input type="text" id="accountNum" name="accountNum" class="form-control" readonly/>
+              </div>
+              <div class="mb-3">
+                <label for="amount" class="form-label">금액:</label>
+                <input type="text" id="amount" name="amount" class="form-control" readonly/>
+              </div>
+              <button type="button" class="btn btn-success exchangeSuccessBtn">완료</button>
+              <button type="button" class="btn btn-secondary hideEditToggle">취소</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

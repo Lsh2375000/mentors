@@ -18,4 +18,6 @@ public interface PayInfoMapper {
     List<PayInfoVO> getPayInfo(@Param("mno")Long mno, @Param("skip") int skip, @Param("size") int size);
 
     int getCount(Long mno);
+
+    void returnMenteeCoin(Long mbNo, Long menteeMno); //멘토링 취소시 결제대기db 삭제
 }
