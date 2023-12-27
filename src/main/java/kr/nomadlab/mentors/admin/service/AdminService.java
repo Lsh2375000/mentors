@@ -17,6 +17,12 @@ public interface AdminService {
 
     List<MentorApplyDTO> getApplyList();
 
+    MentorApplyDTO getApplyOne(Long mno);
+
+    void removeApplyOne(Long mno);
+
+    void changeRole(String memberId);
+
     List<ExchangeDto> adminExchangeSearch(AdminExSearchDTO adminExSearchDTO);
 
     List<ExchangeDto> adminExchangedSearch(AdminExSearchDTO adminExSearchDTO);

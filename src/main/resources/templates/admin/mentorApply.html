@@ -3,31 +3,77 @@
       layout:decorate="~{layout/adminInc.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>멘토 신청 목록</title>
 </head>
+<style layout:fragment="style">
+    .table {
+        margin-top: 100px;
+    }
+    th, td {
+        text-align: center;
+    }
+</style>
 <div layout:fragment="content" style="padding-bottom: 300px;">
+    <form name="frmApply" id="frmApply" action="/admin/mentorApply"  method="post">
+
     <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">회원 번호</th>
-            <th scope="col">전공언어</th>
-            <th scope="col">포트폴리오</th>
-            <th scope="col">학교 및 전공</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="dto : ${dtoList}">
-            <th scope="row" th:text="${dto.mno}"></th>
-            <td th:text="${dto.devLanguage}"></td>
-            <td th:each="file : ${dto.fileNames.split('\|')}">
-                <img src="/img/pdfIcon.png" style="width: 20px; margin-right: 5px;" alt="pdf"/>
-                <a target="_blank" style="color: black; text-decoration: none;" th:href="|@{/mentorApply/}${file}|">
-                    [[${file.split('_')[1]}]]
-                </a>
-            </td>
-            <td><span th:text="${dto.univName}"></span> / <span th:text="${dto.major}"></span></td>
-        </tr>
-        </tbody>
-    </table>
+            <thead>
+            <tr>
+                <th scope="col" style="width: 90px;">신청 번호</th>
+                <th scope="col" style="width: 90px;">회원 번호</th>
+                <th scope="col" style="width: 200px;">전공언어</th>
+                <th scope="col" style="width: 400px;">포트폴리오</th>
+                <th scope="col">학교 및 전공</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="dto,num : ${dtoList}">
+                    <th scope="row" th:text="${num.count}"></th>
+                    <th scope="row">[[${dto.mno}]]</th>
+                    <td th:text="${dto.devLanguage}"></td>
+                    <td>
+                        <div th:each="file : ${dto.fileNames.split('\|')}">
+                            <img src="/img/pdfIcon.png" style="width: 20px; margin-right: 5px;" alt="pdf"/>
+                            <a target="_blank" style="color: black; text-decoration: none;" th:href="|@{/mentorApply/}${file}|">
+                                [[${file.split('_')[1]}]]
+                            </a>
+                        </div>
+                    </td>
+                    <td><span th:text="${dto.univName}"></span> / <span th:text="${dto.major}"></span></td>
+                    <td style="width: 120px;">
+                        <button type="button" class="btn btn-primary applyBtn" th:id="${dto.mno}"> 수락 </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input name="mno" id="mno" hidden>
+    </form>
+
 </div>
+
+<script layout:fragment="script" th:inline="javascript">
+    const applyBtns = document.querySelectorAll('.applyBtn');
+    const frmApply = document.getElementById('frmApply');
+    const mno = document.getElementById('mno');
+
+
+    applyBtns.forEach(applyBtn => {
+        applyBtn.addEventListener('click', function (e) {
+            if (!confirm('수락 하시겠습니까?')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            } else {
+                console.log(applyBtn.id);
+                mno.value = applyBtn.id;
+                frmApply.submit();
+            }
+
+
+        });
+    });
+
+</script>
+
 </html>

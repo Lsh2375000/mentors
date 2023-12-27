@@ -16,6 +16,12 @@
         select * from `mentee` where `memberId` = #{memberId};
     </select>
 
+    <select id="selectOneByMno" resultType="kr.nomadlab.mentors.member.domain.MenteeVO">
+        select *
+        from `mentee`
+        where `mno` = ${mno};
+    </select>
+
     <update id="update">
         update `mentee`
         set `name` = #{name}, `nickname` = #{nickname}, `devLanguage` = #{devLanguage}
@@ -26,6 +32,11 @@
         delete from `mentee` where `memberId` = #{memberId}
     </delete>
 
+    <insert id="introWrite">
+        update `mentee`
+        set `intro` = #{intro}
+        where `mno` = #{mno}
+    </insert>
 
 
 </mapper>

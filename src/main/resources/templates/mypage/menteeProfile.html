@@ -4,23 +4,117 @@
       layout:decorate="~{layout/myPageInc.html}">
 <head>
     <meta charset="UTF-8">
-    <title>멘티 마이페이지</title>
+    <title>멘토 마이페이지</title>
 </head>
-
 <style layout:fragment="style">
-    .col {
+    .col { /*프로필 본문 목록 영역*/
         font-family: 'Orbit', sans-serif;
     }
-</style>
 
+    .contentDiv { /*본문의 각 영역 div*/
+        width: 1250px;
+        height: 400px;
+        border-bottom: 1px solid #cdd1d4;
+        margin-top: 30px;
+    }
+
+    .contentTitle { /* 본문의 각 영역 제목*/
+        text-align: left;
+        font-weight: bold;
+        font-size: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .contentBody { /* 본문의 내용 영역 */
+        height: 400px;
+    }
+
+    .emptyDiv{
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .emptyContent { /*본문 내용이 비어있을 때 출력되는 span*/
+        font-size: 25px;
+        margin-bottom: 15px;
+    }
+    .emptyContent2 {
+        font-size: 18px;
+        color: #b4b4b4;
+    }
+    .contentTextDiv {
+        padding-top: 30px;
+    }
+    .introText {
+        font-size: 20px;
+    }
+    .goBtn {
+        text-decoration: none;
+        color: black;
+        font-size: 18px;
+        padding: 10px 15px;
+        background-color: white;
+        border: 1px solid #c9c9c9;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+</style>
 <div layout:fragment="content">
     <div class="row mt-3">
         <div class="col">
-            <div class="card" style="width: 1000px; height: 500px;">
-                <div class="card-header">
-                    프로필
+            <div class="contentDiv">
+                <div class="contentTitle">
+                    <span>소개</span>
+                    <!--멘티 마이페이지 들어왔을 떄만 출력-->
+                    <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getNickname() == memberDTO.nickname}">
+                        <th:block th:if="${menteeDTO.intro == null}">
+                            <a th:href="@{/mypage/menteeIntro(nickname=${#authentication.principal.getNickname()})}" class="goBtn">작성하기</a>
+                            <!--멘티 자기소개 값이 없을 때 출력-->
+                        </th:block>
+                        <th:block th:unless="${menteeDTO.intro == null}">
+                            <a th:href="@{/mypage/menteeIntro(nickname=${#authentication.principal.getNickname()})}" class="goBtn">수정하기</a>
+                            <!--멘티 자기소개 값이 있을 때 출력-->
+                        </th:block>
+                    </th:block>
                 </div>
-                <div class="card-body">
+                <div class="contentBody">
+                    <div class="contentTextDiv">
+                        <span class="introText" th:if="${menteeDTO.intro != null}" th:utext="${menteeDTO.intro}"></span>
+                    </div>
+                    <th:block th:if="${menteeDTO.intro == null}">
+                        <div class="emptyDiv">
+                            <span class="emptyContent">소개글이 비어있어요.</span>
+                            <span class="emptyContent2" th:if="${#authentication.principal != 'anonymousUser' &&
+                            #authentication.principal.getNickname == memberDTO.nickname}">
+                            나의 기술 스택, 포트폴리오, 깃허브 주소 등으로 꾸며보세요.
+                        </span>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+            <div class="contentDiv">
+                <div class="contentTitle">
+                    <span>내가 쓴 글</span>
+                    <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getNickname() == memberDTO.nickname}">
+                        <button class="goBtn">커뮤니티 둘러보기</button> <!--멘토로그인해서 마이페이지 들어왔을 때 출력-->
+                    </th:block>
+                </div>
+                <div class="contentBody">
+                    <div class="contentTextDiv"> <!--헌구가 수정해야 할곳 지금은 임시로 걍 자기소개값으로 넣었음-->
+                        <span class="introText" th:if="${menteeDTO.intro != null}" th:utext="${menteeDTO.intro}"></span>
+                    </div>
+                    <th:block th:if="${menteeDTO.intro == null}">
+                        <div class="emptyDiv">
+                            <span class="emptyContent">작성한 게시글이 없어요.</span>
+                            <span class="emptyContent2" th:if="${#authentication.principal != 'anonymousUser' &&
+                            #authentication.principal.getNickname == memberDTO.nickname}">
+                                게시판 활동을 시작해보세요.
+                            </span>
+                        </div>
+                    </th:block>
                 </div>
             </div>
         </div>

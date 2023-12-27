@@ -24,7 +24,7 @@ public class UpDownController {
     private String uploadPath;
 
     @Operation(summary = "view 파일", description = "GET 방식으로 첨부파일 조회") // Swagger-UI의 문구
-    @GetMapping({"/mentorModify/{fileName}", "/mentor/{fileName}"})
+    @GetMapping({"/mentorModify/{fileName}", "/mentor/{fileName}","/mentorApply/{fileName}"})
     public ResponseEntity<Resource> viewFileGet(@PathVariable String fileName) {
         // ResponseEntity<Resource> = 헤더와 바디로 구성된 JSON 형태의 response로 전달되는 resource 객체
         Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);

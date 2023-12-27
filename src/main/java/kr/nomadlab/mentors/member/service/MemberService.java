@@ -24,9 +24,9 @@ public interface MemberService {
 
     void updateMemberIsDel(String memberId); // 회원 탈퇴시 논리적 삭제
 
-    void addMentorApply(MentorApplyDTO mentorApplyDTO, List<MultipartFile> files);
+    void addMentorApply(MentorApplyDTO mentorApplyDTO, List<MultipartFile> files); // 멘티의 멘토 신청
 
-    MemberDTO getProfileNickname(String nickname);
+    MemberDTO getProfileNickname(String nickname); // 프로필 들어갔을 때 해당 닉네이을 가진 유저의 정보가져옴
 
     int getMemberRole(String memberId);
 

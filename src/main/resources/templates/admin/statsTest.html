@@ -130,7 +130,7 @@
       </div>
       <div class="mt-4">
         <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex gap-2" style="width: 188px;">
+          <div class="d-flex gap-2">
           </div>
           <div class="picker">
             <span id="coinCalendar">
@@ -146,7 +146,7 @@
           </select>
         </div>
         <div class="coinChart">
-          <canvas id="coinChart"></canvas>
+          <canvas id="coinChart" width="100%"></canvas>
         </div>
       </div>
     </div>
@@ -160,9 +160,6 @@
   <script layout:fragment="script" th:inline="javascript">
 
     // ----------------- 코인 통계 --------------------------------
-    const coinCalendar = document.getElementById('coinCalendar');
-    const coinDatepicker = document.getElementById('coinDatepicker');
-
     let coinChart = document.getElementById('coinChart').getContext('2d');
     const coinPeriodSelect = document.querySelector('select[name=coinPeriodSelect]');
     let coinPeriod = [[${coinPeriod}]];
@@ -170,9 +167,15 @@
 
     let coinData;
     let coinStatsChart;
+
+    let cd_5Cnt;
+    let cd_4Cnt;
+    let cd_3Cnt;
+    let cd_2Cnt;
+    let cd_1Cnt;
+    let cd_dCnt;
+
     let coinOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
       scales: {
         x: {
           grid: {
@@ -188,242 +191,27 @@
       }
     };
 
-    let cd_5Cnt;
-    let cd_4Cnt;
-    let cd_3Cnt;
-    let cd_2Cnt;
-    let cd_1Cnt;
-    let cd_dCnt;
-
-
     if(coinPeriod === "daily"){
-      // 일별 데이터
-      cd_5Cnt = [[${cd_5}]]
-      cd_4Cnt = [[${cd_4}]]
-      cd_3Cnt = [[${cd_3}]]
-      cd_2Cnt = [[${cd_2}]]
-      cd_1Cnt = [[${cd_1}]]
-      cd_dCnt = [[${cd_day}]]
 
-      let ctoday = new Date()
-      let cd_day = new Date();
-      cd_day = formatDate(cd_day)
-
-      let cd_1 = new Date();
-      cd_1.setDate(ctoday.getDate() -1);
-      cd_1 = formatDate(cd_1)
-
-      let cd_2 = new Date();
-      cd_2.setDate(ctoday.getDate() -2);
-      cd_2 = formatDate(cd_2)
-
-      let cd_3 = new Date();
-      cd_3.setDate(ctoday.getDate() -3);
-      cd_3 = formatDate(cd_3)
-
-      let cd_4 = new Date();
-      cd_4.setDate(ctoday.getDate() -4);
-      cd_4 = formatDate(cd_4)
-
-      let cd_5 = new Date();
-      cd_5.setDate(ctoday.getDate() -5);
-      cd_5 = formatDate(cd_5)
-
-      coinData = {
-        labels: [cd_5, cd_4, cd_3, cd_2, cd_1, cd_day],
-        datasets: [{
-          label: "코인 충전량 평균",
-          data: [cd_5Cnt, cd_4Cnt, cd_3Cnt, cd_2Cnt, cd_1Cnt, cd_dCnt],
-          backgroundColor: "rgb(19,68,239)", // 막대의 색상
-          borderColor: "rgba(75, 192, 192, 1)", // 막대의 테두리 색상
-          borderWidth: 1, // 막대의 테두리 두께
-          borderRadius: 5
-        }]
-      };
-      coinStatsChart = new Chart(coinChart, {
-        type: 'bar',
-        data: coinData,
-        options: coinOptions
-      });
-
-    }else if(coinPeriod === "weekly"){
-      // 주간별 데이터
-      let cw_4Cnt = [[${cw_4}]]
-      let cw_3Cnt = [[${cw_3}]]
-      let cw_2Cnt = [[${cw_2}]]
-      let cw_1Cnt = [[${cw_1}]]
-      let cthisWeekCnt = [[${cthisWeek}]]
-
-      coinData = {
-        labels: ["4주전", "3주전", "2주전", "1주전", "이번주"],
-        datasets: [{
-          label: "코인 충전량 평균",
-          data: [cw_4Cnt, cw_3Cnt, cw_2Cnt, cw_1Cnt, cthisWeekCnt],
-          backgroundColor: "rgb(19,68,239)", // 막대의 색상
-          borderColor: "rgba(75, 192, 192, 1)", // 막대의 테두리 색상
-          borderWidth: 1, // 막대의 테두리 두께
-          borderRadius: 5
-        }]
-      };
-      coinStatsChart = new Chart(coinChart, {
-        type: 'bar',
-        data: coinData,
-        options: coinOptions
-      });
-
-    }else if (coinPeriod === "monthly"){
-      // 월 별 데이터
-      let cm_12Cnt = [[${cm_12}]]
-      let cm_11Cnt = [[${cm_11}]]
-      let cm_10Cnt = [[${cm_10}]]
-      let cm_9Cnt = [[${cm_9}]]
-      let cm_8Cnt = [[${cm_8}]]
-      let cm_7Cnt = [[${cm_7}]]
-      let cm_6Cnt = [[${cm_6}]]
-      let cm_5Cnt = [[${cm_5}]]
-      let cm_4Cnt = [[${cm_4}]]
-      let cm_3Cnt = [[${cm_3}]]
-      let cm_2Cnt = [[${cm_2}]]
-      let cm_1Cnt = [[${cm_1}]]
-      let cthisMonthCnt = [[${cthisMonth}]]
-
-      coinData = {
-        labels: ["1년전", "11달 전", "10달 전", "9달 전", "8달 전", "7달 전", "6달 전", "5달 전", "4달 전", "3달 전", "2달 전", "1달 전", "이번 달"],
-        datasets: [{
-          label: "코인 충전량 평균",
-          data: [cm_12Cnt, cm_11Cnt, cm_10Cnt, cm_9Cnt, cm_8Cnt, cm_7Cnt, cm_6Cnt, cm_5Cnt, cm_4Cnt, cm_3Cnt, cm_2Cnt, cm_1Cnt, cthisMonthCnt],
-          backgroundColor: "rgb(19,68,239)", // 막대의 색상
-          borderColor: "rgba(75, 192, 192, 1)", // 막대의 테두리 색상
-          borderWidth: 1, // 막대의 테두리 두께
-          borderRadius: 5
-        }]
-      };
-      coinStatsChart = new Chart(coinChart, {
-        type: 'bar',
-        data: coinData,
-        options: coinOptions
-      });
-
-    }else if (coinPeriod === "yearly"){
-      // 연도별 데이터
-      let cy_5Cnt = [[${cy_5}]]
-      let cy_4Cnt = [[${cy_4}]]
-      let cy_3Cnt = [[${cy_3}]]
-      let cy_2Cnt = [[${cy_2}]]
-      let cy_1Cnt = [[${cy_1}]]
-      let cthisYearCnt = [[${cthisYear}]]
-
-      coinData = {
-        labels: ["5년 전","4년 전", "3년 전", "2년 전", "1년 전", "올해"],
-        datasets: [{
-          label: "코인 충전량 평균",
-          data: [cy_5Cnt, cy_4Cnt, cy_3Cnt, cy_2Cnt, cy_1Cnt, cthisYearCnt],
-          backgroundColor: "rgb(19,68,239)", // 막대의 색상
-          borderColor: "rgba(75, 192, 192, 1)", // 막대의 테두리 색상
-          borderWidth: 1, // 막대의 테두리 두께
-          borderRadius: 5
-        }]
-      };
-      coinStatsChart = new Chart(coinChart, {
-        type: 'bar',
-        data: coinData,
-        options: coinOptions
-      });
-
-    }else if (coinDate != null){
-      // 날짜 선택
-      let cbyDate_m3 = [[${cbyDate_m3}]]
-      let cbyDate_m2 = [[${cbyDate_m2}]]
-      let cbyDate_m1 = [[${cbyDate_m1}]]
-      let cbyDate = [[${cbyDate}]]
-      let cbyDate_p1 = [[${cbyDate_p1}]]
-      let cbyDate_p2 = [[${cbyDate_p2}]]
-      let cbyDate_p3 = [[${cbyDate_p3}]]
-
-      let cvalueDate = new Date(coinDate);
-      let cdate_m3 = new Date(cvalueDate);
-      cdate_m3.setDate(cvalueDate.getDate() -3);
-      cdate_m3 = formatDate(cdate_m3);
-      let cdate_m2 = new Date(cvalueDate);
-      cdate_m2.setDate(cvalueDate.getDate() -2);
-      cdate_m2 = formatDate(cdate_m2);
-      let cdate_m1 = new Date(cvalueDate);
-      cdate_m1.setDate(cvalueDate.getDate() -1);
-      cdate_m1 = formatDate(cdate_m1);
-      let cdate_p1 = new Date(cvalueDate);
-      cdate_p1.setDate(cvalueDate.getDate() +1);
-      cdate_p1 = formatDate(cdate_p1);
-      let cdate_p2 = new Date(cvalueDate);
-      cdate_p2.setDate(cvalueDate.getDate() +2);
-      cdate_p2 = formatDate(cdate_p2);
-      let cdate_p3 = new Date(cvalueDate);
-      cdate_p3.setDate(cvalueDate.getDate() +3);
-      cdate_p3 = formatDate(cdate_p3);
-
-      coinData = {
-        labels: [cdate_m3, cdate_m2, cdate_m1, coinDate, cdate_p1, cdate_p2, cdate_p3],
-        datasets: [{
-          label: "코인 충전량 평균",
-          data: [cbyDate_m3, cbyDate_m2, cbyDate_m1, cbyDate, cbyDate_p1, cbyDate_p2, cbyDate_p3],
-          backgroundColor: "rgb(19,68,239)", // 막대의 색상
-          borderColor: "rgba(75, 192, 192, 1)", // 막대의 테두리 색상
-          borderWidth: 1, // 막대의 테두리 두께
-          borderRadius: 5
-        }]
-      };
-      coinStatsChart = new Chart(coinChart, {
-        type: 'bar',
-        data: coinData,
-        options: coinOptions
-      });
     }
 
-    // select 박스
-    coinPeriodSelect.addEventListener('change', function (){
-      if(coinPeriodSelect.value === 'daily'){
-        coinPeriod = 'daily'
-        updateLocation()
+    coinData = {
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [{
+        label: '코인 충전량 평균',
+        data: [10, 25, 15, 30, 20],
+        backgroundColor: "rgb(19,68,239)", // 막대의 색상
+        borderColor: "rgba(75, 192, 192, 1)", // 막대의 테두리 색상
+        borderWidth: 1, // 막대의 테두리 두께
+        borderRadius: 5
+      }]
+    };
 
-      }else if(coinPeriodSelect.value === 'weekly'){
-        coinPeriod = 'weekly';
-        updateLocation()
-      }else if(coinPeriodSelect.value === 'monthly'){
-        coinPeriod = 'monthly';
-        updateLocation()
-      }else if(coinPeriodSelect.value === 'yearly'){
-        coinPeriod = 'yearly';
-        updateLocation()
-      }
-    })
-
-    coinCalendar.addEventListener('click', function (){
-      console.log("달력 클릭");
-      coinDatepicker.click();
+    coinStatsChart = new Chart(coinChart, {
+      type: 'bar',
+      data: coinData,
+      options: coinOptions
     });
-
-    flatpickr(coinDatepicker, {
-
-      dateFormat: 'Y-m-d', // 날짜 및 시간 형식 설정 (예: 2023-09-12 15:30)
-      defaultDate: coinDate,    // 초기 날짜 설정 (현재 날짜와 시간)
-      locale: 'ko',            // 한국어로 지역화
-      onOpen: function(selectedDates, dateStr, instance) {
-        // 위젯이 열릴 때 실행할 코드
-        console.log("위젯 열림")
-      },
-      onClose: function(selectedDates, dateStr, instance) {
-        // 위젯이 닫힐 때 실행할 코드
-        console.log("위젯 닫힘")
-      },
-      onChange: function(selectedDates, dateStr, instance) {
-        // 날짜가 변경될 때 실행할 코드
-        console.log("날짜 변경 됨")
-        console.log("밸류는 ",coinDatepicker.value);
-        coinPeriod = null;
-        coinDate = coinDatepicker.value;
-        updateLocation();
-      },
-    });
-
 
     //------------------------------------ 방문 자 수---------------------------------------------------
     const calendar = document.getElementById('calendar');
@@ -621,6 +409,7 @@
       });
       console.log("연도별")
     }else if(date != null){
+      // 날짜 선택
       let byDate_m3 = [[${byDate_m3}]]
       let byDate_m2 = [[${byDate_m2}]]
       let byDate_m1 = [[${byDate_m1}]]

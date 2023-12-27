@@ -55,6 +55,7 @@ nhn.husky.EZCreator = new (function(){
 			elIFrame = document.createElement("IFRAME");
 			elIFrame.setAttribute("frameborder", "0");
 			elIFrame.setAttribute("scrolling", "no");
+			elIFrame.setAttribute("id", elPlaceHolder.id + "_iframe");
 		}
 		
 		elIFrame.style.width = "1px";

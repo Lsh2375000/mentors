@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -13,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script><!-- Bootstrap core JS-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@600&family=Do+Hyeon&family=Orbit&family=Poor+Story&display=swap" rel="stylesheet">  <script th:src="@{/js/myPage.js}"></script> <!--마이페이지 레이아웃 JS-->
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@600&family=Do+Hyeon&family=Orbit&family=Poor+Story&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 </head>
@@ -121,19 +123,25 @@
 </style>
 <body>
 <div class="d-flex" id="wrapper">
-  <!-- Sidebar-->
   <div id="page-content-wrapper">
-    <!-- Top navigation-->
+
+    <!-- 프로필 / 마이페이지 헤더 시작 -->
     <nav class="navbar navbar-expand-lg" style="background-color: #0766AD;">
+      <!-- 헤더 컨테이너 div 시작 -->
       <div class="container-fluid" style="padding-left: 100px;">
+        <!-- 사이트 로고 -->
         <a class="navbar-brand" href="/main"><img class="mainImage" src="/img/basic/mentorsLogo.png" style="width: 280px; height: 80px;"/></a>
+
+        <!-- 반응형 버튼 -->
         <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fas fa-bars"></i>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarResponsive">
+          <!-- url 헤더 네비게이션 시작 -->
           <ul class="navbar-nav ms-auto">
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">팀 프로젝트</a></li>
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/qboard/list">Q&A 게시판</a></li>
@@ -155,7 +163,9 @@
                 </div>
               </li>
             </th:block>
+            <!-- url 헤더 네비게이션 끝 -->
 
+            <!--로그인 시 마이페이지 출력 헤더 옵션 시작-->
             <th:block th:unless="${#authentication.principal == 'anonymousUser'}">
               <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
                 <li class="nav-item mx-0 mx-lg-1 dropdown">
@@ -179,11 +189,17 @@
                 </li> <!--End Nav Dropdown-->
               </th:block>
             </th:block>
+            <!--로그인 시 마이페이지 출력 헤더 옵션 끝-->
           </ul>
         </div>
 
-      </div> <!--End Container-->
+      </div>
+      <!-- 헤더 컨테이너 끝 -->
+
     </nav> <!--End Nav-->
+    <!-- 프로필 / 마이페이지 헤더 끝 -->
+
+    <!-- 마이페이지 왼쪽 메뉴 바 시작 -->
     <div style="display: flex;">
       <div class="outerSidebar" id="sidebar-wrapper" style="margin-left: 100px;">
 
@@ -209,16 +225,19 @@
             <th:block th:if="${memberRole == 0}">
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${memberDTO.nickname})}">멘토링 목록     ></a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
             </th:block>
             <th:block th:if="${memberRole == 1}">
               <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
+              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
             </th:block>
-            <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
             <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
           </div> <!--End List Group Flush-->
         </th:block>
+        <!--비로그인시 멘토, 멘티 유저 프로필 끝-->
 
-        <!--로그인시 다른 멘토, 멘티 프로필 시작-->
+
+        <!--로그인시 프로필 / 마이페이지 시작-->
         <th:block th:unless="${#authentication.principal == 'anonymousUser'}">
           <th:block th:if="${#authentication.principal.getNickname() != memberDTO.nickname}">
             <div class="sidebar-heading border-none">
@@ -241,16 +260,18 @@
               <th:block th:if="${memberRole == 0}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${memberDTO.nickname})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${memberDTO.nickname})}">멘토링 목록     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
               </th:block>
               <th:block th:if="${memberRole == 1}">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${memberDTO.nickname})}">홈     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeIntro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
               </th:block>
-              <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${memberDTO.nickname})}">[[${memberDTO.nickname}]]님의 소개     ></a>
               <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">[[${memberDTO.nickname}]]님이 쓴 글     ></a>
             </div> <!--End List Group Flush-->
           </th:block>
 
-          <th:block sec:authorize="hasRole('ROLE_MENTOR')"> <!--멘토 마이페이지-->
+          <!-- 멘토 마이페이지 시작-->
+          <th:block sec:authorize="hasRole('ROLE_MENTOR')">
             <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
               <div class="sidebar-heading border-none">
                 <span class="sidebar_header" style="font-size: 40px">마이페이지</span>
@@ -269,13 +290,15 @@
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTor(nickname=${#authentication.principal.getNickname()})}">멘토링 목록     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mentorIntro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
               </div> <!--End List Group Flush-->
             </th:block>
-          </th:block> <!--End 멘토 마이페이지-->
+          </th:block>
+          <!--멘토 마이페이지 끝-->
 
-          <th:block sec:authorize="hasRole('ROLE_MENTEE')"> <!--멘티 마이페이지-->
+          <!--멘티 마이페이지 시작-->
+          <th:block sec:authorize="hasRole('ROLE_MENTEE')">
             <th:block th:if="${#authentication.principal.getNickname() == memberDTO.nickname}">
               <div class="sidebar-heading border-none">
                 <span class="sidebar_header" style="font-size: 40px">마이페이지</span>
@@ -288,17 +311,23 @@
               <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">홈     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/mainListTee(nickname=${#authentication.principal.getNickname()})}">멘토링 목록     ></a>
-                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/intro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
+                <a class="list-group-item list-group-item-action list-group-item p-3" th:href="@{/mypage/menteeIntro(nickname=${#authentication.principal.getNickname()})}">나의 소개     ></a>
                 <a class="list-group-item list-group-item-action list-group-item p-3" href="/mypage/write">내가 쓴 글     ></a>
               </div> <!--End List Group Flush-->
             </th:block>
-          </th:block> <!--End 멘티 마이페이지-->
+          </th:block>
+          <!-- 멘티 마이페이지 끝-->
+
         </th:block>
+        <!--로그인시 프로필 / 마이페이지 끝-->
+
       </div> <!--End OuterSidebar-->
       <div class="container" layout:fragment="content">
 
       </div>
     </div>
+    <!-- 마이페이지 왼쪽 메뉴 바 끝 -->
+
   </div> <!--End Wrapper-->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
