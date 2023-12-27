@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.chat.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,9 @@ public class ChatRoomDTO {
     private int maxMembers; // 최대 인원 수
     private String lastMessage; // 마지막 메세지
     private LocalDateTime lastMessageTime;// 마지막 메세지 보낸 시간
+
+    private Long mbNo; // 멘토링 고유번호
+    private LocalDate startDate; // 멘토링 시작날짜
 
     public static ChatRoomDTO create(Long mno, String name, int maxMembers) { // 채팅방 생성
         ChatRoomDTO room  = new ChatRoomDTO();

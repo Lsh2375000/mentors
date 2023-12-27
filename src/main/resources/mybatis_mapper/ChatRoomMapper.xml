@@ -55,9 +55,11 @@
 
     <!-- 채팅방 조회 -->
     <select id="selectRoomById" resultType="kr.nomadlab.mentors.chat.dto.ChatRoomDTO">
-        SELECT cr.*
+        SELECT cr.*, m.startDate
         FROM chatRoom AS cr
-        WHERE cr.roomId = #{roomId}
+                 LEFT JOIN main AS m ON cr.roomId = m.roomId
+        WHERE cr.roomId = #{roomId};
+
     </select>
 
     <!-- 채팅방 참여회원 목록 조회 -->

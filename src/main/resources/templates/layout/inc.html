@@ -477,6 +477,8 @@
   var roomIds = [];
   var currentRoomId = null;
   var subscriptions = [];
+  var mbNo = null;
+  var startDate = null;
   var chatUser = [[${#authentication.principal}]];
   var mno = 0;
   var sender = null;
@@ -526,6 +528,8 @@
     const result = await getRoomMessages(currentRoomId);
     const room = result.room;
     const chatMembers = result.chatMembers;
+    mbNo = room.mbNo; // 멘토링 고유번호
+    startDate = room.startDate; // 멘토링 시작날짜
 
     // 채팅방 정보 표시
     $('.room-name').text(room.name);
@@ -728,7 +732,8 @@
               JSON.stringify({
                 'roomId': currentRoomId,
                 'sender': sender,
-                'mno': mno
+                'mno': mno,
+                'mbNo': mbNo
               }));
 
       // 모달 닫기

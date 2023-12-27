@@ -77,7 +77,7 @@ public class StompChatController {
         message.setSendTime(LocalDateTime.now());
         message.setMessage(message.getSender() + "님이 채팅방에 나가셨습니다.");
         chatService.sendMessage(message); // 채팅 저장
-        chatService.removeChatMember(message.getRoomId(), message.getMno()); // 채팅방 회원정보 삭제
+        chatService.removeChatMember(message.getRoomId(), message.getMno(), message.getMbNo()); // 채팅방 회원정보 삭제
 
         List<String> liveUser = new ArrayList<>();
         map.remove(message.getSender());
