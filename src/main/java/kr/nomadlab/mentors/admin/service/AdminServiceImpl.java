@@ -86,6 +86,7 @@ public class AdminServiceImpl implements AdminService{
     public ExchangeDto adminExchange(Long exNo) {
         ExchangeVO exchangeVO = adminMapper.getExchangeInfo(exNo);
         ExchangeDto exchangeDto = modelMapper.map(exchangeVO, ExchangeDto.class);
+        adminMapper.exPaySuccess(exNo);
 
         return exchangeDto;
     }

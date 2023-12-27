@@ -4,6 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin ExchangedList</title>
+  <style>
+    .exchangedList{
+      overflow-y: auto;
+    }
+  </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -53,7 +58,7 @@
               <nav class="left-side-menu">
                 <ul class="exCompleted">
                   <li><a href="/admin/exchange" class="selected">환전 대기</a></li>
-                  <li><a href="/admin/exchanged" class="selected">화전 완료</a></li>
+                  <li><a href="/admin/exchanged" class="selected">환전 완료</a></li>
                 </ul>
               </nav>
             </tr>
@@ -90,8 +95,6 @@
     const to = document.querySelector('input[name=to]');
     const searchResult = document.querySelector("tbody");
 
-
-
     searchBtn.addEventListener('click', function () {
       const checkedId = [];
 
@@ -101,7 +104,7 @@
         }
       }
       console.log(checkedId);
-      printList(checkedId, keyword.value, parseInt(up.value), parseInt(down.value), from.value, to.value)
+      printList(checkedId, keyword.value, up.value, down.value, from.value, to.value)
 
     });
 

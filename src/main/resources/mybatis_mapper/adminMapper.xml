@@ -127,4 +127,7 @@
     <update id="exchangeComplete">
         update `exchange` set isComplete = true, completeDate = now() where exNo=#{exNo}
     </update>
+    <update id="exPaySuccess">
+        update `payInfo` set isComplete = true, completeDate = now()
+    </update>
 </mapper>
