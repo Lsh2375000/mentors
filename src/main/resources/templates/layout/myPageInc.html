@@ -144,7 +144,7 @@
           <!-- url 헤더 네비게이션 시작 -->
           <ul class="navbar-nav ms-auto">
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/board/list">팀 프로젝트</a></li>
-            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/qboard/list">Q&A 게시판</a></li>
+            <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/question/list">Q&A 게시판</a></li>
             <th:block th:if="${#authentication.principal == 'anonymousUser' || #authentication.principal.getPasswd() == '1111'}"> <!-- 비회원 -->
               <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/member/login">로그인</a></li>
               <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/member/agreement">회원가입</a></li>
