@@ -109,6 +109,17 @@ public class CustomSecurityConfig {
     public SecurityFilterChain userFilterChain(HttpSecurity http) throws Exception {
         log.info("-----------------User Configuration-------------------");
 
+        http.authorizeHttpRequests(requests -> {
+            requests.requestMatchers("/member/login").permitAll();
+            requests.requestMatchers("question/register", "question/modify",
+                    "project/register", "project/modify", "/project/register",
+                    "/payments/**", "/mypage/exchange", "/mypage/mainListTee",
+                    "/mypage/paymentsHistory", "/mypage/mainModify", "/mypage/exchange",
+                    "/member/menteeModify", "/member/mentorModify", "/member/mentorApply",
+                    "/member/menteeModify", "/main/write",
+                    "/board/register", "/board/modify").hasRole("MENTOR,MENTEE");
+            requests.anyRequest().permitAll();
+        });
          // 커스텀 로그인 페이지
          http.formLogin(login -> login
                  .loginPage("/member/login")

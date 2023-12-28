@@ -595,7 +595,7 @@
                     typesNo : mbNo
                 }
                 passMessage(messageObj).then(data => {
-                    alert('신청완료되었습니다.\n 마이페이지에서 확인하세요');
+                    alert('신청완료되었습니다.\n 채팅목록을 확인하세요');
                     let coinValue = document.querySelector('.getCoin');
                     const coin = parseInt(coinValue.textContent);
                     coinValue.textContent = coin-price;
@@ -611,6 +611,8 @@
             console.log("mno ? ",mno);
             console.log("roomId ? ", roomId);
            await enterChat(chatObj)
+            stompClient.disconnect();
+           connect();
             console.log("채팅방 입장")
            await getBoard(mbNo).then(data => {
                 mbNo = data.mbNo;

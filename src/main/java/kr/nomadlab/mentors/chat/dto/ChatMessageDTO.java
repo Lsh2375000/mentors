@@ -2,6 +2,7 @@ package kr.nomadlab.mentors.chat.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,4 +22,5 @@ public class ChatMessageDTO {
     private Integer state; // 보낸사람의 접속상태 : 0 접속, 1 퇴장
 
     private Long mbNo; // 멘토링 고유번호
+    private LocalDate startDate; // 멘토링 시작날짜
 }

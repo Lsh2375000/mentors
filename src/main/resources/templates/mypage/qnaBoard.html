@@ -52,7 +52,7 @@
         <!-- 게시글 목록 -->
         <ul class="board-list p-3">
             <li class="board-container mb-4" th:each="questionList:${questionList.dtoList}">
-                <a href="#" class="view-link">
+                <a th:href="@{/question/view(qno=${questionList.qno})}" class="view-link">
                     <div class="board">
                         <h3 class="board-title pt-3 pb-3">
                             [[${questionList.title}]]
