@@ -437,7 +437,11 @@
   if ('[[${#authentication.principal.getNickname}]]' == str.toString()) {
     mentorApplyBtn.addEventListener('click', function (e) {
       if (isMentorApply === 'true') {
-        confirm('멘토 신청하시겠습니까?');
+        if (!confirm('멘토 신청하시겠습니까?')) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
 
       } else if (isMentorApply === 'false') {
         e.preventDefault();
