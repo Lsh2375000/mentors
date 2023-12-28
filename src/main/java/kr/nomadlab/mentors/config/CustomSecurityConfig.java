@@ -112,12 +112,12 @@ public class CustomSecurityConfig {
         http.authorizeHttpRequests(requests -> {
             requests.requestMatchers("/member/login").permitAll();
             requests.requestMatchers(
-                    "/payments/**", "/mypage/exchange", "/mypage/mainListTor",
+                    "/mypage/exchange", "/mypage/mainListTor",
                     "/mypage/paymentsHistory", "/mypage/mainModify", "/mypage/exchange",
                      "/member/mentorModify", "/main/write").hasRole("MENTOR");
 
-            requests.requestMatchers("question/register", "question/modify",
-                    "project/register", "project/modify", "/payments/**", "/payments",
+            requests.requestMatchers("/question/register", "/question/modify",
+                    "/project/register", "/project/modify", "/payments",
                     "/mypage/exchange", "/mypage/mainListTee",
                     "/mypage/paymentsHistory", "/member/menteeModify",
                     "/member/mentorApply", "/board/register", "/board/modify").hasRole("MENTEE");
