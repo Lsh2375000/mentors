@@ -138,7 +138,6 @@
                 console.log(result);
                 isLike = !result;
                 likeBtn.innerHTML = '<i class="fa-regular fa-heart fa-2xl" style="color: tomato"></i>';
-                alert("좋아요 취소")
             }
             else {
                 const result = await addLike(boardLikeDTO);
@@ -146,7 +145,6 @@
                 console.log(blNo);
                 isLike = true;
                 likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl" style="color: tomato"></i>';
-                alert("좋아요 등록")
             }
         });
 
@@ -175,7 +173,6 @@
             });
         }
         printReplies(1, 10); //무조건 호출
-        // printReplies(1, 10, true);
 
         const commentCount = document.querySelector('.comment-count'); // 댓글 수 DOM
         const commentList = document.querySelector('.comment-list');//댓글 목록 DOM
@@ -293,7 +290,6 @@
                     await modifyReply(replyObj)
                         .then(result => {
                             content.value = '';
-                            alert(result.rno + '댓글이 수정되었습니다!');
                             printReplies(page, size);
                         })
                         .catch(e => {
@@ -306,6 +302,10 @@
             // 댓글 삭제 버튼 전체 목록
             document.querySelectorAll('.remove-comment-btn').forEach(removeBtn => {
                removeBtn.addEventListener('click', function (e) { // 댓글 삭제 클릭 이벤트
+                   if (!confirm('댓글을 삭제하시겠습니까?')) {
+                       return;
+                   }
+
                    const comment = this.closest('.comment'); // 댓글
                    console.log(comment);
                    const rno = comment.id; // 댓글 고유번호
@@ -317,7 +317,6 @@
                    }
 
                    removeReply(rno).then(result => {
-                       alert(result.rno + '댓글이 삭제되었습니다.');
                        page = 1; // 해당 댓글이 삭제시 1페이지로 이동
                        printReplies(page, size);
                    }).catch(e => {
@@ -329,10 +328,13 @@
             // 대댓글 삭제 버튼 목록
             document.querySelectorAll('.remove-reply-btn').forEach(removeBtn => {
                 removeBtn.addEventListener('click', function (e) { // 대댓글 삭제 클릭 이벤트
+                    if (!confirm('댓글을 삭제하시겠습니까?')) {
+                        return;
+                    }
+
                     const rno = this.closest('.reply').id; // 대댓글 고유번호
 
                     removeReply(rno).then(result => {
-                        alert(result.rno + '댓글이 삭제되었습니다.');
                         page = 1; // 해당 댓글이 삭제시 1페이지로 이동
                         printReplies(page, size);
                     }).catch(e => {
@@ -430,11 +432,10 @@
                 }
 
                 await addReply(replyObj).then(result => { //등록이 된 후 결과처리
-                    alert(result.data.rno);
                     content.value = '';
                     printReplies(1, 10); //댓글목록갱신
                 }).catch(e => {
-                    alert('exception');
+                    console.log('exception');
                 });
             }
         }

@@ -1,5 +1,6 @@
 package kr.nomadlab.mentors.editor.controller;
 
+import jakarta.annotation.PostConstruct;
 import kr.nomadlab.mentors.editor.dto.EditorUploadDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,20 @@ public class EditorController {
 
     @Value("${kr.nomadlab.upload.path}")
     private String uploadPath;
+
+    @PostConstruct
+    public void init() {
+        File tempFolder = new File(uploadPath);
+
+        if (!tempFolder.exists()) {
+            tempFolder.mkdirs();
+        }
+
+        uploadPath = tempFolder.getAbsolutePath();
+
+        log.info("--------");
+        log.info(uploadPath);
+    }
 
     @PostMapping(value = "/upload")
     public String upload(EditorUploadDTO editorUploadDTO) throws UnsupportedEncodingException {

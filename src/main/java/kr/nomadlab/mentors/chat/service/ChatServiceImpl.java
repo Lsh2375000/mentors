@@ -103,11 +103,14 @@ public class ChatServiceImpl implements ChatService{
     // 채팅방에서 나간 회원정보 삭제
     @Override
     public void removeChatMember(String roomId, Long mno, Long mbNo, LocalDate startDate) {
+        log.info("startDate: " + startDate);
+
         ChatListDTO chatListDTO = ChatListDTO.builder()
                 .roomId(roomId)
                 .mno(mno)
                 .build();
         chatRoomMapper.deleteChatMember(chatListDTO);
+
         mainMapper.updateCurPeople(roomId); // 메인 게시판 현재인원 업데이트
 
         if (startDate.isBefore(LocalDate.now())) { // 멘토링 시작날짜보다 이전일 경우

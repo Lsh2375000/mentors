@@ -178,10 +178,10 @@
   .chat-modal {
     display: none;
     position: fixed;
-    bottom: 20%;
-    right: 25px;
+    bottom: 5%;
+    right: 8rem;
 
-    width: 400px;
+    width: 350px;
     background-color: #B2C7D9;
     border: 1px solid #999;
     border-radius: 5px;
@@ -201,7 +201,7 @@
   }
 
   .chat-body {
-    height: 500px;
+    height: 450px;
     padding: 10px;
     overflow-y: auto;
     overscroll-behavior-y: contain;
@@ -237,8 +237,8 @@
     max-width: 70%;
     background-color: #fff;
     border-radius: 10px;
-    font-size: 14px;
-    padding: 8px;
+    font-size: 13px;
+    padding: 6px;
     word-break: break-all;
   }
 
@@ -320,7 +320,7 @@
 
   /* Style the chat list container */
   .chat-list {
-    width: 400px;
+    width: 350px;
     height: 60vh;
     overflow-y: auto;
     border: 1px solid #ddd;
@@ -331,8 +331,8 @@
     display: none;
 
     position: fixed;
-    bottom: 20%;
-    right: 25px;
+    bottom: 15%;
+    right: 8rem;
   }
 
   .chat-list h5 {
@@ -423,6 +423,20 @@
     background-color: #c0392b;
   }
 
+  #conversation button {
+    border: 1px solid #9a9a9a;
+    padding: 5px;
+    border-radius: 1rem;
+  }
+
+  #connect {
+    background-color: #0abe94;
+  }
+
+  #disconnect {
+    background-color: #ff0000;
+  }
+
 </style>
 
 <!-- 채팅방 -->
@@ -454,8 +468,8 @@
 <!-- 채팅목록 -->
 <div id="conversation" class="chat-list">
   <h5>채팅
-    <button id="connect">connect</button>
-    <button id="disconnect">disconnect</button>
+    <button id="connect"></button>
+    <button id="disconnect"></button>
   </h5>
   <div class="chat-list-inner"></div>
 </div>
@@ -728,7 +742,12 @@
   }
 
   async function leaveChat() {
-    const confirmation = confirm("채팅방을 나가면 채팅목록에서 삭제됩니다. \n정말 나가시겠습니까?");
+    const start = new Date(...startDate); // 멘토링 시작 날짜
+    const today = new Date(); //오늘날짜
+    const confirmMessage = start > today
+            ? '채팅방을 나가면 채팅목록에서 삭제됩니다. \n정말 나가시겠습니까?'
+            : '채팅방을 나갈경우 멘토링 환불이 되지않습니다. \n정말 나가시겠습니까?';
+    const confirmation = confirm(confirmMessage);
     if (confirmation) {
       stompClient.send("/pub/chat/leave", {},
               JSON.stringify({
@@ -746,12 +765,9 @@
       const index = roomIds.indexOf(currentRoomId);
       subscriptions[index].unsubscribe();
 
-      // 채팅 목록 가져오기
-      const result = await getRooms(mno);
-      console.log(result);
-
-      // 채팅 목록 화면에 출력
-      printChatList(result.chatList);
+      // 특정 조건을 만족하는 태그 선택
+      const room = $(`.chat-item[id='${currentRoomId}']`);
+      room.remove();
     }
   }
 

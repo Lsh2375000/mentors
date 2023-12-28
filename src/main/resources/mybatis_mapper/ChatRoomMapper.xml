@@ -60,7 +60,7 @@
         SELECT cl.*, m.nickname
         FROM chatList AS cl
                  LEFT JOIN member AS m ON cl.mno = m.mno
-        WHERE cl.roomId = "be9b7a5a-04db-47a5-98bf-6e5e7003b886";
+        WHERE cl.roomId = #{roomId};
     </select>
 
     <!-- 채팅방에 해당 회원 존재 여부 확인 -->
