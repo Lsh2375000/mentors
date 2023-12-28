@@ -36,6 +36,7 @@ public class PayInfoRestController {
         //member에 코인 - 해주기
         payInfoService.savePayInfo(member.getMno(), payInfoDto);
         memberService.payCoin(member.getMno(), -payInfoDto.getPrice());
+
         sessionReset(member);
 
         return ResponseEntity.ok("Request processed successfully");
@@ -44,7 +45,7 @@ public class PayInfoRestController {
     private void sessionReset(MemberSecurityDTO memberDTO) {
         // 세션 사용자 정보 업데이트
         UserDetails userDetails = userDetailsService.loadUserByUsername(memberDTO.getMemberId());
-        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, new HashSet<GrantedAuthority>());
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, memberDTO.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
     }
 }
