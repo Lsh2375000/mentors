@@ -89,8 +89,9 @@ public class ProjectController {
     
 //    @PreAuthorize("isAuthenticated()") //로그인한 시용자만
     @GetMapping({"/view", "/modify"}) // 게시글 상세 페이지, 수정 페이지
-    public void view(@RequestParam("projectNo") Long projectNo, PageRequestDTO pageRequestDTO, Model model, HttpServletRequest request){
+    public void view(@RequestParam("projectNo") Long projectNo, PageRequestDTO pageRequestDTO, Model model, HttpServletRequest request, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO){
         log.info("projectNo: " + projectNo );
+        log.info("로그인 정보 : " + memberSecurityDTO);
         String requestedUrl  = request.getRequestURI(); // /project/read, //project/modify
         log.info("requestedUrl: " + requestedUrl);
 

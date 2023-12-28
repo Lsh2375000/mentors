@@ -236,10 +236,23 @@
     .reviewDate{
         color: #abb0b5;
     }
+    #banner {
+        background-color: #c3ddff;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 <body>
 <!--        멘토 랭킹 배너-->
 <div layout:fragment="banner">
+    <div id="banner">
+        <div style="text-align: left; width: 1300px;">
+            <h1 style="font-family: 'Orbit', sans-serif;">멘토링</h1>
+            <span style="font-size: 18px; color: #474747">전문인과 전공자들의 지식을 전수 받을 수 있어요.</span>
+        </div>
+    </div>
     <div class="d-flex justify-content-evenly w-75" style="margin: 0 auto; padding-top: 50px;">
         <div class="mentorRank" th:each="mentor1:${mentorList1}">
             <div class="text-center ranking" th:if="${mentor1.ranking == 1}">
@@ -560,6 +573,8 @@
                     }else{
                         enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn"><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
                     }
+                }else {
+                    enrollBtnDiv.innerHTML = '';
                 }
 
             })
