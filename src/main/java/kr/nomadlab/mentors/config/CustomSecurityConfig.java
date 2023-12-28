@@ -113,7 +113,7 @@ public class CustomSecurityConfig {
             requests.requestMatchers("/member/login").permitAll();
             requests.requestMatchers(
                     "/mypage/exchange", "/mypage/mainListTor",
-                    "/mypage/paymentsHistory", "/mypage/mainModify", "/mypage/exchange",
+                     "/mypage/mainModify", "/mypage/exchange",
                      "/member/mentorModify", "/main/write").hasRole("MENTOR");
 
             requests.requestMatchers("/question/register", "/question/modify",
