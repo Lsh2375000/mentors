@@ -117,7 +117,7 @@ public class CustomSecurityConfig {
                      "/member/mentorModify", "/main/write").hasRole("MENTOR");
 
             requests.requestMatchers("question/register", "question/modify",
-                    "project/register", "project/modify", "/payments/**",
+                    "project/register", "project/modify", "/payments/**", "/payments",
                     "/mypage/exchange", "/mypage/mainListTee",
                     "/mypage/paymentsHistory", "/member/menteeModify",
                     "/member/mentorApply", "/board/register", "/board/modify").hasRole("MENTEE");
