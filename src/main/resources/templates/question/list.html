@@ -53,7 +53,7 @@
         .board-footer span, dt, dd { font-size: 14px; }
         .footer-right { display: flex; }
         /*.footer-right dt { visibility: hidden; }*/
-        .footer-right dd { margin: 0 5px;}
+        .footer-right dd { margin: 0 0.7rem 0 0.2rem; }
         .complete { background-color: #0abe94 !important; }
     </style>
 
@@ -139,11 +139,11 @@
                                     <span th:text="${dto.elapsedTime}"></span>
                                 </div>
                                 <dl class="footer-right">
-                                    <dt>좋아요</dt>
+                                    <dt><i class="fa-regular fa-thumbs-up"></i></dt>
                                     <dd>[[${dto.voteCount}]]</dd>
-                                    <dt>조회수</dt>
+                                    <dt><i class="fa-regular fa-eye"></i></dt>
                                     <dd>[[${dto.hit}]]</dd>
-                                    <dt>댓글수</dt>
+                                    <dt><i class="fa-regular fa-comment"></i></dt>
                                     <dd>[[${dto.answerCount}]]</dd>
                                 </dl>
                             </div>

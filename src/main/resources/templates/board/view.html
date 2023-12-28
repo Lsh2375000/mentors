@@ -68,12 +68,14 @@
                     <button type="button">
                         <a th:href="|@{/board/list}?${link}|" class="text-decoration-none">이전</a>
                     </button>
-                    <button type="button" id="likeBtn">좋아요</button>
-                        <button type="button" th:class="${member != 'anonymousUser' && member.mno == board.mno} ? '' : 'hide'">
-                            <a th:href="|@{/board/modify(boardNo=${board.boardNo})}&${link}|">수정</a>
-                        </button>
-                        <button type="submit" id="removeBtn"
-                                th:class="${member != 'anonymousUser' && member.mno == board.mno} ? '' : 'hide'">삭제</button>
+                    <button type="button" id="likeBtn">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                    <button type="button" th:class="${member != 'anonymousUser' && member.mno == board.mno} ? '' : 'hide'">
+                        <a th:href="|@{/board/modify(boardNo=${board.boardNo})}&${link}|">수정</a>
+                    </button>
+                    <button type="submit" id="removeBtn"
+                            th:class="${member != 'anonymousUser' && member.mno == board.mno} ? '' : 'hide'">삭제</button>
                 </form>
             </div>
 

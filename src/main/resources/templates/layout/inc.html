@@ -179,8 +179,8 @@
   .chat-modal {
     display: none;
     position: fixed;
-    bottom: 0;
-    right: 20px;
+    bottom: 20%;
+    right: 25px;
 
     width: 400px;
     background-color: #B2C7D9;
@@ -294,8 +294,8 @@
 <style>
   .button {
     display: inline-block;
-    padding: 10px 20px; /* Adjust padding for desired size */
-    border-radius: 10px; /* Adjust border-radius for slight rounding */
+    padding: 0.8rem; /* Adjust padding for desired size */
+    border-radius: 1.5rem; /* Adjust border-radius for slight rounding */
     background-color: #3498db; /* Set background color */
     color: #fff; /* Set text color */
     text-align: center;
@@ -304,8 +304,11 @@
     cursor: pointer;
 
     position: fixed;
-    bottom: 12%;
+    bottom: 10%;
     right: 25px;
+
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   .button:hover {
@@ -325,12 +328,12 @@
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #FFFFFF;
-    z-index: 9999;
+    z-index: 8888;
     display: none;
 
     position: fixed;
     bottom: 20%;
-    left: 25px;
+    right: 25px;
   }
 
   .chat-list h5 {
@@ -459,7 +462,7 @@
 </div>
 
 <button class="button trigger">
-  <i class="fa-solid fa-comment-dots fa-xl"></i>
+  <i class="fa-solid fa-comment-dots fa-2xl"></i>
 </button>
 
 <script th:inline="javascript">
