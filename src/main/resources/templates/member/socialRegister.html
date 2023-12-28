@@ -9,6 +9,7 @@
     border: 1px solid #c5c5c5;
     padding: 20px;
     width: 1000px;
+    margin-bottom: 100px;
   }
   .row{
     margin-bottom: 30px;
@@ -97,25 +98,30 @@
   .input_value:focus ~ .input_span, .input_value:valid ~ .input_span {
     width: 100%;
   }
-  }
+
 </style>
+<div layout:fragment="banner" style="margin-top: 100px;">
+  <h1 style="text-align: center">소셜 회원가입</h1>
+</div>
 <div layout:fragment="content" id="out_div">
   <form name="frmAdd" id="frmAdd" action="/member/socialRegister" method="post" class="form-horizontal">
-
+    <div style="text-align: right">
+      <span><span style="color: red;">*</span> 표시는 필수로 입력해야 합니다.</span>
+    </div>
     <!--비밀번호 시작-->
     <div class="section_div">
       <div class="form-group" style="width: 400px;">
         <div class="input_div">
           <span id="pswCon"></span>
           <input name="passwd" type="password" class="input_value passwd" id="passwd" required>
-          <label class="input_name">비밀번호</label>
+          <label class="input_name"><span style="color: red;">*</span>비밀번호</label>
         </div>
       </div>
       <div class="form-group">
         <div class="input_div">
           <span id="chkTxt"></span>
           <input name="passwdChk" type="password" class="input_value passwdChk" id="passChk" required>
-          <label class="input_name">비밀번호 확인</label>
+          <label class="input_name"><span style="color: red;">*</span>비밀번호 확인</label>
           <span class="input_span"></span>
         </div>
       </div>
@@ -127,7 +133,7 @@
       <div class="form-group" style="width: 400px;">
         <div class="input_div">
           <input name="memberName" type="text" class="input_value name" maxlength="10" id="name" required>
-          <label class="input_name">이름</label>
+          <label class="input_name"><span style="color: red;">*</span>이름</label>
           <span class="input_span"></span>
         </div>
       </div>
@@ -137,7 +143,7 @@
       <div class="form-group">
         <div class="input_div">
           <input name="nickname" type="text" class="input_value nickname" maxlength="20" id="nickname" required>
-          <label class="input_name">닉네임</label>
+          <label class="input_name"><span style="color: red;">*</span>닉네임</label>
           <span class="input_span"></span>
         </div>
       </div>
@@ -151,7 +157,7 @@
     <div class="section_div">
       <div class="form-group" style="width: 400px;">
         <div class="input_div">
-          <input name="region" class="input_value" id="zipcode" size="10" maxlength="7" placeholder="우편주소" readonly required>
+          <input name="region" class="input_value" id="zipcode" size="10" maxlength="7" placeholder="*우편주소" readonly required>
         </div>
       </div>
       <div class="form-group">
@@ -168,7 +174,7 @@
       <div class="form-group">
         <div class="input_div">
           <input name="region" class="input_value" id="address02" size="70" maxlength="70" required>
-          <label class="input_name">상세 주소 2</label>
+          <label class="input_name"><span style="color: red;">*</span>상세 주소 2</label>
           <span class="input_span"></span>
         </div>
       </div>
@@ -179,12 +185,15 @@
     <div class="form-group row">
       <label class="col-sm-2 control-label">관심 프로그래밍 언어</label>
       <div class="col-sm-5">
-        <select name="devLanguage" class="form-select lngName">
-          <option value="JAVA">JAVA</option>
-          <option value="Python">Python</option>
-          <option value="Javascript">Javascript</option>
-          <option value="C#">C#</option>
-        </select>
+        Java<input type="checkbox" name="devLanguage" value="Java" class="form-check-input">
+        Python<input type="checkbox" name="devLanguage" value="Phython" class="form-check-input">
+        C<input type="checkbox" name="devLanguage" value="C" class="form-check-input">
+        C++<input type="checkbox" name="devLanguage" value="C++" class="form-check-input">
+        JS<input type="checkbox" name="devLanguage" value="JavaScript" class="form-check-input">
+        PHP<input type="checkbox" name="devLanguage" value="PHP" class="form-check-input">
+        Swift<input type="checkbox" name="devLanguage" value="Swift" class="form-check-input">
+        Kotlin<input type="checkbox" name="devLanguage" value="Kotlin" class="form-check-input">
+        TypeScript<input type="checkbox" name="devLanguage" value="TypeScript" class="form-check-input">
       </div>
     </div>
     <!--프로그래밍 언어 끝-->

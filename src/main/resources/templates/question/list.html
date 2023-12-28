@@ -4,8 +4,23 @@
       layout:decorate="~{layout/inc.html}">
 <head>
     <meta charset="UTF-8">
-    <title>팀 프로젝트 소개</title>
+    <title>Q&A 게시판</title>
 </head>
+<style layout:fragment="style">
+    #banner {
+        background-color: #cdf0f0;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+<body>
+<div layout:fragment="banner" id="banner">
+    <div style="text-align: left; width: 1300px;">
+        <h1 style="font-family: 'Orbit', sans-serif;">QnA 게시판</h1>
+    </div>
+</div>
 <body>
 <div layout:fragment="content">
 
