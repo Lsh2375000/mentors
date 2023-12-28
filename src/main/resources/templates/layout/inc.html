@@ -184,6 +184,7 @@
     right: 8rem;
 
     width: 350px;
+    height: fit-content;
     background-color: #B2C7D9;
     border: 1px solid #999;
     border-radius: 5px;
@@ -538,6 +539,11 @@
   }
 
   async function handleChatItemClick(chat) {
+    if ($(".chat-modal").css("display") === "block") {
+      alert("채팅은 하나만 이용가능합니다. \n채팅방을 닫아주세요.");
+      return;
+    }
+
     $(".chat-body").html("");
     currentRoomId = chat.roomId;
     console.log('Current Room ID: ' + currentRoomId);
@@ -566,8 +572,8 @@
             }));
 
     // 채팅 입력란 초기화 및 모달 표시
-    $(".chat-input").val('');
     $('.chat-modal').show();
+    $(".chat-input").val('').focus();
     scrollToBottom();
   }
 
@@ -692,7 +698,7 @@
                 'sender': sender,
                 'message' : inputMessage
               }));
-      $(".chat-input").val('');
+      $(".chat-input").val('').focus();
     }
   }
 
@@ -823,6 +829,53 @@
     disconnect();
   }
 </script>
+<script>
+  let isPress = false,   // 마우스를 눌렀을 때
+          prevPosX = 0,      // 이전에 위치한 X값
+          prevPosY = 0;      // 이전에 위치한 Y값
+
+  const $target = document.querySelector(".chat-modal");
+
+  // 드래그 구현에 필요한 이벤트
+  $target.onmousedown = start;
+  $target.onmouseup = end;
+
+  // 요소의 상위 요소 (임시로 window)
+  document.body.onmousemove = move;
+
+  // mousedown
+  function start(e) {
+    prevPosX = e.clientX;
+    prevPosY = e.clientY;
+
+    isPress = true;
+  }
+
+  // mousemove
+  function move(e) {
+    if (!isPress) {
+      return;
+    }
+
+    // 이전 좌표와 현재 좌표 차이값
+    const posX = prevPosX - e.clientX;
+    const posY = prevPosY - e.clientY;
+
+    // 현재 좌표가 이전 좌표로 바뀜
+    prevPosX = e.clientX;
+    prevPosY = e.clientY;
+
+    // left, top으로 이동
+    $target.style.left = ($target.offsetLeft - posX) + "px";
+    $target.style.top = ($target.offsetTop - posY) + "px";
+  }
+
+  // mouseup
+  function end() {
+    isPress = false;
+  }
+</script>
+
 
 
 <script th:inline="javascript">
