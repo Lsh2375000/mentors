@@ -73,12 +73,12 @@ public class MemberController {
 
         String referer = (String)request.getHeader("REFERER"); // 이전의 URL경로를 들고 온다
         log.info("backHistory........." + referer);
-        String teeRegisterURL = "http://localhost:8080/member/menteeRegister"; // 멘티 회원가입 주소
+        String teeRegisterURL = "menteeRegister"; // 멘티 회원가입 주소
 
         String inputEmail = (String) session.getAttribute("inputEmail");
         String inputNickname = (String) session.getAttribute("inputNickname");
 
-        if (referer.equals(teeRegisterURL)) { // URL : /member/menteeRegister
+        if (teeRegisterURL.indexOf("menteeRegister") != -1) { // URL : /member/menteeRegister
             Long mno = memberService.add(memberDTO);
             menteeDTO.setMno(mno);
             menteeService.add(menteeDTO);
