@@ -40,10 +40,11 @@ public class MainRestController {
 
     @PostMapping("/chat")
     public void enterChat(@RequestBody ChatListDTO chatListDTO){
+        String nickname = chatListDTO.getNickname();
         Long mno = chatListDTO.getMno();
         String roomId = chatListDTO.getRoomId();
 
-        chatService.inviteChatRoom(mno, roomId);
+        chatService.inviteChatRoom(mno, roomId, nickname);
         log.info("채팅방초대됨");
         mainService.updateCurPeople(roomId);
         log.info("채팅방인원 업데이트됨");

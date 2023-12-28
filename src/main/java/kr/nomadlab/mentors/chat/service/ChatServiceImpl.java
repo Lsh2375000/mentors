@@ -58,9 +58,10 @@ public class ChatServiceImpl implements ChatService{
     }
 
     // 채팅방 초대
-    public void inviteChatRoom(Long mno, String roomId) {
+    public void inviteChatRoom(Long mno, String roomId, String nickname) {
         chatRoomMapper.insertChatList(ChatListDTO.builder()
                 .mno(mno)
+                .nickname(nickname)
                 .roomId(roomId)
                 .role("MEMBER")
                 .build());

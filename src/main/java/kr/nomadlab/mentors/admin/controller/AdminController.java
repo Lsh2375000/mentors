@@ -260,7 +260,7 @@ public class AdminController {
     public String mentorApplyPOST(Long mno) {
         log.info("mentorApplyPOST()...");
         log.info("mno : " + mno);
-        MenteeDTO menteeDTO = menteeService.getOneByMno(mno);
+        MenteeDTO menteeDTO = menteeService.getByMno(mno);
         // 1. 해당 mno의 멘티정보를 가져온다
 
         MentorApplyDTO mentorApplyDTO = adminService.getApplyOne(mno);
