@@ -604,8 +604,10 @@
             //여기에 채팅방
             let chatObj = {
                 mno : mno,
-                roomId : roomId
+                roomId : roomId,
+                nickname : auth.nickname
             }
+            console.log("nickname", auth.nickname)
             console.log("mno ? ",mno);
             console.log("roomId ? ", roomId);
            await enterChat(chatObj)
