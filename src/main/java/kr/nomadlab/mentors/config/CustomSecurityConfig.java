@@ -111,13 +111,17 @@ public class CustomSecurityConfig {
 
         http.authorizeHttpRequests(requests -> {
             requests.requestMatchers("/member/login").permitAll();
-            requests.requestMatchers("question/register", "question/modify",
-                    "project/register", "project/modify", "/project/register",
-                    "/payments/**", "/mypage/exchange", "/mypage/mainListTee",
+            requests.requestMatchers(
+                    "/payments/**", "/mypage/exchange", "/mypage/mainListTor",
                     "/mypage/paymentsHistory", "/mypage/mainModify", "/mypage/exchange",
-                    "/member/menteeModify", "/member/mentorModify", "/member/mentorApply",
-                    "/member/menteeModify", "/main/write",
-                    "/board/register", "/board/modify").hasRole("MENTOR,MENTEE");
+                     "/member/mentorModify", "/main/write").hasRole("MENTOR");
+
+            requests.requestMatchers("question/register", "question/modify",
+                    "project/register", "project/modify", "/payments/**", "/payments",
+                    "/mypage/exchange", "/mypage/mainListTee",
+                    "/mypage/paymentsHistory", "/member/menteeModify",
+                    "/member/mentorApply", "/board/register", "/board/modify").hasRole("MENTEE");
+
             requests.anyRequest().permitAll();
         });
          // 커스텀 로그인 페이지

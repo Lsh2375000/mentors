@@ -95,7 +95,7 @@
             <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-1 rounded" th:href="@{/mypage/menteeProfile(nickname=${#authentication.principal.getNickname()})}">마이페이지</a></li>
           </th:block>
           <th:block th:if="${#authentication.principal != 'anonymousUser' && #authentication.principal.getPasswd() != '1111'}"><!-- 회원 로그인 -->
-            <li class="nav-item mx-0 mx-lg-1"><span class="nav py-3 px-0 px-lg-3 rounded nicknameSpan">[<span style="font-weight: normal" th:text="${#authentication.principal.getNickname()}"></span>]보유 코인 : <span class="getCoin" th:text="${#authentication.principal.getCoin()}"></span>
+            <li class="nav-item mx-0 mx-lg-1"><span class="nav py-3 px-0 px-lg-3 rounded nicknameSpan">[<span style="font-weight: normal" th:text="${#authentication.principal.getNickname()}"></span>]보유 비타민 : <span class="getCoin" th:text="${#authentication.principal.getCoin()}"></span>
               <th:block sec:authorize="hasRole('ROLE_MENTEE')">
                 <button class="btn btn-sm btn-primary" onclick="window.location.href='/payments'" style="margin-left: 10px;">충전하기</button>
               </th:block>
