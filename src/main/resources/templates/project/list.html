@@ -60,7 +60,7 @@
         <!-- 왼쪽 사이드 메뉴 -->
         <nav class="left-side-menu">
             <ul class="menu">
-                <li><a href="/board/list" class="selected">팀프로젝트소개</a></li>
+                <li><a href="/board/list">팀프로젝트소개</a></li>
                 <li><a href="/project/list" class="selected">팀프로젝트모집</a></li>
             </ul>
         </nav>
@@ -122,7 +122,7 @@
                             <h3 class="project-title">
                                 [[${dto.title}]]
                             </h3>
-                            <p class="project-content">내용</p>
+                            <div class="project-content" th:utext="${dto.content}"></div>
                             <ul class="tag-list">
                                <li class="tag-style" th:each="tag:${dto.tagList}">
                                    [[${tag.tagName}]]
@@ -186,6 +186,35 @@
 <script layout:fragment="script" th:inline="javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
+        // img 빼기
+        const projectContents = document.querySelectorAll('.project-content');
+
+        function filterImgTags(content) {
+            // 적절한 방법으로 DOM을 생성
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+
+            // <img> 태그를 찾아 제거
+            const imgTags = tempDiv.getElementsByTagName('img');
+            for (let i = imgTags.length - 1; i >= 0; i--) {
+                imgTags[i].parentNode.removeChild(imgTags[i]);
+            }
+
+            // 필터링된 내용을 반환
+            return tempDiv.innerHTML;
+        }
+
+        // 모든 board-content에 대해 작업
+        projectContents.forEach((projectContent) => {
+            const editorContent = projectContent.innerHTML;
+            const filteredContent = filterImgTags(editorContent);
+            console.log('edit: ', editorContent)
+            console.log('filter: ', filteredContent);
+
+            // 필터링된 내용을 해당 board-content에 다시 설정
+            projectContent.innerHTML = filteredContent;
+        });
+
         const formObj = document.querySelector("form[name=frmSearch]");
         const searchInput = document.getElementById('keyword'); // 검색창
 

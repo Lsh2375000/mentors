@@ -66,14 +66,15 @@ public class ChatServiceImpl implements ChatService{
                 .roomId(roomId)
                 .role("MEMBER")
                 .build());
+
         // 채팅 초대시 초대 메세지 전송
-//        ChatMessageDTO.builder()
-//                .mno(mno)
-//                .roomId(roomId)
-//                .sender()
-//                .message()
-//                .build();
-//        chatMessageMapper.insertMessage();
+        chatMessageMapper.insertMessage(
+                ChatMessageDTO.builder()
+                .mno(mno)
+                .roomId(roomId)
+                .sender(nickname)
+                .message(nickname + "님을 초대하였습니다.")
+                .build());
     }
 
     // 채팅 목록 조회

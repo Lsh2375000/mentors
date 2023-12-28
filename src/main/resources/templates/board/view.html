@@ -69,7 +69,7 @@
                         <a th:href="|@{/board/list}?${link}|" class="text-decoration-none">이전</a>
                     </button>
                     <button type="button" id="likeBtn">
-                        <i class="fa-regular fa-heart"></i>
+                        <i class="fa-regular fa-heart fa-2xl" style="color: tomato"></i>
                     </button>
                     <button type="button" th:class="${member != 'anonymousUser' && member.mno == board.mno} ? '' : 'hide'">
                         <a th:href="|@{/board/modify(boardNo=${board.boardNo})}&${link}|">수정</a>
@@ -116,7 +116,12 @@
             blNo = like.blNo;
         }
 
-        document.getElementById('likeBtn').addEventListener('click', async function (e) { // 좋아요 클릭 이벤트
+        const likeBtn = document.getElementById('likeBtn'); // 좋아요 버튼
+        if (isLike) { // 좋아요를 눌렀다면
+            likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl" style="color: tomato"></i>';
+        }
+
+        likeBtn.addEventListener('click', async function (e) { // 좋아요 클릭 이벤트
             e.preventDefault();
             e.stopPropagation();
 
@@ -132,6 +137,7 @@
                 const result = await removeLike(blNo);
                 console.log(result);
                 isLike = !result;
+                likeBtn.innerHTML = '<i class="fa-regular fa-heart fa-2xl" style="color: tomato"></i>';
                 alert("좋아요 취소")
             }
             else {
@@ -139,6 +145,7 @@
                 blNo = result.blNo;
                 console.log(blNo);
                 isLike = true;
+                likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl" style="color: tomato"></i>';
                 alert("좋아요 등록")
             }
         });

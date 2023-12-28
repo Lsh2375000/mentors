@@ -68,7 +68,9 @@
                     <button type="button">
                         <a th:href="|@{/question/list}?${link}|" class="text-decoration-none">이전</a>
                     </button>
-                    <button type="button" id="likeBtn">추천</button>
+                    <button type="button" id="likeBtn">
+                        <i class="fa-regular fa-thumbs-up fa-2xl"></i>
+                    </button>
                     <button type="button" th:class="${member != 'anonymousUser' && member.mno == question.mno} ? '' : 'hide'">
                         <a th:href="|@{/question/modify(qno=${question.qno})}&${link}|">수정</a>
                     </button>
@@ -115,6 +117,11 @@
             vno = vote.vno;
         }
 
+        const likeBtn = document.getElementById('likeBtn'); // 좋아요 버튼
+        if (isVote) { // 좋아요를 눌렀다면
+            likeBtn.innerHTML = '<i class="fa-solid fa-thumbs-up fa-2xl"></i>';
+        }
+
         document.getElementById('likeBtn').addEventListener('click', async function (e) { // 좋아요 클릭 이벤트
             e.preventDefault();
             e.stopPropagation();
@@ -131,6 +138,7 @@
                 const result = await removeVote(vno);
                 console.log(result);
                 isVote = !result;
+                likeBtn.innerHTML = '<i class="fa-regular fa-thumbs-up fa-2xl"></i>';
                 alert("추천 취소")
             }
             else {
@@ -138,6 +146,7 @@
                 vno = result.vno;
                 console.log(vno);
                 isVote = true;
+                likeBtn.innerHTML = '<i class="fa-solid fa-thumbs-up fa-2xl"></i>';
                 alert("추천 등록")
             }
         });
@@ -212,8 +221,8 @@
                                         <button class="hide-btn btn btn-outline-primary
                                             ${comment.children.length <= 0 ? 'hide' : ''}">△ 숨기기</button>
                                         <button class="reg-reply-btn btn btn-outline-primary">답글달기</button>
-                                        <button class="select-answer-btn btn btn-outline-primary" ${isComplete ? 'disabled' : ''}>
-<!--                                        ${comment.select || (auth !== 'anonymousUser' && auth.mno === comment.mno) ? '' : 'hide'}-->
+                                        <button class="select-answer-btn btn btn-outline-primary ${comment.select || (auth !== 'anonymousUser' && auth.mno === comment.mno) ? '' : 'hide'}"
+                                            ${isComplete ? 'disabled' : ''}>
                                             ${comment.select ? '<i class="fa-solid fa-check fa-xl"></i>' : '채택하기'}
                                         </button>
                                     </div>

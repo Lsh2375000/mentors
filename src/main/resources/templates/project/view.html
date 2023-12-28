@@ -68,12 +68,14 @@
                     <button type="button">
                         <a th:href="|@{/project/list}?${link}|" class="text-decoration-none">이전</a>
                     </button>
-                    <button type="button" id="likeBtn"></button>
-                    <button type="button" th:class="${member != 'anonymousUser' && member.mno == question.mno} ? '' : 'hide'">
+                    <button type="button" id="likeBtn">
+                        <i class="fa-regular fa-heart fa-2xl" style="color: tomato"></i>
+                    </button>
+                    <button type="button" th:class="${member != 'anonymousUser' && member.mno == project.mno} ? '' : 'hide'">
                         <a th:href="|@{/project/modify(projectNo=${project.projectNo})}&${link}|">수정</a>
                     </button>
                     <button type="submit" id="removeBtn"
-                            th:class="${member != 'anonymousUser' && member.mno == question.mno} ? '' : 'hide'">삭제</button>
+                            th:class="${member != 'anonymousUser' && member.mno == project.mno} ? '' : 'hide'">삭제</button>
                 </form>
             </div>
 
@@ -114,9 +116,9 @@
             pjlNo = like.pjlNo;
         }
 
-        const likeBtn = document.querySelector('likeBtn'); // 좋아요 버튼
+        const likeBtn = document.getElementById('likeBtn'); // 좋아요 버튼
         if (isLike) { // 좋아요를 눌렀다면
-            likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl"></i>';
+            likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl" style="color: tomato"></i>';
         }
 
         likeBtn.addEventListener('click', async function (e) { // 좋아요 클릭 이벤트
@@ -135,7 +137,7 @@
                 const result = await removeLike(pjlNo);
                 console.log(result);
                 isLike = !result;
-                likeBtn.innerHTML = '<i class="fa-regular fa-heart fa-2xl"></i>';
+                likeBtn.innerHTML = '<i class="fa-regular fa-heart fa-2xl" style="color: tomato"></i>';
                 alert("좋아요 취소");
             }
             else {
@@ -143,7 +145,7 @@
                 pjlNo = result.pjlNo;
                 console.log(pjlNo);
                 isLike = true;
-                likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl"></i>';
+                likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl" style="color: tomato"></i>';
                 alert("좋아요 등록")
             }
         });
