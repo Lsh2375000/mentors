@@ -128,6 +128,6 @@
         update `exchange` set isComplete = true, completeDate = now() where exNo=#{exNo}
     </update>
     <update id="exPaySuccess">
-        update `payInfo` set isComplete = true, completeDate = now()
+        update `payInfo` set isComplete = true, completeDate = now() where payInfoNo=#{payInfoNo}
     </update>
 </mapper>

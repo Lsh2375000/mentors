@@ -190,8 +190,9 @@
         <!--주소 시작-->
         <div class="section_div">
             <div class="form-group" style="width: 400px;">
-                <div class="input_div">
-                    <input name="region" class="input_value" id="zipcode" size="10" maxlength="7" placeholder="*우편주소" readonly required>
+                <div class="input_div" style="display: flex">
+                    <span style="color: red; font-size: 20px">*</span>
+                    <input name="region" class="input_value" id="zipcode" size="10" maxlength="7" placeholder="우편주소" readonly required>
                 </div>
             </div>
             <div class="form-group">
@@ -208,7 +209,7 @@
             <div class="form-group">
                 <div class="input_div">
                     <input name="region" class="input_value" id="address02" size="70" maxlength="70" required>
-                    <label class="input_name"><span style="color: red;">*</span>상세 주소 2</label>
+                    <label class="input_name">상세 주소 2</label>
                     <span class="input_span"></span>
                 </div>
             </div>
@@ -500,7 +501,7 @@
                 e.stopPropagation();
                 return;
 
-            } else if (!result2) {
+            } else if (result2 === 'false') {
                 alert('인증문자를 확인해 주세요.');
                 e.preventDefault();
                 e.stopPropagation();
@@ -519,7 +520,8 @@
                 return;
 
             }
-            if (result) {
+            if (result === 'true') {
+                alert('회원가입이 완료 되었습니다.')
                 frmAdd.submit();
             }
 
