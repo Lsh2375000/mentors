@@ -204,19 +204,17 @@
 <script layout:fragment="script" th:inline="javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
-        // img 빼기
+        // 첫번째 p태그 찾기
         const boardContents = document.querySelectorAll('.board-content');
 
-        function filterImgTags(content) {
+        function filterPTag(content) {
             // 적절한 방법으로 DOM을 생성
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
 
             // <img> 태그를 찾아 제거
-            const imgTags = tempDiv.getElementsByTagName('img');
-            for (let i = imgTags.length - 1; i >= 0; i--) {
-                imgTags[i].parentNode.removeChild(imgTags[i]);
-            }
+            const firstPTag = tempDiv.querySelector('p');
+            tempDiv.innerHTML = `<p>${firstPTag.innerText}</p>`;
 
             // 필터링된 내용을 반환
             return tempDiv.innerHTML;
@@ -225,7 +223,7 @@
         // 모든 board-content에 대해 작업
         boardContents.forEach((boardContent) => {
             const editorContent = boardContent.innerHTML;
-            const filteredContent = filterImgTags(editorContent);
+            const filteredContent = filterPTag(editorContent);
 
             // 필터링된 내용을 해당 board-content에 다시 설정
             boardContent.innerHTML = filteredContent;
