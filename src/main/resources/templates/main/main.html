@@ -594,6 +594,8 @@
                 alert("비타민을 먼저 충전해주세요.");
                 window.location.href = '/payments';
                 return;
+            } else if(price === 0){
+                alert('신청완료되었습니다.\n 채팅목록을 확인하세요');
             }
 
             let payInfoObj = {
