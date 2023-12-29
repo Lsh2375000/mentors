@@ -9,7 +9,7 @@
         insert into coinStats (amount, payDate) values (#{amount}, now());
     </insert>
     <select id="totalCoin" resultType="int">
-        select SUM(amount) from coinStats
+        select IFNULL(SUM(amount),0) from coinStats
     </select>
 
     <!--날짜 별 구분-->
