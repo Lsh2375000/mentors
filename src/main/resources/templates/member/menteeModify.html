@@ -212,13 +212,13 @@
     const inputPwVal = currentPw.value; // 입력한 현재 비밀번호 값
     const pwCheck = document.getElementById('pwCheck'); // 현재 비밀번호 일치여부 텍스트
     const result = await matchCurrentPw(inputPwVal); // 비밀번호 일치여부 결과
-    if (result) {
+    if (result === 'true') {
       pwCheck.innerHTML = '현재 비밀번호와 일치합니다.'
       pwCheck.style.color = '#5c6ff1';
       currentPw.disabled = true; // 현재 비밀번호가 일치하면
       modifyPw.disabled = false; // 새로 사용할 비밀번호 폼 ON
       modifyPwChk.disabled = false; // 새로 사용할 비밀번호 폼 ON
-    } else {
+    } else if (result === 'false'){
       pwCheck.innerHTML = '현재 비밀번호와 일치하지 않습니다.'; // 비밀번호 일치하지 않으면 수정 불가
       pwCheck.style.color = '#f64e4e';
       editBtn.addEventListener('click', function (e) {
@@ -238,12 +238,14 @@
     const pwRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,12}$/; // 비밀번호 양식
 
     if (mPwVal === currentPw.value) { // 비밀번호가 전에 사용하던 비밀번호와 같다면
-      modifyPWTxt.innerHTML = '전에 사용하던 비밀번호는 사용할 수 없습니다.';
+      modifyPWTxt.innerHTML = '현재 사용중인 비밀번호로는 변경할 수 없습니다.';
       modifyPWTxt.style.color = '#f64e4e';
 
     } else if (!pwRegex.test(mPwVal) || mPwVal === "") { // 비밀번호 양식이 맞지 않거나 비어있다면
       modifyPWTxt.innerHTML = '비밀번호는 영문 대소문자, 숫자, ' +
               '특수문자(!,@,#,$,%,^,&,*)를 포함하여 8~12자 사이로 입력해주세요.';
+      modifyPWTxt.style.color = '#f64e4e';
+
     } else { // 모든 유효성을 통과 했다면
       modifyPWTxt.innerHTML = '사용가능한 비밀번호 입니다.';
       modifyPWTxt.style.color = '#5c6ff1';
@@ -254,11 +256,17 @@
   modifyPwChk.addEventListener('keyup', function (e) { // 비밀번호 확인 유효성 검사
     const mPwChkVal = modifyPwChk.value; // 입력한 비밀번호 확인
     const mPWVal = modifyPw.value; // 입력한 비밀번호
+    const inputPwVal = currentPw.value; // 현재 입력한 비밀번호 값
+
 
     if (mPwChkVal !== mPWVal) { // 비밀번호와 비밀번호 확인이 다르다면
       modifyPwCheckTxt.innerHTML = '비밀번호가 일치하지 않습니다.'
       modifyPwCheckTxt.style.color = '#f64e4e';
-    } else { // 일치한다면
+    } else if (mPwChkVal === inputPwVal) {
+      modifyPwCheckTxt.innerHTML = '현재 사용중인 비밀번호로는 변경할 수 없습니다.'
+      modifyPwCheckTxt.style.color = '#f64e4e';
+    } else if (mPwChkVal === mPWVal && mPwChkVal !== inputPwVal) {
+      // 변경할 비밀번호와 확인비밀번호가 일치하고 전에 사용하던 비밀번호와 같지 않다면
       modifyPwCheckTxt.innerHTML = '비밀번호가 일치합니다.';
       modifyPwCheckTxt.style.color = '#5c6ff1';
       editBtn.disabled = false;
@@ -266,7 +274,20 @@
   });
 
   editBtn.addEventListener('click', function (e) {
-    console.log(frmModifyPw);
+    const inputPwVal = currentPw.value; // 현재 입력한 비밀번호 값
+    const mPWVal = modifyPw.value; // 입력한 비밀번호
+    const mPwChkVal = modifyPwChk.value; // 입력한 비밀번호 확인
+
+    if (inputPwVal === mPWVal || inputPwVal === mPwChkVal) {
+      e.preventDefault();
+      e.stopPropagation();
+      alert('현재 사용중인 비밀번호로는 변경할 수 없습니다.');
+      return;
+    }
+
+
+
+    alert('비밀번호가 변경되었습니다. 다시 로그인해 주세요.');
     frmModifyPw.submit();
   });
 
@@ -311,6 +332,7 @@
       }
       return;
     }
+    alert('회원정보가 변경되었습니다.');
     frmModify.submit();
   });
 

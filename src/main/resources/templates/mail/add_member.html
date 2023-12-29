@@ -1,13 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <div style="margin: 20px;">
-    <p>아래 코드를 복사해 입력해 주세요</p>
-    <div style="border: 1px solid black; text-align: center;">
-      <h3>회원가입 인증 코드입니다.</h3>
-      <div style="font-size: 130%;">
-        <span style="font-weight: bold; color: red;" th:text="${confirmKey}"></span>
-        <br>
-      </div>
-    </div>
+  <div>
+    <table cellpadding="0" cellspacing="0" border="0" style="width:760px; font-family:dotum; letter-spacing:-1px; table-layout:fixed; border-collapse:collapse;">
+      <tbody>
+      <tr>
+        <td style="border-bottom:2px solid #f29200; text-align:center; font-size: 30px;">
+          Mentors 회원가입 인증 코드 입니다.
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:0 20px;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:100%; table-layout:fixed; border-collapse:collapse;">
+          <tbody>
+          <tr>
+            <td style="padding:60px 0 40px 0;">
+            <table cellpadding="0" cellspacing="0" border="0" style="width:100%; text-align:center; table-layout:fixed; border-collapse:collapse;">
+              <tbody>
+              <tr>
+                <td style="padding-top:20px; color:#31a9e1; font-size:42px; font-weight:bold; text-align:center;" th:text="|인증코드 : ${confirmKey}|"></td></tr>
+              </tbody>
+            </table>
+          </td>
+          </tr>
+          <tr>
+            <td style="border-top:1px solid #dcdcdc"></td>
+          </tr>
+          <tr>
+            <td>
+            <table cellpadding="0" cellspacing="0" border="0" style="width:100%; table-layout:fixed; border-collapse:collapse;">
+              <tbody>
+              <tr>
+                <td style="height:18px;"></td>
+              </tr>
+              <tr>
+                <td style="border:1px solid #eaeaea; color:#666; font-size:18px;">
+                <img src="https://api.career.go.kr/_web/images/am/icon_mail.jpg" style="border:none; vertical-align:middle;" alt="" loading="lazy">본 메일은 발신전용 메일입니다.
+              </td>
+              </tr>
+              <tr>
+                <td style="height:60px;"></td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
+          </tr>
+          </tbody>
+        </table>
+      </td>
+      </tr>
+      </tbody>
+    </table>
   </div>
+
 </html>
