@@ -7,6 +7,7 @@ import kr.nomadlab.mentors.member.domain.MemberVO;
 import kr.nomadlab.mentors.member.domain.MentorApplyVO;
 import kr.nomadlab.mentors.member.dto.MentorApplyDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public interface AdminMapper {
     void addAdmin(AdminVO adminVO); // 관리자 계정 생성
 
-    void addAdminRole(String memberId, Integer role_set); // 관리자 롤 설정
+    void addAdminRole(@Param("adminId") String adminId, @Param("role_set") Integer role_set); // 관리자 롤 설정
 
     AdminVO getAdminId(String adminId); // 관리자 로그인시 롤 불러오기
 

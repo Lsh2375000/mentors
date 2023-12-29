@@ -37,6 +37,7 @@ public class AdminServiceImpl implements AdminService{
         log.info("adminVO : " + adminVO);
 
         adminMapper.addAdmin(adminVO);
+        adminMapper.addAdminRole(adminDTO.getAdminId(), 2);
 
     }
 

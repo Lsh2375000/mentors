@@ -25,7 +25,7 @@ public class MemberValidationController {
     // 인증문자 전송
     @GetMapping("/sendConfirmMail")
     @ResponseBody
-    public String sendConfirmMail(String mailTo, HttpSession session) throws Exception {
+    public String sendConfirmMail(@RequestParam("mailTo") String mailTo, HttpSession session) throws Exception {
         if (mailSenderService.sendMailByAddMember(mailTo)) {
             String confirmKey = mailSenderService.getConfirmKey(); // 인증문자를 변수에 저장
             session.setAttribute("confirmKey", confirmKey); // 변수를 세션에 저장
@@ -43,7 +43,7 @@ public class MemberValidationController {
     // 입력한 인증문자 일치 여부 확인
     @PostMapping("/matchConfirmKey")
     @ResponseBody
-    public String  matchConfirmKey(HttpSession session, String confirmKey) throws Exception {
+    public String  matchConfirmKey(@RequestParam("confirmKey") String confirmKey, HttpSession session) throws Exception {
         log.info("matchConfirmKey......");
         String matchConfirmKey =  (String) session.getAttribute("confirmKey"); // 변수에 세션값을 저장
         log.info(matchConfirmKey);
@@ -65,7 +65,7 @@ public class MemberValidationController {
     // 비밀번호 재설정시 이메일 존재 유무
     @PostMapping("/isEmail")
     @ResponseBody
-    public String isEmail(@RequestParam String email, HttpSession session) {
+    public String isEmail(@RequestParam("email") String email, HttpSession session) {
         log.info("idCheck......");
         log.info(email);
 
@@ -80,7 +80,7 @@ public class MemberValidationController {
     // 이메일 중복 체크
     @PostMapping("/idCheck")
     @ResponseBody
-    public String idCheck(@RequestParam String memberId, HttpSession session) {
+    public String idCheck(@RequestParam("memberId") String memberId, HttpSession session) {
         log.info("idCheck......");
         log.info(memberId);
         if (memberService.getMemberId(memberId) == null) {
@@ -93,7 +93,7 @@ public class MemberValidationController {
     // 닉네임 중복 체크
     @PostMapping("/nicknameCheck")
     @ResponseBody
-    public String nicknameCheck(@RequestParam String nickname, HttpSession session) {
+    public String nicknameCheck(@RequestParam("nickname") String nickname, HttpSession session) {
         log.info("nicknameCheck......");
         log.info("입력한 닉네임 : " + nickname);
         session.setAttribute("inputNickname", nickname); // 닉네임을 세션에 담는다
