@@ -519,7 +519,7 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js?1"></script>
     </div>
 <script layout:fragment="script" th:inline="javascript">
 
@@ -578,8 +578,6 @@
                 }
 
             })
-
-
         contentModal.show();
 
         //등록버튼 클릭시 알림 보내기
@@ -605,7 +603,7 @@
                 menteeMno : auth.mno,
                 completeDate : endDate
             }
-            payInfoSave(payInfoObj).then(result =>{
+            await payInfoSave(payInfoObj).then(result =>{
                 let messageObj ={
                     receiverMno : modalDataMno,
                     types : "mentoring",
@@ -650,7 +648,6 @@
                modalEndDate.innerHTML = `${data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2]}`;
                enrollBtnDiv.innerHTML = '';
             })
-
         })
     }
 
