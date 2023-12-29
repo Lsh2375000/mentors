@@ -536,7 +536,6 @@
     const enrollBtnDiv = document.querySelector('.enrollBtnDiv');
 
     const auth = [[${#authentication.principal}]];
-    console.log("현재 사용자는 ? " , auth )
 
 
 
@@ -554,8 +553,7 @@
                 price = data.price;
                 endDate = data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2];
                 roomId = data.roomId;
-                console.log("겟 보드 함 ");
-                console.log("참가 여부 ? ", data.applied);
+
                 modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
                 modalTitle.innerHTML = `${data.title}`;
                 modalPosition.innerHTML = `${data.position}`;
@@ -566,7 +564,7 @@
                 modalStartDate.innerHTML = `${data.startDate[0]+'-'+data.startDate[1]+'-'+ data.startDate[2]}`;
                 modalEndDate.innerHTML = `${data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2]}`;
                 if(auth.mno !== data.mno || auth.authorities[0].authority !== 'ROLE_MENTOR'){
-                    console.log("본인이 작성한 글이 아니고 멘토가 아닌사람")
+
                     // 만석이면 disabled 적용
                     if(data.curPeople >= data.maxPeople || data.applied === true){
                         enrollBtnDiv.innerHTML = `<button type="button" class="enrollBtn" style="background-color: #555555; border: none;" disabled><span class="modalPeople">${data.curPeople} / ${data.maxPeople}</span></button>`;
@@ -587,7 +585,7 @@
                 return;
             }
 
-            console.log(auth.coin);
+
             if(auth.coin < price){
                 alert("비타민을 먼저 충전해주세요.");
                 window.location.href = '/payments';
@@ -622,21 +620,17 @@
                 roomId : roomId,
                 nickname : auth.nickname
             }
-            console.log("nickname", auth.nickname)
-            console.log("mno ? ",mno);
-            console.log("roomId ? ", roomId);
+
            await enterChat(chatObj)
             stompClient.disconnect();
            connect();
-            console.log("채팅방 입장")
+
            await getBoard(mbNo).then(data => {
                 mbNo = data.mbNo;
                 modalDataMno = data.mno;
                 price = data.price;
                 roomId = data.roomId;
-                console.log("겟 보드 함 ");
-                console.log("현재인원 ?",`${data.curPeople}`);
-                console.log("참가 여부 ? ", data.applied);
+
                 modalNickName.innerHTML = `<a href="/mypage/mentorProfile?nickname=${data.nickName}">${data.nickName}</a>`;
                 modalTitle.innerHTML = `${data.title}`;
                 modalPosition.innerHTML = `${data.position}`;
@@ -663,7 +657,7 @@
     }
     //비타민 사용내역 저장
     async function payInfoSave(payInfoObj){
-        console.log(payInfoObj);
+
         const result = await axios.put(`/payInfo/save`, payInfoObj);
 
         return result.data;
@@ -739,7 +733,7 @@
                 }
             })
             checkLanguage = checkedValue;
-            console.log(checkedValue);
+
             updateLocation();
         })
     })

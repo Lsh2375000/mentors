@@ -96,10 +96,10 @@
 
             // 해쉬 태그 입력 이벤트
             document.querySelector('input[name=hashTag]').addEventListener('keyup', function (e) {
-                console.log(e.key);
+
 
                 const hashTag = e.target;
-                console.log(hashTags);
+
 
                 if (hashTag.value.trim() !== '' && e.key === 'Enter') { // 내용 존재, Enter키 입력시 태그 추가
 
@@ -128,7 +128,7 @@
                         tagWrap.insertBefore(divElement, hashTag); // 태그 삽입
 
                         hashTags.push(tagName); // 배열에 태그 추가
-                        console.log(hashTags);
+
 
                         hashTag.value = '';
                         hashTag.focus();
@@ -141,7 +141,7 @@
 
                 // 일치하는 태그 제외하고 새로운 배열 생성
                 hashTags = hashTags.filter(tag => tag !== tagNameNode.textContent);
-                console.log('tagArr: ', hashTags); // 태그를 담은 배열 확인
+
 
                 this.remove();
             }

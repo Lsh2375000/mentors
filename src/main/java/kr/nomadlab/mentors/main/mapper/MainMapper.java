@@ -32,7 +32,6 @@ public interface MainMapper {
     void falseIsMentoring(Long mno); //수업 종료시 isMentoring False
 
 
-
     List<MainVO> myPageList(@Param("size") int size, @Param("skip") int skip, @Param("sort")String sort, @Param("mno") Long mno); // 멘토의 마이페이지 멘토링 목록 리스트 출력
     int myPageCount(@Param("size") int size, @Param("skip") int skip, @Param("sort")String sort, @Param("mno") Long mno); // 멘토의 마이페이지 멘토링 총 갯수
 

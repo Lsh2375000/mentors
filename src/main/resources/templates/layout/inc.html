@@ -546,7 +546,7 @@
 
     $(".chat-body").html("");
     currentRoomId = chat.roomId;
-    console.log('Current Room ID: ' + currentRoomId);
+
 
     // 선택한 채팅방에 대한 정보 가져오기
     const result = await getRoomMessages(currentRoomId);
@@ -578,7 +578,7 @@
   }
 
   function displayChatMembers(chatMembers) {
-    console.log('chatMembers: ', chatMembers);
+
     // 참여 회원 목록 초기화
     $('.chat-member-list').html("");
 
@@ -610,7 +610,7 @@
 
   function connect() {
     if (!isUserLoggedIn()) {
-      console.log('User is not logged in. Stomp connection aborted.');
+
       return;
     }
 
@@ -620,7 +620,7 @@
 
     stompClient.connect({}, async function (frame) {
       setConnected(true);
-      console.log('Connected: ' + frame);
+
 
       // 로그인한 회원 고유번호 및 닉네임 저장
       mno = chatUser.mno;
@@ -628,7 +628,7 @@
 
       // 채팅 목록 가져오기
       const result = await getRooms(mno);
-      console.log(result);
+
 
       // 채팅 목록 화면에 출력
       printChatList(result.chatList);
@@ -642,7 +642,7 @@
         return subscription;
       });
 
-      console.log(subscriptions);
+
     });
   }
 
@@ -650,10 +650,6 @@
     const sendTime = new Date(messages.sendTime);
     const options = { hour: "numeric", minute: "numeric" };
 
-    console.log(messages);
-    console.log(messages.userList);
-    console.log(messages.userList.indexOf(sender));
-    console.log(currentRoomId);
 
     // 현재 채팅방에 유저가 있고, 메시지가 현재 방에 속한 경우에만 메시지를 표시
     if (messages.userList.indexOf(sender) > -1 && currentRoomId === messages.roomId) {
@@ -665,7 +661,7 @@
 
       getMembers(messages.roomId)
               .then(result => {
-                console.log('result: ', result);
+
                 displayChatMembers(result.chatMembers);
               })
               .catch(e => console.log(e));
@@ -685,7 +681,7 @@
       stompClient.disconnect();
     }
     setConnected(false);
-    console.log("Disconnected");
+
   }
 
   function sendChat() {
@@ -734,10 +730,9 @@
 
   // loadChat 함수와 showChat 함수를 대체
   function displayChatMessages(chatMessages) {
-    console.log(chatMessages);
-    console.log(chatMessages.length);
+
     if (chatMessages && chatMessages.length > 0) {
-      console.log('displayChatMessages: ', chatMessages);
+
       for (const chatMessage of chatMessages) {
         appendChatMessage(chatMessage);
       }

@@ -134,7 +134,7 @@
           checkedId.push(typesId[i].value);
         }
       }
-      console.log(checkedId);
+
       printList(checkedId, keyword.value, up.value, down.value, from.value, to.value)
 
     });
@@ -189,7 +189,6 @@
 
     document.querySelector('.exchangeSuccessBtn').addEventListener('click', function(){
       const exNo = document.getElementById('exNo').value;
-      console.log('exNo이다');
 
       axios.put(`/admin/exchange/${exNo}/complete`).then(result =>{
         document.getElementById('editToggle').style.display = 'none';

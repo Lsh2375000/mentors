@@ -397,7 +397,7 @@
     })
 
     coinCalendar.addEventListener('click', function (){
-      console.log("달력 클릭");
+
       coinDatepicker.click();
     });
 
@@ -408,16 +408,15 @@
       locale: 'ko',            // 한국어로 지역화
       onOpen: function(selectedDates, dateStr, instance) {
         // 위젯이 열릴 때 실행할 코드
-        console.log("위젯 열림")
+
       },
       onClose: function(selectedDates, dateStr, instance) {
         // 위젯이 닫힐 때 실행할 코드
-        console.log("위젯 닫힘")
+
       },
       onChange: function(selectedDates, dateStr, instance) {
         // 날짜가 변경될 때 실행할 코드
-        console.log("날짜 변경 됨")
-        console.log("밸류는 ",coinDatepicker.value);
+
         coinPeriod = null;
         coinDate = coinDatepicker.value;
         updateLocation();
@@ -535,7 +534,7 @@
         data: data,
         options: options
       });
-      console.log("일별")
+
     }else if(period === "weekly"){
       // 주간별 데이터
       let w_4Cnt = [[${w_4}]]
@@ -560,7 +559,7 @@
         data: data,
         options: options
       });
-      console.log("주간별")
+
     } else if(period === "monthly"){
       // 월 별 데이터
       let m_12Cnt = [[${m_12}]]
@@ -593,7 +592,7 @@
         data: data,
         options: options
       });
-      console.log("월별")
+
     } else if(period === "yearly"){
       // 연도별 데이터
       let y_5Cnt = [[${y_5}]]
@@ -619,7 +618,7 @@
         data: data,
         options: options
       });
-      console.log("연도별")
+
     }else if(date != null){
       let byDate_m3 = [[${byDate_m3}]]
       let byDate_m2 = [[${byDate_m2}]]
@@ -665,7 +664,7 @@
         data: data,
         options: options
       });
-      console.log("특정 날짜별")
+
     }
 
     // select 박스
@@ -698,7 +697,7 @@
 
 
     calendar.addEventListener('click', function (){
-      console.log("달력 클릭");
+
       datepicker.click();
     })
 
@@ -709,16 +708,15 @@
       locale: 'ko',            // 한국어로 지역화
       onOpen: function(selectedDates, dateStr, instance) {
         // 위젯이 열릴 때 실행할 코드
-        console.log("위젯 열림")
+
       },
       onClose: function(selectedDates, dateStr, instance) {
         // 위젯이 닫힐 때 실행할 코드
-        console.log("위젯 닫힘")
+
       },
       onChange: function(selectedDates, dateStr, instance) {
         // 날짜가 변경될 때 실행할 코드
-        console.log("날짜 변경 됨")
-        console.log("밸류는 ",datepicker.value);
+
         period = null;
         date = datepicker.value;
         updateLocation();
