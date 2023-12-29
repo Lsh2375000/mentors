@@ -62,6 +62,7 @@
         .project-container:hover { background-color: #f8f9fa; }
         .project-title { font-size: 21px; }
         .project-content { color: #495057; }
+        .project-content p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .tag-list { display: flex; }
         .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 5px 5px 5px 0;
             font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
@@ -203,19 +204,17 @@
 <script layout:fragment="script" th:inline="javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
-        // img 빼기
+        // 첫번째 p태그 찾기f
         const projectContents = document.querySelectorAll('.project-content');
 
-        function filterImgTags(content) {
+        function filterPTag(content) {
             // 적절한 방법으로 DOM을 생성
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
 
             // <img> 태그를 찾아 제거
-            const imgTags = tempDiv.getElementsByTagName('img');
-            for (let i = imgTags.length - 1; i >= 0; i--) {
-                imgTags[i].parentNode.removeChild(imgTags[i]);
-            }
+            const firstPTag = tempDiv.querySelector('p');
+            tempDiv.innerHTML = `<p>${firstPTag.innerText}</p>`;
 
             // 필터링된 내용을 반환
             return tempDiv.innerHTML;
@@ -224,7 +223,7 @@
         // 모든 board-content에 대해 작업
         projectContents.forEach((projectContent) => {
             const editorContent = projectContent.innerHTML;
-            const filteredContent = filterImgTags(editorContent);
+            const filteredContent = filterPTag(editorContent);
             console.log('edit: ', editorContent)
             console.log('filter: ', filteredContent);
 
