@@ -310,7 +310,6 @@
         dupIdBtn.addEventListener('click', async function () { // 이메일 중복 검사
             const memberId = document.getElementById('email').value;
             const result = await checkId(memberId);
-            console.log(typeof result)
             const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 
             if (memberId === ''.trim()) {
@@ -332,7 +331,6 @@
                     e.stopPropagation();
                 });
             } else if (result === 'true') {
-                console.log('사용가능');
                 alert('사용 가능한 이메일 입니다.');
                 emailAuthBtn.disabled = false;
             }

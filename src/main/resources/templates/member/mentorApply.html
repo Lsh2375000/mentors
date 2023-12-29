@@ -197,7 +197,6 @@
     function search(target) {
         let word = target.value;
         const univName = document.getElementById('univName');
-        console.log(word);
 
         axios.get('http://www.career.go.kr/cnet/openapi/getOpenApi', {
             params: {
@@ -211,10 +210,8 @@
         })
             .then(response => {
                 // 성공적으로 데이터를 받아온 경우의 처리
-                console.log('이거 : ' + response.data);
                 univList.innerHTML = '';
                 let word = document.getElementById("word").value; // 검색어 입력값
-                console.log('검색된 학교수 : ' + response.data.dataSearch.content.length);
 
                 if (word.length > 0 && response.data.dataSearch.content.length > 0) {
                     for (let i = 0; i < response.data.dataSearch.content.length; i++) {
@@ -271,7 +268,6 @@
     function search2(target) {
         let word2 = target;
         const majorName = document.getElementById('majorName');
-        console.log(word2);
 
         axios.get('http://www.career.go.kr/cnet/openapi/getOpenApi', {
             params: {
@@ -285,10 +281,8 @@
         })
             .then(response => {
                 // 성공적으로 데이터를 받아온 경우의 처리
-                console.log('이거 : ' + response.data);
                 majorList.innerHTML = '';
                 let word2 = document.getElementById("word2").value; // 검색어 입력값
-                console.log('검색된 학과 : ' + response.data.dataSearch.content.length);
 
                 if (word2.length > 0 && response.data.dataSearch.content.length > 0) {
                     for (let i = 0; i < response.data.dataSearch.content.length; i++) {

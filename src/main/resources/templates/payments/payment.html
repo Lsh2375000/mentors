@@ -122,15 +122,11 @@
       const product = this.closest('tr').querySelector('.product').textContent;
       const price = this.closest('tr').querySelector('.product-price').textContent;
 
-      console.log(product);
-      console.log(price);
-
       const tossObj = {payType: 'toss', amount: price, orderName: product};
 
       //결제요청 데이터 저장
       axios.post('/payment/toss', tossObj)
               .then(response => {
-                console.log('서버 응답:', response.data);
 
                 const reqOrderId = response.data.orderId;
 

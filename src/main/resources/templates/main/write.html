@@ -290,7 +290,6 @@
                 if (checkedCount > 0) {
                         oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
                         editorValue = oEditors.getById["content"].getIR();
-                        console.log("에디터 ", editorValue)
                         // 에디터 내용 빈값인 경우
                         if(editorValue === '<p><br></p>'){
                                 showToast("<i class=\"fa-solid fa-circle-xmark\" style='color: red; background-color: white; border-radius: 100%'></i> &nbsp&nbsp 내용을 입력해 주세요.")

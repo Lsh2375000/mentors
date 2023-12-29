@@ -226,8 +226,6 @@
         boardContents.forEach((boardContent) => {
             const editorContent = boardContent.innerHTML;
             const filteredContent = filterImgTags(editorContent);
-            console.log('edit: ', editorContent)
-            console.log('filter: ', filteredContent);
 
             // 필터링된 내용을 해당 board-content에 다시 설정
             boardContent.innerHTML = filteredContent;
@@ -303,14 +301,11 @@
 
         // 해쉬 태그 입력 이벤트
         document.getElementById('tag-input').addEventListener('keyup', function (e) {
-            console.log(e.key);
 
             const hashTag = e.target;
-            console.log(hashTags);
 
             if (hashTag.value.trim() !== '' && e.key === 'Enter') { // 내용 존재, Enter키 입력시 태그 추가
                 const tagName = hashTag.value.trim(); // 입력한 태그 명
-                console.log(tagName);
 
                 hashTagInput.disabled = false; // 해쉬태그 담을 input 활성화
 
@@ -329,12 +324,9 @@
                 e.stopPropagation();
 
                 const tagNameNode = this.firstElementChild; // 첫번째 자식 엘리먼트
-                console.log(tagNameNode);
-                console.log(tagNameNode.textContent);
 
                 // 일치하는 태그 제외하고 새로운 배열 생성
                 hashTags = hashTags.filter(tag => tag !== tagNameNode.textContent);
-                console.log('tagArr: ', hashTags); // 태그를 담은 배열 확인
 
                 hashTagInput.value = ''; // 해쉬태그를 담을 인풋 초기화
                 hashTags.forEach(tag => { // 해쉬 태그를 input에 저장
