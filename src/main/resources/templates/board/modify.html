@@ -94,7 +94,7 @@
 
             // 해쉬태그 수정 요청
             const result = modifyTag(boardNo, tagList);
-            console.log(result);
+
 
             frmModify.submit();
         });
@@ -102,7 +102,7 @@
         const tagWrap = document.querySelector('.tag-wrap'); // 태그를 넣을 영역
         const boardNo = [[${board.boardNo}]];
         let tagList = [[${board.tagList}]]; // 태그 임시저장 목록
-        console.log(tagList);
+
 
         // 태그 삭제 이벤트 등록
         document.querySelectorAll('.tag-style').forEach(tag => {
@@ -111,7 +111,7 @@
 
         // 해쉬태그 입력 이벤트
         document.querySelector('input[name=hashTag]').addEventListener('keyup', function (e) {
-            console.log(e.key);
+
 
             const hashTag = e.target;
 
@@ -145,7 +145,7 @@
 
                     const tagObj = { boardNo: boardNo, tagName: tagName };
                     tagList.push(tagObj); // 배열에 태그 추가
-                    console.log(tagList);
+
 
                     hashTag.value = '';
                     hashTag.focus();
@@ -155,18 +155,18 @@
 
         function removeTag(e) { // 태그 삭제 함수
             const tagNameNode = this.firstElementChild; // 첫번째 자식 노드
-            console.log(tagNameNode.textContent);
+
 
             // 일치하는 태그 제외하고 새로운 배열 생성
             tagList = tagList.filter(tag => tag.tagName !== tagNameNode.textContent);
-            console.log('tagArr: ', tagList); // 태그를 담은 배열 확인
+
 
             this.remove();
         }
     });
 
     const errors = [[${errors}]]
-    console.log(errors)
+
 
     let errorMsg = ''
 

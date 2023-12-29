@@ -126,7 +126,7 @@
             e.stopPropagation();
 
             const boardLikeDTO = { boardNo: boardNo, mno: mno }; // 좋아요 정보를 담을 객체
-            console.log(likeList);
+
 
             if (boardUser === 'anonymousUser') { // 로그인 안한경우
                 alert('로그인을 해주세요.');
@@ -135,14 +135,14 @@
 
             if (isLike) { // 좋아요를 한경우
                 const result = await removeLike(blNo);
-                console.log(result);
+
                 isLike = !result;
                 likeBtn.innerHTML = '<i class="fa-regular fa-heart fa-2xl" style="color: tomato"></i>';
             }
             else {
                 const result = await addLike(boardLikeDTO);
                 blNo = result.blNo;
-                console.log(blNo);
+
                 isLike = true;
                 likeBtn.innerHTML = '<i class="fa-solid fa-heart fa-2xl" style="color: tomato"></i>';
             }
@@ -163,7 +163,7 @@
 
         function printReplies(page, size, goLast){
             getList({boardNo, page, size, goLast}).then(
-                data => {console.log(data);
+                data => {
                     printList(data.dtoList);
                     printPages(data);
                     printCount(data.total);
@@ -198,7 +198,7 @@
                     date = comment.addDate; // 댓글 등록 날짜
                     dateFomatter = `${date[0]}.${date[1].toString().padStart(2, '0')}.${date[2].toString().padStart(2, '0')}
                         ${date[3]}:${date[4].toString().padStart(2, '0')}`; // 날짜 포맷
-                    console.log(date);
+
                     str += `<li class ="comment" id="${comment.rno}">
                                 <div class="comment-header">
                                     <h6><a href="#">${comment.writer}</a></h6>
@@ -250,14 +250,14 @@
                     const inputElement = this.closest('.comment').querySelector('.comment-body .mod-input');
                     const pElement = inputElement.previousElementSibling;
                     const modButton = e.target;
-                    console.log(pElement);
+
 
                     inputElement.classList.toggle('hide');
                     pElement.classList.toggle('hide');
 
                     // input 엘리먼트에 class hide가 존재하지 않는 경우
                     if (!inputElement.classList.contains('hide')) {
-                        console.log(inputElement.value);
+
                         modButton.textContent = '취소';
                         inputElement.focus();
                         inputElement.addEventListener('keyup', modifyComment); // 키업 이벤트 등록
@@ -271,14 +271,13 @@
 
             // 댓글 수정 함수
             async function modifyComment(e){
-                console.log(e.key);
+
                 const rno = this.closest('.comment').id; // 댓글 고유 번호
                 const content = e.target; // 댓글 입력창
                 if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
 
                 if (e.key === 'Enter') {
-                    console.log('엔터키 누름');
-                    console.log('댓글작성 내용: ', content.value);
+
 
                     // 매개변수로 전달할 객체
                     const replyObj = {
@@ -307,7 +306,7 @@
                    }
 
                    const comment = this.closest('.comment'); // 댓글
-                   console.log(comment);
+
                    const rno = comment.id; // 댓글 고유번호
                    const replyCount = comment.querySelector('.btn-area').dataset.replyCount; // 답변 갯수
 
@@ -348,8 +347,7 @@
                 hideButton.addEventListener('click', function (e) {
                     const replyList = this.closest('.comment').querySelector('.reply-list'); // 대댓글 목록
                     const replyCount = this.closest('.btn-area').dataset.replyCount;
-                    console.log(replyList);
-                    console.log(replyCount);
+
 
                     replyList.classList.toggle('hide');
 
@@ -400,7 +398,7 @@
             if (data.next){ // 다음 페이지
                 pageStr += `<li class="page-item"><a class="page-link" data-page="${data.end + 1}">NEXT</a></li>`;
             }
-            console.log(pageStr);
+
             replyPaging.innerHTML = pageStr;
         }
 
@@ -409,15 +407,14 @@
 
         // 댓글 등록 함수
         async function registerReply(e) {
-            console.log(e.key);
+
             const content = e.target; // 댓글 작성 내용
             const comment = content.closest('.comment'); // 댓글 가져오기
 
             if (e.isComposing || content.value.trim() === '') return; // 아무것도 입력하지 않는 경우
 
             if (e.key === 'Enter') {
-                console.log('엔터키 누름');
-                console.log('댓글작성 내용: ', content.value);
+
 
                 // 매개변수로 전달할 객체
                 const replyObj = {

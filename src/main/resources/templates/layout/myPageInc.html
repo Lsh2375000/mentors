@@ -372,7 +372,7 @@
   const qmpwChk = document.getElementById('qmpwChk'); // 입력한 현재 비밀번호
   const quitMemberBtn = document.getElementById('quitMemberBtn'); // 모달창에서 회원 탈퇴 버튼
   const str = '[[${memberDTO.nickname}]]';
-  console.log(str);
+
 
 
   if ('[[${#authentication.principal.getNickname}]]' == str.toString()) {
@@ -415,8 +415,7 @@
       e.stopPropagation();
     } else if (result) {
       if (confirm('정말 회원 탈퇴 하시겠습니까?')) {
-        // console.log(mpwChk.value);
-        // console.log(frmQuitPw);
+
         frmQuitPw.submit();
       }
 
@@ -428,7 +427,7 @@
 
   const notifyUser = [[${#authentication.principal}]]
   const isMentorApply = "[[${isMentorApply}]]";
-  console.log(typeof isMentorApply);
+
 
   const mentorApplyBtn = document.getElementById('isMentorApply');
 
