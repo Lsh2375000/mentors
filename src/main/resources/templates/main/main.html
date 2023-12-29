@@ -330,7 +330,7 @@
                     <input type="hidden" name="paidFree" th:value="${paidFree}">
                     <div class="w-100">
                         <input type="text" name="keyword" class="inputKeyword w-75" th:value="${keyword}">
-                        <button type="submit" class="btn btn-secondary searchBtn">검색</button>
+                        <button type="button" class="btn btn-secondary searchBtn">검색</button>
                     </div>
                     <div class="w-100 mt-2">
                         <select class="select w-75" name="sort">
@@ -648,7 +648,7 @@
                 modalLanguage.innerHTML = `${data.devLanguage}`;
                modalStartDate.innerHTML = `${data.startDate[0]+'-'+data.startDate[1]+'-'+ data.startDate[2]}`;
                modalEndDate.innerHTML = `${data.endDate[0]+'-'+data.endDate[1]+'-'+ data.endDate[2]}`;
-
+               enrollBtnDiv.innerHTML = '';
             })
 
         })
@@ -685,6 +685,7 @@
 
     // 페이징, 검색
     const searchFrm = document.querySelector('form[name=searchFrm]'); // 검색 폼
+    const searchBtn = document.querySelector('.searchBtn');
     const pageNums = document.querySelectorAll('.pageNum'); // 페이지번호
     const keyword = document.querySelector('.inputKeyword'); // 키워드
     const select = document.querySelector('.select'); // 셀렉트폼
@@ -695,6 +696,12 @@
     const freeBtn = document.getElementById('freeBtn');
     const paidBtn = document.getElementById('paidBtn');
     let paidFree = [[${paidFree}]]; // 무료/유료
+
+    // 검색버튼
+    searchBtn.addEventListener('click', function (){
+        updateLocation();
+
+    })
 
     // 무료/유료 검색
     allBtn.addEventListener('click', function (){
