@@ -241,7 +241,6 @@
     </form>
     <!--form end-->
 
-    <!--카카오 주소 API Script-->
     <script src="/js/checkAxios.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
@@ -310,6 +309,7 @@
         dupIdBtn.addEventListener('click', async function () { // 이메일 중복 검사
             const memberId = document.getElementById('email').value;
             const result = await checkId(memberId);
+            console.log(typeof result)
             const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 
             if (memberId === ''.trim()) {
@@ -318,7 +318,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                 });
-            } else if (!result) {
+            } else if (result === 'false') {
                 alert('이미 사용중인 이메일 입니다.');
                 btnSubmit.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -330,7 +330,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                 });
-            } else if (result) {
+            } else if (result === 'true') {
                 console.log('사용가능');
                 alert('사용 가능한 이메일 입니다.');
                 emailAuthBtn.disabled = false;
@@ -341,7 +341,7 @@
             const nickname = document.getElementById('nickname').value;
             const result = await checkNickname(nickname);
 
-            if (!result) {
+            if (result === 'false') {
                 alert('이미 사용중인 닉네임 입니다.')
                 btnSubmit.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -353,7 +353,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                 });
-            } else if (result) {
+            } else if (result === 'true') {
 
                 alert('사용 가능한 닉네임 입니다.');
 
