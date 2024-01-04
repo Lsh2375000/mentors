@@ -61,7 +61,7 @@ public class MailSenderServiceImpl implements MailSenderService{
 
         Context context = new Context();
         context.setVariable("confirmKey", confirmKey);
-        String messageText = templateEngine.process("/mail/add_member", context);
+        String messageText = templateEngine.process("mail/add_member", context);
 
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(Message.RecipientType.TO, mailTo);
