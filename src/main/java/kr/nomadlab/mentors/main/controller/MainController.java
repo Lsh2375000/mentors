@@ -91,7 +91,7 @@ public class MainController {
             model.addAttribute("keyword", keyword);
             model.addAttribute("mainList", mainList);
 
-            return "/main/main";
+            return "main/main";
 
     }
 

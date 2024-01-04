@@ -33,7 +33,7 @@ public class PaymentController {
     @GetMapping("")
     public String payment(){
         log.info("/payment");
-        return "/payments/payment";
+        return "payments/payment";
     }
     @GetMapping("/success")
     public String success(

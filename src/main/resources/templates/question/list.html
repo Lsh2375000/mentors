@@ -30,7 +30,7 @@
         a { text-decoration: none; }
 
         main { padding-top: 50px; display: flex; }
-        main section { width: 100%; }
+        main section { width: 100%; max-width: 960px; }
         main ul { padding-left: 0 !important; }
         .left-side-menu { margin-top: 44px; margin-right: 40px; width: 168px; }
         .menu { min-width: 160px; }
@@ -61,6 +61,7 @@
         .board-container:hover { background-color: #f8f9fa; }
         .board-title { font-size: 21px; }
         .board-content { color: #495057; }
+        .board-content p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .tag-list { display: flex; }
         .tag-style { background-color: #eff3fa; border-radius: 0.5rem; padding: 4px 10px; margin: 5px 5px 5px 0;
             font-size: 13px; font-weight: 600; cursor: pointer; color: var(--bs-body-color); }
@@ -204,30 +205,6 @@
 <script layout:fragment="script" th:inline="javascript">
 
     document.addEventListener('DOMContentLoaded', function () {
-        // 첫번째 p태그 찾기
-        const boardContents = document.querySelectorAll('.board-content');
-
-        function filterPTag(content) {
-            // 적절한 방법으로 DOM을 생성
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = content;
-
-            // <img> 태그를 찾아 제거
-            const firstPTag = tempDiv.querySelector('p');
-            tempDiv.innerHTML = `<p>${firstPTag.innerText}</p>`;
-
-            // 필터링된 내용을 반환
-            return tempDiv.innerHTML;
-        }
-
-        // 모든 board-content에 대해 작업
-        boardContents.forEach((boardContent) => {
-            const editorContent = boardContent.innerHTML;
-            const filteredContent = filterPTag(editorContent);
-
-            // 필터링된 내용을 해당 board-content에 다시 설정
-            boardContent.innerHTML = filteredContent;
-        });
 
         const formObj = document.querySelector("form[name=frmSearch]");
         const searchInput = document.getElementById('keyword'); // 검색창
@@ -348,6 +325,28 @@
 
                 formObj.submit();
             });
+        });
+
+        // 텍스트 필터링
+        const boardContents = document.querySelectorAll('.board-content');
+
+        function filterText(content) {
+            // 적절한 방법으로 DOM을 생성
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            tempDiv.innerHTML = `<p>${tempDiv.innerText}</p>`;
+
+            // 필터링된 내용을 반환
+            return tempDiv.innerHTML;
+        }
+
+        // 모든 board-content에 대해 작업
+        boardContents.forEach((boardContent) => {
+            const editorContent = boardContent.innerHTML;
+            const filteredContent = filterText(editorContent);
+
+            // 필터링된 내용을 해당 board-content에 다시 설정
+            boardContent.innerHTML = filteredContent;
         });
     });
 
