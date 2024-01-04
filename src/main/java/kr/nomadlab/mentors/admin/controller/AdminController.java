@@ -318,6 +318,4 @@ public class AdminController {
         log.info(adminService.adminExchangeSearch(adminExSearchDTO));
         model.addAttribute("adminSearchDTO", adminService.adminExchangedSearch(adminExSearchDTO));
     }
-
-
 }
