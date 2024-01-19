@@ -293,13 +293,13 @@
                     e.preventDefault();
                     e.stopPropagation();
                 });
-            } else if (!result) {
+            } else if (result === 'false') {
                 alert('인증문자가 일치하지 않습니다.');
                 btnSubmit.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                 });
-            } else if (result) {
+            } else if (result === 'true') {
                 alert('인증되었습니다.');
                 authCode.readonly = true;
                 keyChkBtn.disabled = true;
@@ -378,6 +378,16 @@
                 pswCon.style.zIndex = '-1';
                 pswCon.style.width = '400px'
                 return false;
+            } else if (passwordRegex.test(passwdVal)) {
+
+                pswCon.innerHTML = '사용가능한 비밀번호 입니다.';
+                pswCon.style.color = '#0D6EFD';
+                pswCon.style.fontWeight = 'bold';
+                pswCon.style.fontSize = '13px';
+                pswCon.style.position = 'absolute';
+                pswCon.style.paddingTop = '40px';
+                pswCon.style.zIndex = '-1';
+
             } else if (passwdVal === '') {
                 chkTxt.innerHTML = '비밀번호가 일치하지 않습니다.';
                 chkTxt.style.color = '#FA3E3E';
@@ -386,9 +396,7 @@
                 chkTxt.style.position = 'absolute';
                 chkTxt.style.paddingTop = '40px';
                 chkTxt.style.zIndex = '-1';
-                pswCon.style.width = '400px'
-            } else {
-                pswCon.innerHTML = '';
+                pswCon.style.width = '400px';
             }
         });
 

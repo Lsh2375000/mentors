@@ -51,7 +51,14 @@
                                 </a>
                             </div>
                         </td>
-                        <td><span th:text="${dto.univName}"></span> / <span th:text="${dto.major}"></span></td>
+                        <td>
+                            <th:block th:if="${dto.univName == '' && dto.major == ''}">
+                                <span th:text="${dto.univName}"> / </span><span th:text="${dto.major}"></span>
+                            </th:block>
+                            <th:block th:if="${dto.univName == '' && dto.major == ''}">
+                                <span> 등록 사항 없음. </span>
+                            </th:block>
+                        </td>
                         <td style="width: 120px;">
                             <button type="button" class="btn btn-primary applyBtn" th:id="${dto.mno}"> 수락 </button>
                         </td>

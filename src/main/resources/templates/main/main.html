@@ -594,19 +594,23 @@
                 alert('신청완료되었습니다.\n 채팅목록을 확인하세요');
             }
 
-            let payInfoObj = {
+            let payInfoDto = {
                 mbNo : mbNo,
                 mentorMno : modalDataMno,
                 price : price,
                 menteeMno : auth.mno,
                 completeDate : endDate
             }
-            await payInfoSave(payInfoObj).then(result =>{
+
+            await payInfoSave(payInfoDto).then(result => {
+                console.log(result);
+
                 let messageObj ={
                     receiverMno : modalDataMno,
                     types : "mentoring",
                     typesNo : mbNo
                 }
+
                 passMessage(messageObj).then(data => {
                     alert('신청완료되었습니다.\n 채팅목록을 확인하세요');
                     let coinValue = document.querySelector('.getCoin');
@@ -614,6 +618,7 @@
                     coinValue.textContent = coin-price;
                 })
             })
+
             //여기에 채팅방
             let chatObj = {
                 mno : mno,
@@ -656,9 +661,9 @@
         return response.data;
     }
     //비타민 사용내역 저장
-    async function payInfoSave(payInfoObj){
-
-        const result = await axios.put(`/payInfo/save`, payInfoObj);
+    async function payInfoSave(payInfoDto){
+        const mbNo = payInfoDto.mbNo;
+        const result = await axios.put(`/payInfo/save/${mbNo}`, payInfoDto);
 
         return result.data;
     }

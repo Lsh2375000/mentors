@@ -20,7 +20,7 @@ import kr.nomadlab.mentors.member.dto.*;
 import kr.nomadlab.mentors.member.service.MemberService;
 import kr.nomadlab.mentors.member.service.MenteeService;
 import kr.nomadlab.mentors.member.service.MentorService;
-import kr.nomadlab.mentors.payInfo.dto.PayInfoDto;
+import kr.nomadlab.mentors.payInfo.dto.PayInfoDTO;
 import kr.nomadlab.mentors.payInfo.service.PayInfoService;
 import kr.nomadlab.mentors.project.dto.ProjectDTO;
 import kr.nomadlab.mentors.project.service.ProjectService;
@@ -31,18 +31,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @Controller
 @RequestMapping("/mypage")
@@ -344,7 +341,7 @@ public class MyPageController {
 
     @GetMapping("/exchange")
     public String exchangeVitamin(@AuthenticationPrincipal MemberSecurityDTO member, PageRequestDTO pageRequestDTO, Model model){
-        PageResponseDTO<PayInfoDto> payInfoDtoList = payInfoService.getPayInfo(member.getMno(), pageRequestDTO);
+        PageResponseDTO<PayInfoDTO> payInfoDtoList = payInfoService.getPayInfo(member.getMno(), pageRequestDTO);
         model.addAttribute("payInfoDtoList", payInfoDtoList);
         enterMentorPage(model, member);
 
@@ -356,7 +353,7 @@ public class MyPageController {
         exchangeDto.setMno(member.getMno());
         exchangeDto.setCoin(member.getCoin());
         exchangeDto.setAmount(member.getCoin()*1000);
-        PayInfoDto payInfoDto = PayInfoDto.builder()
+        PayInfoDTO payInfoDto = PayInfoDTO.builder()
                 .price(member.getCoin())
                 .mentorMno(member.getMno())
                 .mbNo(0L)

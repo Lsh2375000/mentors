@@ -292,21 +292,21 @@
   });
 
 
-  const dupNicknameBtn = document.getElementById('dupNicknameBtn'); // 닉네임 중복검사 버튼
-
-  dupNicknameBtn.addEventListener('click', async function () { // 닉네임 중복 검사
-    const nickname = document.getElementById('nickname').value;
-    const result = await checkNickname(nickname);
-    if (result) {
-      alert('사용 가능한 닉네임 입니다.');
-    } else {
-      alert('이미 사용중인 닉네임 입니다.');
-      btnSubmit.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      });
-    }
-  });
+  // const dupNicknameBtn = document.getElementById('dupNicknameBtn'); // 닉네임 중복검사 버튼
+  //
+  // dupNicknameBtn.addEventListener('click', async function () { // 닉네임 중복 검사
+  //   const nickname = document.getElementById('nickname').value;
+  //   const result = await checkNickname(nickname);
+  //   if (result) {
+  //     alert('사용 가능한 닉네임 입니다.');
+  //   } else {
+  //     alert('이미 사용중인 닉네임 입니다.');
+  //     btnSubmit.addEventListener('click', function (e) {
+  //       e.preventDefault();
+  //       e.stopPropagation();
+  //     });
+  //   }
+  // });
 
 
   const inputAll = document.querySelectorAll('input');

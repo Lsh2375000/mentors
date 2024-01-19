@@ -306,7 +306,8 @@
     // 수강평 작성 모달
     const writeModal = new bootstrap.Modal(document.getElementById('writeModal'));
 
-    const modalForm = document.querySelector('form[name=modalForm]')
+    const modalForm = document.querySelector('form[name=modalForm]');
+
     function writeModalBtn(mno,mbNo){
         document.querySelector('input[name=mbNo]').value = mbNo
         document.querySelector('input[name=mentorMno]').value = mno;

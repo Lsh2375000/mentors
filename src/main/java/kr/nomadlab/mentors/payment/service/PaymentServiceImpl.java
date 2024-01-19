@@ -8,7 +8,7 @@ import kr.nomadlab.mentors.member.dto.MemberDTO;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.member.mapper.MemberMapper;
 import kr.nomadlab.mentors.payment.config.TossPaymentConfig;
-import kr.nomadlab.mentors.payment.dto.PaymentDto;
+import kr.nomadlab.mentors.payment.dto.PaymentDTO;
 import kr.nomadlab.mentors.payment.dto.PaymentFailDto;
 import kr.nomadlab.mentors.payment.dto.PaymentPAO;
 import kr.nomadlab.mentors.payment.dto.PaymentSuccessDto;
@@ -37,8 +37,8 @@ public class PaymentServiceImpl implements PaymentService{
     private final MemberMapper memberMapper;
 
     @Override
-    public PaymentDto paymentReqRegister(MemberSecurityDTO memberSecurityDTO, PaymentPAO paymentPAO) {
-        PaymentDto paymentDto = PaymentDto.builder()
+    public PaymentDTO paymentReqRegister(MemberSecurityDTO memberSecurityDTO, PaymentPAO paymentPAO) {
+        PaymentDTO paymentDTO = PaymentDTO.builder()
                 .orderId(UUID.randomUUID().toString())
                 .payType(paymentPAO.getPayType())
                 .amount(paymentPAO.getAmount())
@@ -48,11 +48,11 @@ public class PaymentServiceImpl implements PaymentService{
                 .memberName(memberSecurityDTO.getMemberName())
                 .memberId(memberSecurityDTO.getMemberId())
                 .build();
-        PaymentVO paymentVO = modelMapper.map(paymentDto, PaymentVO.class);
+        PaymentVO paymentVO = modelMapper.map(paymentDTO, PaymentVO.class);
         log.info(paymentVO);
         paymentMapper.paymentReqInsert(paymentVO);
 
-        return paymentDto;
+        return paymentDTO;
     }
 
     @Override
@@ -62,15 +62,15 @@ public class PaymentServiceImpl implements PaymentService{
         //최종 결제 승인 요청
         PaymentSuccessDto paymentSuccessDto = requestPaymentAccept(paymentKey, orderId, amount);
 
-        PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
-        paymentDto.setPaymentKey(paymentKey);
-        paymentDto.setPaySuccessYN(true);
+        PaymentDTO paymentDTO = modelMapper.map(paymentVO, PaymentDTO.class);
+        paymentDTO.setPaymentKey(paymentKey);
+        paymentDTO.setPaySuccessYN(true);
         Long mno = paymentVO.getMno();
         int coin = (int)((amount)/1000);
         memberMapper.updateCoin(mno,coin);
 
         //성공시 DB업데이트
-        PaymentVO paymentVOUp = modelMapper.map(paymentDto, PaymentVO.class);
+        PaymentVO paymentVOUp = modelMapper.map(paymentDTO, PaymentVO.class);
         paymentMapper.update(paymentVOUp);
 
         // ------------멤버에 코인 추가하는 메서드 넣기 ------->
@@ -93,11 +93,11 @@ public class PaymentServiceImpl implements PaymentService{
         }
         else {
             if(!paymentVO.isPaySuccessYN()) {
-                PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
-                paymentDto.setFailReason(message);
-                paymentDto.setPaySuccessYN(false);
-                paymentDto.setPayFailYN(true);
-                PaymentVO resultPaymentVO = modelMapper.map(paymentDto, PaymentVO.class);
+                PaymentDTO paymentDTO = modelMapper.map(paymentVO, PaymentDTO.class);
+                paymentDTO.setFailReason(message);
+                paymentDTO.setPaySuccessYN(false);
+                paymentDTO.setPayFailYN(true);
+                PaymentVO resultPaymentVO = modelMapper.map(paymentDTO, PaymentVO.class);
 
                 paymentMapper.update(resultPaymentVO);
             }
@@ -112,17 +112,17 @@ public class PaymentServiceImpl implements PaymentService{
     }
     //페이징된 구매내역 불러오기
     @Override
-    public PageResponseDTO<PaymentDto> getListPayments(Long mno, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<PaymentDTO> getListPayments(Long mno, PageRequestDTO pageRequestDTO) {
         List<PaymentVO> paymentVOList = paymentMapper.selectList(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
-        List<PaymentDto> paymentDtoList = new ArrayList<>();
+        List<PaymentDTO> paymentDTOList = new ArrayList<>();
         paymentVOList.forEach(paymentVO -> {
-            PaymentDto paymentDto = modelMapper.map(paymentVO, PaymentDto.class);
-            paymentDtoList.add(paymentDto);
+            PaymentDTO paymentDTO = modelMapper.map(paymentVO, PaymentDTO.class);
+            paymentDTOList.add(paymentDTO);
         });
 
-        return PageResponseDTO.<PaymentDto>withAll()
+        return PageResponseDTO.<PaymentDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
-                .dtoList(paymentDtoList)
+                .dtoList(paymentDTOList)
                 .total(paymentMapper.getCount(mno))
                 .build();
     }

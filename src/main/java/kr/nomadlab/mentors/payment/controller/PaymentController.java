@@ -7,7 +7,7 @@ import kr.nomadlab.mentors.admin.dto.CoinStatsDTO;
 import kr.nomadlab.mentors.admin.service.CoinStatsService;
 import kr.nomadlab.mentors.exception.CustomLogicException;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
-import kr.nomadlab.mentors.payment.dto.PaymentDto;
+import kr.nomadlab.mentors.payment.dto.PaymentDTO;
 import kr.nomadlab.mentors.payment.dto.PaymentFailDto;
 import kr.nomadlab.mentors.payment.dto.PaymentSuccessDto;
 import kr.nomadlab.mentors.payment.service.PaymentService;

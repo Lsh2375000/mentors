@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PayInfoDto {
+public class PayInfoDTO {
     private Long payInfoNo;
     private Long mbNo;
     private Long mentorMno;

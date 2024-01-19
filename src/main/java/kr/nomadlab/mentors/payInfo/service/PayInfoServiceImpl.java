@@ -4,10 +4,9 @@ import kr.nomadlab.mentors.common.PageRequestDTO;
 import kr.nomadlab.mentors.common.PageResponseDTO;
 import kr.nomadlab.mentors.main.mapper.MainMapper;
 import kr.nomadlab.mentors.member.mapper.MemberMapper;
-import kr.nomadlab.mentors.payInfo.dto.PayInfoDto;
+import kr.nomadlab.mentors.payInfo.dto.PayInfoDTO;
 import kr.nomadlab.mentors.payInfo.mapper.PayInfoMapper;
 import kr.nomadlab.mentors.payInfo.vo.PayInfoVO;
-import kr.nomadlab.mentors.payment.dto.PaymentDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -29,13 +28,13 @@ public class PayInfoServiceImpl implements PayInfoService{
     private final MainMapper mainMapper;
 
     @Override
-    public Long savePayInfo(Long mno, PayInfoDto payInfoDto) {
+    public Long savePayInfo(Long mno, PayInfoDTO payInfoDTO) {
         PayInfoVO payInfoVO = PayInfoVO.builder()
-                .mbNo(payInfoDto.getMbNo())
-                .mentorMno(payInfoDto.getMentorMno())
+                .mbNo(payInfoDTO.getMbNo())
+                .mentorMno(payInfoDTO.getMentorMno())
                 .menteeMno(mno)
-                .completeDate(payInfoDto.getCompleteDate())
-                .price(payInfoDto.getPrice())
+                .completeDate(payInfoDTO.getCompleteDate())
+                .price(payInfoDTO.getPrice())
                 .build();
 
         payInfoMapper.insertPayInfo(payInfoVO);
@@ -59,21 +58,21 @@ public class PayInfoServiceImpl implements PayInfoService{
     }
 
     @Override
-    public PageResponseDTO<PayInfoDto> getPayInfo(Long mno, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<PayInfoDTO> getPayInfo(Long mno, PageRequestDTO pageRequestDTO) {
         List<PayInfoVO> payInfoVOList = payInfoMapper.getPayInfo(mno, pageRequestDTO.getSkip(), pageRequestDTO.getSize());
-        List<PayInfoDto> payInfoDtOList = new ArrayList<>();
+        List<PayInfoDTO> payInfoDtOList = new ArrayList<>();
         if(payInfoVOList != null) {
             payInfoVOList.forEach(payInfoVO -> {
                 if (payInfoVO.getPrice() != 0) {
                     log.info(payInfoVO);
-                    PayInfoDto payInfoDto = modelMapper.map(payInfoVO, PayInfoDto.class);
+                    PayInfoDTO payInfoDto = modelMapper.map(payInfoVO, PayInfoDTO.class);
                     payInfoDtOList.add(payInfoDto);
                 }
             });
         }
         int total = payInfoMapper.getCount(mno);
 
-        return PageResponseDTO.<PayInfoDto>withAll()
+        return PageResponseDTO.<PayInfoDTO>withAll()
                 .dtoList(payInfoDtOList)
                 .total(total)
                 .pageRequestDTO(pageRequestDTO)

@@ -3,7 +3,7 @@ package kr.nomadlab.mentors.payment.controller;
 import kr.nomadlab.mentors.member.dto.MemberDTO;
 import kr.nomadlab.mentors.member.dto.MemberSecurityDTO;
 import kr.nomadlab.mentors.payment.config.TossPaymentConfig;
-import kr.nomadlab.mentors.payment.dto.PaymentDto;
+import kr.nomadlab.mentors.payment.dto.PaymentDTO;
 import kr.nomadlab.mentors.payment.dto.PaymentPAO;
 import kr.nomadlab.mentors.payment.dto.PaymentResDto;
 import kr.nomadlab.mentors.payment.service.PaymentService;
@@ -28,19 +28,19 @@ public class PaymentRestController {
         log.info("/payment/toss");
         log.info(paymentPAO);
         log.info(memberSecurityDTO);
-        PaymentDto paymentDto = paymentService.paymentReqRegister(memberSecurityDTO, paymentPAO);
-        PaymentResDto paymentResDto = PaymentResDto.builder()
-                .payType(paymentDto.getPayType())
-                .amount(paymentDto.getAmount())
-                .orderId(paymentDto.getOrderId())
-                .orderName(paymentDto.getOrderName())
-                .customerName(paymentDto.getMemberName())
-                .createdAt(paymentDto.getCreatedAt())
-                .failReason(paymentDto.getFailReason())
+        PaymentDTO paymentDTO = paymentService.paymentReqRegister(memberSecurityDTO, paymentPAO);
+        PaymentResDto paymentResDTO = PaymentResDto.builder()
+                .payType(paymentDTO.getPayType())
+                .amount(paymentDTO.getAmount())
+                .orderId(paymentDTO.getOrderId())
+                .orderName(paymentDTO.getOrderName())
+                .customerName(paymentDTO.getMemberName())
+                .createdAt(paymentDTO.getCreatedAt())
+                .failReason(paymentDTO.getFailReason())
                 .build();
-        paymentResDto.setSuccessUrl(tossPaymentConfig.getSuccessUrl());
-        paymentResDto.setFailUrl(tossPaymentConfig.getFailUrl());
-        return ResponseEntity.ok().body(paymentResDto);
+        paymentResDTO.setSuccessUrl(tossPaymentConfig.getSuccessUrl());
+        paymentResDTO.setFailUrl(tossPaymentConfig.getFailUrl());
+        return ResponseEntity.ok().body(paymentResDTO);
     }
 
 //    @PostMapping("/confirm")
