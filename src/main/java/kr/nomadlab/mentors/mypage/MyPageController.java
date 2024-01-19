@@ -345,7 +345,7 @@ public class MyPageController {
         model.addAttribute("payInfoDtoList", payInfoDtoList);
         enterMentorPage(model, member);
 
-        return "/mypage/exchange";
+        return "mypage/exchange";
     }
 
     @PostMapping("/bankInfo")
@@ -370,7 +370,7 @@ public class MyPageController {
             userDetails.setCoin(0);
         }
 
-        return "redirect:/mypage/exchange";
+        return "redirect:mypage/exchange";
     }
     /* 멘토 메인 영역 끝 */
 
